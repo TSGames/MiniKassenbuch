@@ -8,7 +8,11 @@ Ziel soll es sein, eine offene, kostenfreie Plattform für die Verwaltung von Ka
 Das System ist insbesondere an Vereine ausgerichtet.
 
 # Installation
-Das System muss mittles composer install konfiguriert werden.
+Das System muss mittles 
+
+php composer.phar install
+
+konfiguriert werden.
 
 Alternativ können Binaries (Coming Soon) bezogen werden. Ein PHP 7.x Webserver wird benötigt.
 
