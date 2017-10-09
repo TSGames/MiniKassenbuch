@@ -20,9 +20,9 @@ konfiguriert werden.
 Alternativ können Binaries (Coming Soon) bezogen werden. Ein PHP 7.x Webserver wird benötigt.
 
 # Frameworks
-Das Projekt nutzt u.a. folgende Frameworks
+Das Projekt nutzt u.a. folgende Frameworks oder Toolkits
 - composer
-- slim-php
+- slim
 - twig
 - materialize.css
 - material icons
