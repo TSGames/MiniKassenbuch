@@ -1,0 +1,51 @@
+{% include 'menu.html' %}
+<script>
+function setFilter(){
+	var year=$('#year').val();
+	var month=$('#month').val();
+	window.location='{{base_url}}?year='+year+'&month='+month;
+}
+</script>
+<div class="container">
+<div class="filter row">
+<h2>Ansicht filtern</h2>
+<div class="input-field col s12 m6">
+	<select id="year" onchange="setFilter()">
+		{% for i in range(year-20,year) %}
+			<option {% if i==filter.year %}selected{% endif %}>{{i}}</option>
+		{% endfor %}
+	</select>
+	<label>Jahr</label>
+</div>
+<div class="input-field col s12 m6">
+	<select id="month" onchange="setFilter()">
+		{% for i in range(0,12) %}
+			<option value="{{i}}" {% if i==filter.month %}selected{% endif %}>{% if i==0 %}Gesamtes Jahr{% elseif i<10 %}0{{i}}{% else %}{{i}}{% endif %}</option>
+		{% endfor %}
+	</select>
+	<label>Monat</label>
+</div>
+</div>
+<table class='striped'>
+	<thead>
+		<th class='number'>Buchungsnr.</th>
+		<th class='label'>Bezeichnung</th>
+		<th class='date'>Datum</th>
+		<th class='amount'>Betrag</th>
+		<th class='saldo'>Saldo</th>
+	</thead
+    {% for booking in list %}
+		<tr>
+        <td class='number'>{{booking.number}}</td>
+        <td class='label'>{{booking.label}}</td>
+		<td class='date'>{{booking.date|date("d.m.Y")}}</td>
+		<td class='amount {% if booking.type==0 %}positive{% else %}negative{% endif %}'>{{(booking.amount/100)|number_format(2)}} €</td>
+		<td class='saldo {% if booking.saldo>=0 %}positive{% else %}negative{% endif %}'>{{(booking.saldo/100)|number_format(2)}} €</td>
+		<td><a href="{{base_url}}edit?id={{booking.id}}"><i class="material-icons">edit</i></a></td>
+		<td><a href="{{base_url}}delete?id={{booking.id}}"><i class="material-icons">delete</i></a></td>
+		</tr>
+    {% endfor %}
+	{% if list==null %}
+		<tr><td colspan="999">Noch keine Buchungen im gewählten Zeitraum für das Konto {{account.label}}. Über das Menü können Sie Buchungen anlegen</td></tr>
+	{% endif %}
+</div>

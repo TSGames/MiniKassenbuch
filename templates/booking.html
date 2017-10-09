@@ -1,0 +1,45 @@
+{% include 'menu.html' %}
+
+<div class="container">
+<form action="{{base_url}}delete_document?booking={{id}}" name="document" method="POST">
+<input type="hidden" name="id">
+</form>
+
+<form action="{{base_url}}save{% if id %}?id={{id}}{% endif %}" name="form" method="POST" enctype="multipart/form-data">
+{% if error %}
+    <div class="error">{{error}}</div>
+{% endif %}
+{% if id %}
+    <div class="info">Buchung {{label}} bearbeiten</div>
+{% endif %}
+<label>Aktuelles Konto</label>
+<input type="text" name="label" value="{{activeAccount.label}}" readonly disabled>
+<label>Bezeichnung</label>
+<input type="text" name="label" value="{{label}}">
+<label>Datum</label>
+<input type="date" name="date" value="{{date}}">
+<label>Betrag in Euro</label>
+<input type="number" name="amount" value="{{amount}}">
+<div class="group">
+<input type="radio" id="in" name="type" value="0" {% if type==0 %}checked{% endif %}><label for="in">Einnahme</label>
+<input type="radio" id="out" name="type" value="1" {% if type==1 %}checked{% endif %}><label for="out">Ausgabe</label>
+</div>
+<label>Bemerkungen, Kommentare etc.</label>
+<textarea name="notes" class="materialize-textarea">{{notes}}</textarea>
+
+{% if documents %}
+<label>Aktuell angeheftete Dokumente</label>
+<ul class="collection">
+{% for document in documents %}
+<li class="collection-item"><a href="{{base_url}}document/{{document.id}}" target="_blank">{{document.filename}}</a>
+<i class="clickable material-icons" onclick="document.id.value={{document.id}};document.submit()">clear</i>
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+<div class="group">
+<label>Belege/Dokumente anheften</label>
+<input type="file" name="documents" multiple>
+</div>
+<a class="btn" onclick="form.submit()">Speichern</a>
+</div>

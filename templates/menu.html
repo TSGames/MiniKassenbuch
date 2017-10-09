@@ -1,0 +1,21 @@
+{% include 'header.html' %}
+  <nav>
+    <div class="nav-wrapper">
+	 <a href="#" onclick="$('#accounts').fadeIn()" class="brand-logo right">{{activeAccount.label}} <i class="material-icons">keyboard_arrow_down</i></a>
+      <ul id="nav-mobile" class="left hide-on-med-and-down">
+		<li><a href="{{base_url}}./">Liste</a>
+		<li><a href="{{base_url}}add">Buchung anlegen</a>
+		<li><a href="{{base_url}}reports">Berichte</a>
+	</ul>
+	</div>
+</nav>
+<form method="POST" name="account" action="{{base_url}}account">
+<input type="hidden" name="id">
+</form>
+<div class="dialog darken" id="accounts" style="display:none" onclick="$('#accounts').fadeOut()">
+<ul class="collection accounts">
+	{% for a in accounts %}
+		<li onclick="account.id.value={{a.id}};account.submit()" class="clickable collection-item {% if a.id==activeAccount.id %}active{% endif %}">{{a.label}}</li>
+	{% endfor %}
+</ul>
+</div>

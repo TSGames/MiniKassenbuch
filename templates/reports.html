@@ -1,0 +1,98 @@
+{% include 'menu.html' %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawYears);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawYears() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Jahr');
+        data.addColumn('number', 'Einnahmen {{currency}}');
+        data.addColumn('number', 'Ausgaben {{currency}}');
+        data.addRows([
+          {% for year,y in years %}
+			['{{year}}',{{y[0]/100}},{{y[1]/100}}],
+		  {% endfor %}
+        ]);
+
+        // Set chart options
+        var options = {'title':'Einnahmen / Ausgaben je Jahr (Alle Konten)',
+                       'width':700,
+                       'height':300};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.ColumnChart(document.getElementById('yearly'));
+        chart.draw(data, options);
+		drawMonths();
+      }
+	   function drawMonths() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Monat');
+        data.addColumn('number', 'Einnahmen {{currency}}');
+        data.addColumn('number', 'Ausgaben {{currency}}');
+        data.addRows([
+          {% for m in months %}
+			['{{m.label}}',{{m[0]/100}},{{m[1]/100}}],
+		  {% endfor %}
+        ]);
+
+        // Set chart options
+        var options = {'title':'Einnahmen / Ausgaben je Monat {{year}}',
+                       'width':700,
+                       'height':300};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.ColumnChart(document.getElementById('monthly'));
+        chart.draw(data, options);
+      }
+    </script>
+<div class="container">
+<div id="yearly" class="chart"></div>
+<div class="report">
+<h2>Übersicht Ein-/Ausgaben je Jahr</h2>
+<table class="striped">
+	<thead>
+		<th>Jahr</th>
+		<th>Einnahmen</th>
+		<th>Ausgaben</th>
+		<th>Ergebnis</th>
+	</thead>
+	 {% for year,y in years %}
+			<tr><td>{{year}}</td><td>{{(y[0]/100)|number_format(2)}} {{currency}}</td><td>{{(y[1]/100)|number_format(2)}} {{currency}}</td><td class="{% if y[0]-y[1]>=0 %}positive{% else %}negative {% endif %}">{{((y[0]-y[1])/100)|number_format(2)}} {{currency}}</td></tr>
+     {% endfor %}
+</table>
+</div>
+<div id="monthly" class="chart"></div>
+<div class="report">
+<h2>Top Einnahmen {{year}}</h2>
+<table class="striped">
+	<thead>
+		<th>Bezeichnung</th>
+		<th>Betrag</th>
+	</thead>
+	 {% for top in tops[0] %}
+			<tr><td>{{top.label}}</td><td>{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
+     {% endfor %}
+</table>
+<h2>Top Ausgaben {{year}}</h2>
+<table class="striped">
+	<thead>
+		<th>Bezeichnung</th>
+		<th>Betrag</th>
+	</thead>
+	 {% for top in tops[1] %}
+			<tr><td>{{top.label}}</td><td>{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
+     {% endfor %}
+</table>
+</div>
