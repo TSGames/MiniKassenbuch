@@ -12,9 +12,9 @@ Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests 
 
 # Installation
 Das System muss mittles 
-
+```
 php composer.phar install
-
+```
 konfiguriert werden.
 
 Alternativ können Binaries (Coming Soon) bezogen werden. Ein PHP 7.x Webserver wird benötigt.
