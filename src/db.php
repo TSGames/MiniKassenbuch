@@ -5,7 +5,9 @@ class DB{
 		$this->db = new PDO('sqlite:../storage.sqlite');
 		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");   
 		$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INT,filename TEXT)");   
+		$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INTEGER,filename TEXT)");   
+		$this->db->exec("CREATE TABLE IF NOT EXISTS CATEGORY (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT UNIQUE)");   
+		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");   
 		$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");   
 		$this->db->exec("INSERT INTO ACCOUNT VALUES (2,'Bank',NULL)");   
 		$this->db->exec("INSERT INTO ACCOUNT VALUES (3,'Konto 1',NULL)");   
@@ -54,6 +56,19 @@ class DB{
 		}
 		return $result;
 	}
+	public function getTopBookingsCategories(){
+		$result=[];
+		for($type=0;$type<2;$type++){
+			$stmt = $this->db->prepare('SELECT CATEGORY.label,SUM(amount) as amount FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=CATEGORY.id) LEFT JOIN BOOKING ON (booking=booking.id) WHERE
+					strftime("%Y",datetime(date,"unixepoch")) = :year
+					AND type = :type
+					GROUP BY category
+					ORDER BY amount DESC LIMIT 5');
+			$stmt->execute([":year"=>date("Y"),":type"=>$type]);
+			$result[$type]=$stmt->fetchAll();
+		}
+		return $result;
+	}
 	public function getMonthStats(){
 		$labels[1]="Jan";
 		$labels[2]="Feb";
@@ -91,19 +106,36 @@ class DB{
 		$stmt->execute([":id"=>$id]);
 		unlink("../documents/".$id*1);
 	}
-	public function setBooking($data,$id=null){
-		print_r($data);
-		$data["date"]=strtotime($data["date"]);
-		$data["amount"]*=100;		
+	public function setBooking($post,$id=null){
 		if($id!=null){
 			$this->deleteBooking($id);
 		}
 		$data["id"]=$id;
+		$data["label"]=$post["label"];
+		$data["date"]=strtotime($post["date"]);
+		$data["amount"]=$post["amount"]*100;		
+		$data["type"]=$post["type"];
+		$data["notes"]=$post["notes"];
 		$data["account"]=$_SESSION["account"];
+		$categories=$post["categories"];
+		
 		$stmt = $this->db->prepare('INSERT INTO BOOKING VALUES (:id,:account,:label,:date,:amount,:type,:notes)');
 		$stmt->execute($data);
-		if($id)
-			return $id;
+		if(!$id)
+			$id=$this->db->lastInsertId();
+		$stmt = $this->db->prepare('DELETE FROM BOOKING_CATEGORY WHERE booking = :booking');
+		$stmt->execute([':booking'=>$id]);
+		foreach($categories as $cat){
+			$stmt = $this->db->prepare('INSERT INTO BOOKING_CATEGORY VALUES (:booking,:category)');
+			$stmt->execute([':booking'=>$id,':category'=>$cat]);
+		}
+		return $id;
+	}
+	public function addCategory($label){
+		$data=[];
+		$data["label"]=$label;
+		$stmt = $this->db->prepare('INSERT INTO CATEGORY VALUES (NULL,:label)');
+		$stmt->execute($data);
 		return $this->db->lastInsertId();
 	}
 	public function getBooking($id){
@@ -113,6 +145,7 @@ class DB{
 		$booking["date"]=explode("T",date("c",$booking["date"]))[0];
 		$booking["amount"]/=100;
 		$booking["documents"]=$this->getDocuments($id);
+		$booking["categories"]=$this->getCategories($id);
 		return $booking;
 	}
 	public function getAccount(){
@@ -136,6 +169,11 @@ class DB{
 		$stmt->execute([":booking"=>$booking]);
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
+	public function getCategories($booking=null){
+		$stmt = $this->db->prepare('SELECT id,label,(category>0) as active FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (booking = :booking AND category=id) ORDER BY upper(label)');
+		$stmt->execute([":booking"=>$booking]);
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	}
 	public function getBookings($filter=true){
 		$number=0;
 		$saldo=0;
@@ -144,6 +182,8 @@ class DB{
 		$data=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$i=0;
 		$result=[];
+		print_r($data);
+		//die();
 		foreach($data as $d){
 			if($d["type"]==0)
 				$saldo+=$d["amount"];

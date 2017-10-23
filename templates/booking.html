@@ -16,6 +16,15 @@
 <input type="text" name="label" value="{{activeAccount.label}}" readonly disabled>
 <label>Bezeichnung</label>
 <input type="text" name="label" value="{{label}}">
+<div class="categories">
+	<label>Kategorie(n)</label>
+	<div>
+	{% for category in categories %}
+	<input type="checkbox" name="categories[]" class="filled-in" value="{{category.id}}" id="{{category.id}}" {% if category.active %}checked{% endif %}> <label for="{{category.id}}">{{category.label}}</label>
+	{% endfor %}
+	</div>
+	<input type="text" name="addCategory" class="addCategory" placeholder="Neue Kategorie anlegen">
+</div>
 <label>Datum</label>
 <input type="date" name="date" value="{{date}}">
 <label>Betrag in Euro</label>
@@ -37,7 +46,7 @@
 {% endfor %}
 </ul>
 {% endif %}
-<div class="group">
+<div class="group addDocuments">
 <label>Belege/Dokumente anheften</label>
 <input type="file" name="documents" multiple>
 </div>

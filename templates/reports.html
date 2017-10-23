@@ -33,6 +33,7 @@
         var chart = new google.visualization.ColumnChart(document.getElementById('yearly'));
         chart.draw(data, options);
 		drawMonths();
+		drawTops();
       }
 	   function drawMonths() {
 
@@ -82,7 +83,7 @@
 		<th>Betrag</th>
 	</thead>
 	 {% for top in tops[0] %}
-			<tr><td>{{top.label}}</td><td>{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
+			<tr><td>{{top.label}}</td><td class="positive">{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
      {% endfor %}
 </table>
 <h2>Top Ausgaben {{year}}</h2>
@@ -92,7 +93,27 @@
 		<th>Betrag</th>
 	</thead>
 	 {% for top in tops[1] %}
-			<tr><td>{{top.label}}</td><td>{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
+			<tr><td>{{top.label}}</td><td class="negative">{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
+     {% endfor %}
+</table>
+<h2>Top Einnahmen {{year}} nach Kategorie</h2>
+<table class="striped">
+	<thead>
+		<th>Kategorie</th>
+		<th>Betrag</th>
+	</thead>
+	 {% for category in categories[0] %}
+			<tr><td>{{category.label}}</td><td class="positive">{{(category.amount/100)|number_format(2)}} {{currency}}</td></tr>
+     {% endfor %}
+</table>
+<h2>Top Ausgaben {{year}} nach Kategorie</h2>
+<table class="striped">
+	<thead>
+		<th>Kategorie</th>
+		<th>Betrag</th>
+	</thead>
+	 {% for category in categories[1] %}
+			<tr><td>{{category.label}}</td><td class="negative">{{(category.amount/100)|number_format(2)}} {{currency}}</td></tr>
      {% endfor %}
 </table>
 </div>

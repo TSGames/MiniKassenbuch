@@ -25,15 +25,18 @@ $app->get('/reports', function ($request, $response, $args) {
 	$years=$db->getYearStats();
 	$months=$db->getMonthStats();
 	$tops=$db->getTopBookingsYear();
+	$categories=$db->getTopBookingsCategories();
 	return $this->view->render($response, 'reports.html', [
 		'years' => $years,
 		'months' => $months,
-		'tops' => $tops
+		'tops' => $tops,
+		'categories' => $categories
     ]);
 });
 $app->get('/add', function ($request, $response, $args) {
-	return $this->view->render($response, 'booking.html', [
-    ]);
+	$db=new DB();
+	$data['categories']=$db->getCategories();
+	return $this->view->render($response, 'booking.html', $data);
 });
 $app->get('/document/{id}', function ($request, $response, $args) {
 	$path="../documents/".$args["id"]*1;
@@ -50,6 +53,7 @@ $app->get('/edit', function ($request, $response, $args) {
 	$db=new DB();
 	$get=$request->getQueryParams();
 	$data=$db->getBooking($get['id']);
+	print_r($data);
 	return $this->view->render($response, 'booking.html', $data);
 });
 $app->post('/delete', function ($request, $response, $args) {
@@ -76,22 +80,28 @@ $app->post('/save', function ($request, $response, $args) {
 	$get=$request->getQueryParams();
 	$files = $request->getUploadedFiles();
 	$error=null;
-	print_r($files);
+	//print_r($files);
+	/*
 	if(!trim($post["label"])){
 		$error="Bitte Bezeichnung angeben";
 	}
-	else if(!trim($post["date"])){
+	else */if(!trim($post["date"])){
 		$error="Bitte Datum angeben";
 	}
 	else if(!trim($post["amount"])){
 		$error="Bitte Betrag angeben";
 	}
 	if($error){
+		$db=new DB();
 		$post["error"]=$error;
+		$post["categories"]=$db->getCategories();
 		return $this->view->render($response, 'booking.html', $post);
 	}
 	else{
 		$db=new DB();
+		if(trim($post['addCategory'])){
+			$post['categories'][]=$db->addCategory(trim($post['addCategory']));
+		}
 		$id=$db->setBooking($post,$get["id"]);
 		foreach($files as $file){
 			if($file->file)
