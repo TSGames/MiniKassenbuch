@@ -182,8 +182,6 @@ class DB{
 		$data=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$i=0;
 		$result=[];
-		print_r($data);
-		//die();
 		foreach($data as $d){
 			if($d["type"]==0)
 				$saldo+=$d["amount"];
