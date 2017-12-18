@@ -19,6 +19,13 @@ konfiguriert werden.
 
 Alternativ können Binaries (Coming Soon) bezogen werden. Ein PHP 7.x Webserver wird benötigt.
 
+# Screenshots
+![](http://torsten-simon.de/pub/kassenbuch/list.JPG)
+![](http://torsten-simon.de/pub/kassenbuch/accounts.JPG)
+![](http://torsten-simon.de/pub/kassenbuch/booking.JPG)
+![](http://torsten-simon.de/pub/kassenbuch/stats.JPG)
+![](http://torsten-simon.de/pub/kassenbuch/categories.JPG)
+
 # Frameworks
 Das Projekt nutzt u.a. folgende Frameworks oder Toolkits
 - composer
@@ -27,3 +34,4 @@ Das Projekt nutzt u.a. folgende Frameworks oder Toolkits
 - materialize.css
 - material icons
 - jQuery
+- Google Charts
