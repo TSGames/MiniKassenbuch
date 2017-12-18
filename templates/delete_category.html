@@ -1,0 +1,13 @@
+{% include 'menu.html' %}
+
+<div class="container">
+<form action="{{base_url}}delete_category" name="form" method="POST">
+<input type="hidden" name="id" value="{{id}}">
+</form>
+<div class="info">
+Möchten Sie die Kategorie {{label}} wirklich löschen?<br />
+Durch das löschen wird die Kategorie von {{count}} Buchungen entfernt
+</div>
+<a class="btn-flat" onclick="window.history.back()">Abbrechen</a>
+<a class="btn" onclick="form.submit()">Löschen</a>
+</div>

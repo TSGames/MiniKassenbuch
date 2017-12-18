@@ -97,9 +97,17 @@ class DB{
 		}
 		return $result;
 	}
+	public function deleteCategory($id){
+		$stmt = $this->db->prepare('DELETE FROM CATEGORY WHERE id = :id');
+		$stmt->execute([":id"=>$id]);
+		$stmt = $this->db->prepare('DELETE FROM BOOKING_CATEGORY WHERE category = :id');
+		$stmt->execute([":id"=>$id]);		
+	}
 	public function deleteBooking($id){
 		$stmt = $this->db->prepare('DELETE FROM BOOKING WHERE id = :id');
 		$stmt->execute([":id"=>$id]);
+		$stmt = $this->db->prepare('DELETE FROM BOOKING_CATEGORY WHERE booking = :id');
+		$stmt->execute([":id"=>$id]);		
 	}
 	public function deleteDocument($id){
 		$stmt = $this->db->prepare('DELETE FROM DOCUMENT WHERE id = :id');
@@ -174,6 +182,16 @@ class DB{
 		$stmt->execute([":booking"=>$booking]);
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
+	public function getAllCategories(){
+		$stmt = $this->db->prepare('SELECT id,label,COUNT(booking) as count FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=id) GROUP BY id ORDER BY upper(label)');
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+	}
+	public function getCategory($id){
+		$stmt = $this->db->prepare('SELECT id,label,COUNT(booking) as count FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=id) WHERE id = :id GROUP BY id ORDER BY upper(label)');
+		$stmt->execute([":id"=>$id]);
+		return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+	}
 	public function getBookings($filter=true){
 		$number=0;
 		$saldo=0;
@@ -189,7 +207,7 @@ class DB{
 				$saldo-=$d["amount"];
 			$number++;
 			if($filter){
-				if(date("Y",$d["date"])!=$_SESSION["filter"]["year"])
+				if(date("Y",$d["date"])!=@$_SESSION["filter"]["year"])
 					continue;
 				if($_SESSION["filter"]["month"]!=0 && date("m",$d["date"])!=$_SESSION["filter"]["month"])
 					continue;

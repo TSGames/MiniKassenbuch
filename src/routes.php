@@ -44,6 +44,11 @@ $app->get('/document/{id}', function ($request, $response, $args) {
 	readfile($path);
 	return $response;
 });
+$app->get('/categories', function ($request, $response, $args) {
+	$db=new DB();
+	$data=["categories" => $db->getAllCategories()];
+	return $this->view->render($response, 'categories.html', $data);
+});
 $app->post('/account', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$_SESSION["account"]=$post["id"];
@@ -53,7 +58,6 @@ $app->get('/edit', function ($request, $response, $args) {
 	$db=new DB();
 	$get=$request->getQueryParams();
 	$data=$db->getBooking($get['id']);
-	print_r($data);
 	return $this->view->render($response, 'booking.html', $data);
 });
 $app->post('/delete', function ($request, $response, $args) {
@@ -61,6 +65,12 @@ $app->post('/delete', function ($request, $response, $args) {
 	$db=new DB();
 	$db->deleteBooking($post["id"]);
 	return $response->withRedirect($request->getUri()->getBasePath());
+});
+$app->post('/delete_category', function ($request, $response, $args) {
+	$post = $request->getParsedBody();
+	$db=new DB();
+	$db->deleteCategory($post["id"]);
+	return $response->withRedirect($request->getUri()->getBasePath()."/categories");
 });
 $app->post('/delete_document', function ($request, $response, $args) {
 	$get=$request->getQueryParams();
@@ -74,7 +84,11 @@ $app->get('/delete', function ($request, $response, $args) {
 	$get=$request->getQueryParams();
 	return $this->view->render($response, 'delete.html', $db->getBooking($get['id']));
 });
-
+$app->get('/delete_category', function ($request, $response, $args) {
+	$db=new DB();
+	$get=$request->getQueryParams();
+	return $this->view->render($response, 'delete_category.html', $db->getCategory($get['id']));
+});
 $app->post('/save', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$get=$request->getQueryParams();

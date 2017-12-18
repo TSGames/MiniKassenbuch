@@ -1,0 +1,22 @@
+{% include 'menu.html' %}
+<div class="container">
+<h4>Kategorien verwalten</h4>
+<table class='striped'>
+	<thead>
+		<th class='id'>Kategorie-Id</th>
+		<th class='label'>Bezeichnung</th>
+		<th class='count'>Anzahl zugewiesener Buchungen</th>
+	</thead
+    {% for category in categories %}
+		<tr>
+        <td class='id'>{{category.id}}</td>
+        <td class='label'>{{category.label}}</td>
+		<td class='count'>{{category.count}}</td>
+		<td><a href="{{base_url}}delete_category?id={{category.id}}"><i class="material-icons">delete</i></a></td>
+		</tr>
+    {% endfor %}
+	{% if categories==null %}
+		<tr><td colspan="999">Noch keine Kategorien angelegt. Kategorien können beim Erstellen einer Buchung angelegt werden.</td></tr>
+	{% endif %}
+</div>
+</div>
