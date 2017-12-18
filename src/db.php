@@ -90,7 +90,7 @@ class DB{
 			$stmt->execute([":year"=>date("Y"),":month"=>$month<10 ? "0".$month : $month]);
 			$result[$month]=["label"=>$labels[$month]];
 			foreach($stmt->fetchAll() as $r){
-				$result[$month][$r["type"]]=$r["value"]/100;
+				$result[$month][$r["type"]]=$r["value"];
 			}
 			if(!@$result[$month][0]) $result[$month][0]=0;
 			if(!@$result[$month][1]) $result[$month][1]=0;
