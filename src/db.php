@@ -1,8 +1,9 @@
 <?php
 
 class DB{
+	public static $FILE="../storage.sqlite";
 	public function __construct(){
-		$this->db = new PDO('sqlite:../storage.sqlite');
+		$this->db = new PDO('sqlite:'.self::$FILE);
 		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");   
 		$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");   
 		$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INTEGER,filename TEXT)");   
