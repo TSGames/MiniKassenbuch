@@ -2,8 +2,9 @@
 
 class DB{
 	public static $FILE="../storage.sqlite";
+	public static $DOCUMENTS="../documents/";
 	public function __construct(){
-		@mkdir("../documents");
+		@mkdir(self::$DOCUMENTS);
 		$this->db = new PDO('sqlite:'.self::$FILE);
 		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");   
 		$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");   
@@ -24,6 +25,20 @@ class DB{
 		}
 		$this->db->commit();
 		*/
+	}
+	public function export(){
+		@mkdir("../exports");
+		$zip = new ZipArchive();
+		$path='../exports/'.date('Y-m-d').'.zip';
+		$zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);		
+		$zip->addFile(self::$FILE,'storage.sqlite');
+		foreach(@scandir(self::$DOCUMENTS) as $file){
+			if($file=="." || $file=="..")
+				continue;
+			$zip->addFile(self::$DOCUMENTS.$file,$file);
+		}
+		$zip->close();
+		return $path;
 	}
 	public function getYearStats(){
 		$year=date("Y")-10;
@@ -114,7 +129,7 @@ class DB{
 	public function deleteDocument($id){
 		$stmt = $this->db->prepare('DELETE FROM DOCUMENT WHERE id = :id');
 		$stmt->execute([":id"=>$id]);
-		unlink("../documents/".$id*1);
+		unlink(self::$DOCUMENTS.$id*1);
 	}
 	public function setBooking($post,$id=null){
 		if($id!=null){
@@ -172,7 +187,7 @@ class DB{
 		$stmt = $this->db->prepare('INSERT INTO DOCUMENT VALUES (NULL,:booking,:name)');
 		$stmt->execute([":booking"=>$booking,":name"=>$file->getClientFilename()]);
 		$id=$this->db->lastInsertId();
-		copy($file->file,"../documents/".$id);
+		copy($file->file,self::$DOCUMENTS.$id);
 	}
 	public function getDocuments($booking){
 		$stmt = $this->db->prepare('SELECT * FROM DOCUMENT WHERE booking = :booking');

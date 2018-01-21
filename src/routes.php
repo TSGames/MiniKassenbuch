@@ -20,6 +20,12 @@ $app->get('/', function ($request, $response, $args) {
         'list' => $list		
     ]);
 });
+$app->get('/export', function ($request, $response, $args) {
+	header('Content-Disposition: attachment; filename='.'export-'.date('Y-m-d').'.zip');
+	$db=new DB();
+	
+	echo file_get_contents($db->export());
+});
 $app->get('/reports', function ($request, $response, $args) {
 	$db=new DB();
 	$years=$db->getYearStats();
@@ -39,7 +45,7 @@ $app->get('/add', function ($request, $response, $args) {
 	return $this->view->render($response, 'booking.html', $data);
 });
 $app->get('/document/{id}', function ($request, $response, $args) {
-	$path="../documents/".$args["id"]*1;
+	$path=DB::$DOCUMENTS.$args["id"]*1;
 	$response   = $response->withHeader('Content-Type', mime_content_type($path));
 	readfile($path);
 	return $response;
