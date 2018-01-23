@@ -248,6 +248,10 @@ class DB{
 			else
 				$saldo-=$d["amount"];
 			$number++;
+			if(date("Y",$d["date"])!=@$oldDate){
+				$number=1;
+			}
+			$oldDate=date("Y",$d["date"]);
 			if($filter){
 				if(date("Y",$d["date"])!=@$_SESSION["filter"]["year"])
 					continue;
