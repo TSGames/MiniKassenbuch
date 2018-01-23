@@ -37,7 +37,7 @@ function setFilter(){
     {% for booking in list %}
 		<tr>
         <td class='number'>{{booking.number}}</td>
-        <td class='label'>{{booking.label}}</td>
+        <td class='label'><a href="{{base_url}}edit?id={{booking.id}}">{{booking.label}}</a></td>
 		<td class='date'>{{booking.date|date("d.m.Y")}}</td>
 		<td class='amount {% if booking.type==0 %}positive{% else %}negative{% endif %}'>{{(booking.amount/100)|number_format(2)}} €</td>
 		<td class='saldo {% if booking.saldo>=0 %}positive{% else %}negative{% endif %}'>{{(booking.saldo/100)|number_format(2)}} €</td>

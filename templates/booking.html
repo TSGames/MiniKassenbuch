@@ -50,5 +50,8 @@
 <label>Belege/Dokumente anheften</label>
 <input type="file" name="documents" multiple>
 </div>
+{% if id %}
+<a class="btn-flat" href="{{base_url}}./">Abbrechen</a>
+{% endif %}
 <a class="btn" onclick="form.submit()">Speichern</a>
 </div>
