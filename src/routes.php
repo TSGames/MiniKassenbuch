@@ -12,7 +12,7 @@ $app->get('/', function ($request, $response, $args) {
 	if(isset($get["month"]) && isset($get["year"])){
 		$_SESSION["filter"]["month"]=$get["month"];
 		$_SESSION["filter"]["year"]=$get["year"];
-		return $response->withRedirect($request->getUri()->getBasePath());
+		return $response->withRedirect($request->getUri()->getBaseUrl());
 	}
 	$db=new DB();
 	$list=$db->getBookings();
@@ -58,7 +58,7 @@ $app->get('/categories', function ($request, $response, $args) {
 $app->post('/account', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$_SESSION["account"]=$post["id"];
-	return $response->withRedirect($request->getUri()->getBasePath());
+	return $response->withRedirect($request->getUri()->getBaseUrl());
 });
 $app->get('/edit', function ($request, $response, $args) {
 	$db=new DB();
@@ -70,20 +70,20 @@ $app->post('/delete', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$db=new DB();
 	$db->deleteBooking($post["id"]);
-	return $response->withRedirect($request->getUri()->getBasePath());
+	return $response->withRedirect($request->getUri()->getBaseUrl());
 });
 $app->post('/delete_category', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$db=new DB();
 	$db->deleteCategory($post["id"]);
-	return $response->withRedirect($request->getUri()->getBasePath()."/categories");
+	return $response->withRedirect($request->getUri()->getBaseUrl()."/categories");
 });
 $app->post('/delete_document', function ($request, $response, $args) {
 	$get=$request->getQueryParams();
 	$post = $request->getParsedBody();
 	$db=new DB();
 	$db->deleteDocument($post["id"]);
-	return $response->withRedirect($request->getUri()->getBasePath()."/edit?id=".$get['booking']);
+	return $response->withRedirect($request->getUri()->getBaseUrl()."/edit?id=".$get['booking']);
 });
 $app->get('/delete', function ($request, $response, $args) {
 	$db=new DB();
@@ -127,6 +127,6 @@ $app->post('/save', function ($request, $response, $args) {
 			if($file->file)
 				$db->addDocument($id,$file);
 		}
-		return $response->withRedirect($request->getUri()->getBasePath());
+		return $response->withRedirect($request->getUri()->getBaseUrl());
 	}
 });

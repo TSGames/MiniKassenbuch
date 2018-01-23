@@ -35,10 +35,32 @@ class DB{
 		foreach(@scandir(self::$DOCUMENTS) as $file){
 			if($file=="." || $file=="..")
 				continue;
-			$zip->addFile(self::$DOCUMENTS.$file,$file);
+			$zip->addFile(self::$DOCUMENTS.$file,"documents/".$file);
+		}
+		foreach($this->getAccounts() as $account){
+			$csv=$this->getCSV($account['id']);
+			if($csv){
+				$zip->addFromString($account['label'].".csv",$csv);
+			}
 		}
 		$zip->close();
 		return $path;
+	}
+	public function getCSV($account){
+		$bookings=$this->getBookingsForAccount(false,$account);
+		if(count($bookings)==0)
+			return null;
+		
+		$csv="Datum;Laufende Nr.;Vorgang;Betrag;Saldo";
+		foreach($bookings as $booking){
+			$date=date("Y-m-d",$booking['date']);
+			$number=$booking['number'];
+			$label=$booking['label'];
+			$amount=number_format($booking['amount']/100,2,",",".");
+			$saldo=number_format($booking['saldo']/100,2,",",".");
+			$csv.="\n$date;$number;$label;$amount;$saldo";
+		}
+		return $csv;
 	}
 	public function getYearStats(){
 		$year=date("Y")-10;
@@ -210,10 +232,13 @@ class DB{
 		return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
 	}
 	public function getBookings($filter=true){
+		return $this->getBookingsForAccount($filter,$_SESSION["account"]);
+	}
+	public function getBookingsForAccount($filter=true,$account){
 		$number=0;
 		$saldo=0;
 		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE account = :account ORDER BY date');
-		$stmt->execute([":account"=>$_SESSION["account"]]);
+		$stmt->execute([":account"=>$account]);
 		$data=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$i=0;
 		$result=[];
