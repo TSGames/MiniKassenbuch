@@ -211,6 +211,11 @@ class DB{
 		$id=$this->db->lastInsertId();
 		copy($file->file,self::$DOCUMENTS.$id);
 	}
+	public function getDocument($id){
+		$stmt = $this->db->prepare('SELECT * FROM DOCUMENT WHERE id = :id');
+		$stmt->execute([":id"=>$id]);
+		return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+	}
 	public function getDocuments($booking){
 		$stmt = $this->db->prepare('SELECT * FROM DOCUMENT WHERE booking = :booking');
 		$stmt->execute([":booking"=>$booking]);

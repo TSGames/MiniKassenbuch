@@ -45,8 +45,9 @@ $app->get('/add', function ($request, $response, $args) {
 	return $this->view->render($response, 'booking.html', $data);
 });
 $app->get('/document/{id}', function ($request, $response, $args) {
+	$db=new DB();
 	$path=DB::$DOCUMENTS.$args["id"]*1;
-	$response   = $response->withHeader('Content-Type', mime_content_type($path));
+	$response  = $response->withHeader('Content-Type', mime_content_type($path))->withHeader('Content-Disposition','inline; filename="'.$db->getDocument($args["id"])['filename'].'"');
 	readfile($path);
 	return $response;
 });
