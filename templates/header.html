@@ -104,4 +104,17 @@ h2{
 .report tr td:last-child{
 	width:150px;
 }
+@media only screen 
+and (max-width : 600px) {
+	td,th{
+		font-size:10pt;
+	}
+	th.number,td.number{
+		display:none;
+	}
+	th.date,td.date{
+		max-width:50px;
+		overflow:hidden;
+	}
+}
 </style>
