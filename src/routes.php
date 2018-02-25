@@ -96,6 +96,15 @@ $app->get('/delete_category', function ($request, $response, $args) {
 	$get=$request->getQueryParams();
 	return $this->view->render($response, 'delete_category.html', $db->getCategory($get['id']));
 });
+$app->post('/categories/add', function ($request, $response, $args) {
+	$post = $request->getParsedBody();
+	$db=new DB();
+	$cat=trim($post['category']);
+	if($cat){
+		$db->addCategory($cat);
+	}
+	return $response->withRedirect($request->getUri()->getBaseUrl()."/categories");
+});
 $app->post('/save', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$get=$request->getQueryParams();
@@ -120,9 +129,6 @@ $app->post('/save', function ($request, $response, $args) {
 	}
 	else{
 		$db=new DB();
-		if(trim($post['addCategory'])){
-			$post['categories'][]=$db->addCategory(trim($post['addCategory']));
-		}
 		$id=$db->setBooking($post,$get["id"]);
 		foreach($files as $file){
 			if($file->file)

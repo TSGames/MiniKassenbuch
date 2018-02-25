@@ -17,7 +17,12 @@ class DB{
 		$this->db->exec("INSERT INTO ACCOUNT VALUES (4,'Konto 2',NULL)");   
 		$this->db->exec("INSERT INTO ACCOUNT VALUES (5,'Konto 3',NULL)");  
 		$this->db->exec("INSERT INTO ACCOUNT VALUES (6,'Konto 4',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (7,'Konto 5',NULL)");   
+		$this->db->exec("INSERT INTO ACCOUNT VALUES (7,'Konto 5',NULL)");
+		
+		if(!isset($_SESSION["filter"])){
+			$_SESSION["filter"]["month"]=0;
+			$_SESSION["filter"]["year"]=date("Y");
+		}
 		/*
 		$this->db->beginTransaction();
 		for($i=0;$i<10000;$i++){
@@ -77,8 +82,8 @@ class DB{
 				$content=true;
 			}
 			if($content){
-				if(!$result[$year][0]) $result[$year][0]=0;
-				if(!$result[$year][1]) $result[$year][1]=0;
+				if(!@$result[$year][0]) $result[$year][0]=0;
+				if(!@$result[$year][1]) $result[$year][1]=0;
 			}
 		}
 		return $result;
@@ -102,7 +107,7 @@ class DB{
 					strftime("%Y",datetime(date,"unixepoch")) = :year
 					AND type = :type
 					GROUP BY category
-					ORDER BY amount DESC LIMIT 5');
+					ORDER BY amount DESC');
 			$stmt->execute([":year"=>date("Y"),":type"=>$type]);
 			$result[$type]=$stmt->fetchAll();
 		}
@@ -164,7 +169,7 @@ class DB{
 		$data["type"]=$post["type"];
 		$data["notes"]=$post["notes"];
 		$data["account"]=$_SESSION["account"];
-		$categories=$post["categories"];
+		$category=$post["category"];
 		
 		$stmt = $this->db->prepare('INSERT INTO BOOKING VALUES (:id,:account,:label,:date,:amount,:type,:notes)');
 		$stmt->execute($data);
@@ -172,10 +177,15 @@ class DB{
 			$id=$this->db->lastInsertId();
 		$stmt = $this->db->prepare('DELETE FROM BOOKING_CATEGORY WHERE booking = :booking');
 		$stmt->execute([':booking'=>$id]);
-		foreach($categories as $cat){
+		
+		if($category){
+			$stmt = $this->db->prepare('INSERT INTO BOOKING_CATEGORY VALUES (:booking,:category)');
+			$stmt->execute([':booking'=>$id,':category'=>$category]);
+		}
+		/*foreach($categories as $cat){
 			$stmt = $this->db->prepare('INSERT INTO BOOKING_CATEGORY VALUES (:booking,:category)');
 			$stmt->execute([':booking'=>$id,':category'=>$cat]);
-		}
+		}*/
 		return $id;
 	}
 	public function addCategory($label){

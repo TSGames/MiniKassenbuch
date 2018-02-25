@@ -25,10 +25,6 @@ $container['view'] = function ($container) {
 	$view->offsetSet('currency', "€");
 	$view->offsetSet('year', date("Y"));
 	$view->offsetSet('month', date("m"));
-	if(!$_SESSION["filter"]){
-		$_SESSION["filter"]["month"]=0;
-		$_SESSION["filter"]["year"]=date("Y");
-	}
 	$view->offsetSet('filter', $_SESSION["filter"]);
     return $view;
 };

@@ -76,6 +76,7 @@
 </div>
 <div id="monthly" class="chart"></div>
 <div class="report">
+{% if tops[0] %}
 <h2>Top Einnahmen {{year}}</h2>
 <table class="striped">
 	<thead>
@@ -86,6 +87,8 @@
 			<tr><td>{{top.label}}</td><td class="positive">{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
      {% endfor %}
 </table>
+{% endif %}
+{% if tops[1] %}
 <h2>Top Ausgaben {{year}}</h2>
 <table class="striped">
 	<thead>
@@ -96,7 +99,9 @@
 			<tr><td>{{top.label}}</td><td class="negative">{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
      {% endfor %}
 </table>
-<h2>Top Einnahmen {{year}} nach Kategorie</h2>
+{% endif %}
+{% if categories[0] %}
+<h2>Alle Einnahmen {{year}} nach Kategorie</h2>
 <table class="striped">
 	<thead>
 		<th>Kategorie</th>
@@ -106,7 +111,9 @@
 			<tr><td>{{category.label}}</td><td class="positive">{{(category.amount/100)|number_format(2)}} {{currency}}</td></tr>
      {% endfor %}
 </table>
-<h2>Top Ausgaben {{year}} nach Kategorie</h2>
+{% endif %}
+{% if categories[1] %}
+<h2>Alle Ausgaben {{year}} nach Kategorie</h2>
 <table class="striped">
 	<thead>
 		<th>Kategorie</th>
@@ -116,4 +123,5 @@
 			<tr><td>{{category.label}}</td><td class="negative">{{(category.amount/100)|number_format(2)}} {{currency}}</td></tr>
      {% endfor %}
 </table>
+{% endif %}
 </div>
