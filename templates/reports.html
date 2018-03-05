@@ -73,7 +73,7 @@
 	</thead>
 	 {% for year,y in years %}
 			<tr><td>{{year}}</td><td>{{(y[0]/100)|number_format(2)}} {{currency}}</td><td>{{(y[1]/100)|number_format(2)}} {{currency}}</td><td class="{% if y[0]-y[1]>=0 %}positive{% else %}negative {% endif %}">{{((y[0]-y[1])/100)|number_format(2)}} {{currency}}</td>
-			<td>{{(y["saldo"]/100)|number_format(2)}} {{currency}}</td><td>{{(y["saldo"]+(y[0]-y[1]))/100|number_format(2)}} {{currency}}</td></tr>
+			<td>{{(y["saldo"]/100)|number_format(2)}} {{currency}}</td><td>{{((y["saldo"]+(y[0]-y[1]))/100)|number_format(2)}} {{currency}}</td></tr>
      {% endfor %}
 </table>
 </div>
