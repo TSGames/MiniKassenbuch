@@ -68,16 +68,19 @@
 		<th>Einnahmen</th>
 		<th>Ausgaben</th>
 		<th>Ergebnis</th>
+		<th>Start-Saldo</th>
+		<th>End-Saldo</th>
 	</thead>
 	 {% for year,y in years %}
-			<tr><td>{{year}}</td><td>{{(y[0]/100)|number_format(2)}} {{currency}}</td><td>{{(y[1]/100)|number_format(2)}} {{currency}}</td><td class="{% if y[0]-y[1]>=0 %}positive{% else %}negative {% endif %}">{{((y[0]-y[1])/100)|number_format(2)}} {{currency}}</td></tr>
+			<tr><td>{{year}}</td><td>{{(y[0]/100)|number_format(2)}} {{currency}}</td><td>{{(y[1]/100)|number_format(2)}} {{currency}}</td><td class="{% if y[0]-y[1]>=0 %}positive{% else %}negative {% endif %}">{{((y[0]-y[1])/100)|number_format(2)}} {{currency}}</td>
+			<td>{{(y["saldo"]/100)|number_format(2)}} {{currency}}</td><td>{{(y["saldo"]+(y[0]-y[1]))/100|number_format(2)}} {{currency}}</td></tr>
      {% endfor %}
 </table>
 </div>
 <div id="monthly" class="chart"></div>
 <div class="report">
 {% if tops[0] %}
-<h2>Top Einnahmen {{year}}</h2>
+<h2>Top Einnahmen {{currentYear}}</h2>
 <table class="striped">
 	<thead>
 		<th>Bezeichnung</th>
@@ -89,7 +92,7 @@
 </table>
 {% endif %}
 {% if tops[1] %}
-<h2>Top Ausgaben {{year}}</h2>
+<h2>Top Ausgaben {{currentYear}}</h2>
 <table class="striped">
 	<thead>
 		<th>Bezeichnung</th>
@@ -101,7 +104,7 @@
 </table>
 {% endif %}
 {% if categories[0] %}
-<h2>Alle Einnahmen {{year}} nach Kategorie</h2>
+<h2>Alle Einnahmen {{currentYear}} nach Kategorie</h2>
 <table class="striped">
 	<thead>
 		<th>Kategorie</th>
@@ -113,7 +116,7 @@
 </table>
 {% endif %}
 {% if categories[1] %}
-<h2>Alle Ausgaben {{year}} nach Kategorie</h2>
+<h2>Alle Ausgaben {{currentYear}} nach Kategorie</h2>
 <table class="striped">
 	<thead>
 		<th>Kategorie</th>

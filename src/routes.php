@@ -32,7 +32,9 @@ $app->get('/reports', function ($request, $response, $args) {
 	$months=$db->getMonthStats();
 	$tops=$db->getTopBookingsYear();
 	$categories=$db->getTopBookingsCategories();
+	$year=$_SESSION["filter"]["year"];
 	return $this->view->render($response, 'reports.html', [
+		'currentYear' => $year,
 		'years' => $years,
 		'months' => $months,
 		'tops' => $tops,

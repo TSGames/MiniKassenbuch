@@ -79,6 +79,9 @@ class DB{
 			$content=false;
 			foreach($stmt->fetchAll() as $r){
 				$result[$year][$r["type"]]=$r["value"];
+				$stmt = $this->db->prepare('SELECT SUM(case when type = 0 then amount else -amount end) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) < :year');
+				$stmt->execute([":year"=>$year]);
+				$result[$year]["saldo"]=$stmt->fetchAll()[0]["value"];
 				$content=true;
 			}
 			if($content){
@@ -95,7 +98,7 @@ class DB{
 				strftime("%Y",datetime(date,"unixepoch")) = :year
 				AND type = :type
 				ORDER BY amount DESC LIMIT 5');
-			$stmt->execute([":year"=>date("Y"),":type"=>$type]);
+			$stmt->execute([":year"=>$_SESSION["filter"]["year"],":type"=>$type]);
 			$result[$type]=$stmt->fetchAll();
 		}
 		return $result;
@@ -108,7 +111,7 @@ class DB{
 					AND type = :type
 					GROUP BY category
 					ORDER BY amount DESC');
-			$stmt->execute([":year"=>date("Y"),":type"=>$type]);
+			$stmt->execute([":year"=>$_SESSION["filter"]["year"],":type"=>$type]);
 			$result[$type]=$stmt->fetchAll();
 		}
 		return $result;
