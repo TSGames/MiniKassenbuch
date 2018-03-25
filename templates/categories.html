@@ -12,6 +12,7 @@
         <td class='id'>{{category.id}}</td>
         <td class='label'>{{category.label}}</td>
 		<td class='count'>{{category.count}}</td>
+		<td><a href="{{base_url}}edit_category?id={{category.id}}"><i class="material-icons">edit</i></a></td>
 		<td><a href="{{base_url}}delete_category?id={{category.id}}"><i class="material-icons">delete</i></a></td>
 		</tr>
     {% endfor %}

@@ -144,6 +144,10 @@ class DB{
 		}
 		return $result;
 	}
+	public function editCategory($id,$label){
+		$stmt = $this->db->prepare('UPDATE CATEGORY SET label = :label WHERE id = :id');
+		$stmt->execute([":id"=>$id,":label"=>$label]);
+	}
 	public function deleteCategory($id){
 		$stmt = $this->db->prepare('DELETE FROM CATEGORY WHERE id = :id');
 		$stmt->execute([":id"=>$id]);

@@ -75,10 +75,21 @@ $app->post('/delete', function ($request, $response, $args) {
 	$db->deleteBooking($post["id"]);
 	return $response->withRedirect($request->getUri()->getBaseUrl());
 });
+$app->get('/edit_category', function ($request, $response, $args) {
+	$db=new DB();
+	$get=$request->getQueryParams();
+	return $this->view->render($response, 'edit_category.html', $db->getCategory($get['id']));
+});
 $app->post('/delete_category', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$db=new DB();
 	$db->deleteCategory($post["id"]);
+	return $response->withRedirect($request->getUri()->getBaseUrl()."/categories");
+});
+$app->post('/edit_category', function ($request, $response, $args) {
+	$post = $request->getParsedBody();
+	$db=new DB();
+	$db->editCategory($post["id"],$post["label"]);
 	return $response->withRedirect($request->getUri()->getBaseUrl()."/categories");
 });
 $app->post('/delete_document', function ($request, $response, $args) {
@@ -122,6 +133,9 @@ $app->post('/save', function ($request, $response, $args) {
 	}
 	else if(!trim($post["amount"])){
 		$error="Bitte Betrag angeben";
+	}
+	else if(!@$post["category"]){
+		$error="Bitte eine Kategorie festlegen";
 	}
 	if($error){
 		$db=new DB();
