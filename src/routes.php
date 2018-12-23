@@ -28,6 +28,7 @@ $app->get('/export', function ($request, $response, $args) {
 });
 $app->get('/reports', function ($request, $response, $args) {
 	$db=new DB();
+	$yearStats=$db->getYearStats(null,0);
 	$years=$db->getYearStats();
 	$yearsAccount=[];
 	foreach($db->getAccounts() as $a){
@@ -44,6 +45,7 @@ $app->get('/reports', function ($request, $response, $args) {
 	$year=$_SESSION["filter"]["year"];
 	return $this->view->render($response, 'reports.html', [
 		'currentYear' => $year,
+	    'yearStats' => $yearStats,
 	    'years' => $years,
 	    'yearsAccount' => $yearsAccount,
 	    'months' => $months,

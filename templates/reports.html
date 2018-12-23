@@ -103,9 +103,12 @@
 	<thead>
 		<th>Bezeichnung</th>
 		<th>Betrag</th>
+		<th>% von Gesamt</th>
 	</thead>
 	 {% for top in tops[0] %}
-			<tr><td>{{top.label}}</td><td class="positive">{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
+			<tr><td>{{top.label}}</td>
+			<td class="positive">{{(top.amount/100)|number_format(2)}} {{currency}}</td>
+			<td class="positive">{{((top.amount/yearStats[0])*100) |number_format(1)}} %</td></tr>
      {% endfor %}
 </table>
 {% endif %}
@@ -115,9 +118,12 @@
 	<thead>
 		<th>Bezeichnung</th>
 		<th>Betrag</th>
+		<th>% von Gesamt</th>
 	</thead>
 	 {% for top in tops[1] %}
-			<tr><td>{{top.label}}</td><td class="negative">{{(top.amount/100)|number_format(2)}} {{currency}}</td></tr>
+			<tr><td>{{top.label}}</td>
+			<td class="negative">{{(top.amount/100)|number_format(2)}} {{currency}}</td>
+			<td class="negative">{{((top.amount/yearStats[1])*100) |number_format(1)}} %</td></tr>
      {% endfor %}
 </table>
 {% endif %}
@@ -127,9 +133,13 @@
 	<thead>
 		<th>Kategorie</th>
 		<th>Betrag</th>
+		<th>% von Gesamt</th>
 	</thead>
 	 {% for category in categories[0] %}
-			<tr><td>{{category.label}}</td><td class="positive">{{(category.amount/100)|number_format(2)}} {{currency}}</td></tr>
+			<tr><td>{{category.label}}</td>
+			<td class="positive">{{(category.amount/100)|number_format(2)}} {{currency}}</td>
+			<td class="positive">{{((category.amount/yearStats[0])*100) |number_format(1)}} %</td></tr>
+			</tr>
      {% endfor %}
 </table>
 {% endif %}
@@ -139,9 +149,13 @@
 	<thead>
 		<th>Kategorie</th>
 		<th>Betrag</th>
+		<th>% von Gesamt</th>
 	</thead>
 	 {% for category in categories[1] %}
-			<tr><td>{{category.label}}</td><td class="negative">{{(category.amount/100)|number_format(2)}} {{currency}}</td></tr>
+			<tr><td>{{category.label}}</td>
+			<td class="negative">{{(category.amount/100)|number_format(2)}} {{currency}}</td>
+			<td class="negative">{{((category.amount/yearStats[1])*100) |number_format(1)}} %</td>
+			</tr>
      {% endfor %}
 </table>
 {% endif %}
