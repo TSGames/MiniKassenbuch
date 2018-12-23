@@ -29,14 +29,24 @@ $app->get('/export', function ($request, $response, $args) {
 $app->get('/reports', function ($request, $response, $args) {
 	$db=new DB();
 	$years=$db->getYearStats();
-	$months=$db->getMonthStats();
+	$yearsAccount=[];
+	foreach($db->getAccounts() as $a){
+	    // get stats for account, only current year
+	    $stats=$db->getYearStats($a["id"],0);
+	    if(count($stats))
+	        $yearsAccount[]=["account"=>$a,"stats"=>$stats];
+	}
+	//print_r($yearsAccount);
+    //die();
+    $months=$db->getMonthStats();
 	$tops=$db->getTopBookingsYear();
 	$categories=$db->getTopBookingsCategories();
 	$year=$_SESSION["filter"]["year"];
 	return $this->view->render($response, 'reports.html', [
 		'currentYear' => $year,
-		'years' => $years,
-		'months' => $months,
+	    'years' => $years,
+	    'yearsAccount' => $yearsAccount,
+	    'months' => $months,
 		'tops' => $tops,
 		'categories' => $categories
     ]);

@@ -67,20 +67,34 @@ class DB{
 		}
 		return $csv;
 	}
-	public function getYearStats(){
-		$year=date("Y")-10;
+	public function getYearStats($account=null,$yearsBack=10){
+		$year=date("Y")-$yearsBack;
 		$result=[];
 		for(;$year<=date("Y");$year++){
 			//$stmt = $this->db->prepare('SELECT strftime("%Y",datetime(date,"unixepoch")) FROM BOOKING');
 			//$stmt->execute();
 			//print_r($stmt->fetchAll());
-			$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) = :year GROUP BY type');
-			$stmt->execute([":year"=>$year]);
+			$stmt=null;
+			if($account){
+				$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) = :year AND account = :account GROUP BY type');
+				$stmt->execute([":year"=>$year,":account"=>$account]);
+			}
+			else{
+				$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) = :year GROUP BY type');
+				$stmt->execute([":year"=>$year]);
+			}
 			$content=false;
 			foreach($stmt->fetchAll() as $r){
 				$result[$year][$r["type"]]=$r["value"];
-				$stmt = $this->db->prepare('SELECT SUM(case when type = 0 then amount else -amount end) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) < :year');
-				$stmt->execute([":year"=>$year]);
+				$stmt=null;
+				if($account){
+				    $stmt = $this->db->prepare('SELECT SUM(case when type = 0 then amount else -amount end) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) < :year AND account = :account');
+				    $stmt->execute([":year"=>$year,":account"=>$account]);
+				}
+				else{
+				    $stmt = $this->db->prepare('SELECT SUM(case when type = 0 then amount else -amount end) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) < :year');
+				    $stmt->execute([":year"=>$year]);
+				}
 				$result[$year]["saldo"]=$stmt->fetchAll()[0]["value"];
 				$content=true;
 			}
@@ -89,6 +103,8 @@ class DB{
 				if(!@$result[$year][1]) $result[$year][1]=0;
 			}
 		}
+		if($yearsBack==0)
+		    return $result[$year-1];
 		return $result;
 	}
 	public function getTopBookingsYear(){

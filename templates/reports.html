@@ -77,6 +77,24 @@
      {% endfor %}
 </table>
 </div>
+<div id="accounts" class="chart"></div>
+<div class="report">
+<h2>Übersicht Ein-/Ausgaben je Konto {{currentYear}}</h2>
+<table class="striped">
+	<thead>
+		<th>Konto</th>
+		<th>Einnahmen</th>
+		<th>Ausgaben</th>
+		<th>Ergebnis</th>
+		<th>Start-Saldo</th>
+		<th>End-Saldo</th>
+	</thead>
+	 {% for y in yearsAccount %}
+		<tr><td>{{y.account.label}}</td><td>{{(y.stats[0]/100)|number_format(2)}} {{currency}}</td><td>{{(y.stats[1]/100)|number_format(2)}} {{currency}}</td><td class="{% if y.stats[0]-y.stats[1]>=0 %}positive{% else %}negative {% endif %}">{{((y.stats[0]-y.stats[1])/100)|number_format(2)}} {{currency}}</td>
+		<td>{{(y.stats["saldo"]/100)|number_format(2)}} {{currency}}</td><td>{{((y.stats["saldo"]+(y.stats[0]-y.stats[1]))/100)|number_format(2)}} {{currency}}</td></tr>
+     {% endfor %}
+</table>
+</div>
 <div id="monthly" class="chart"></div>
 <div class="report">
 {% if tops[0] %}
