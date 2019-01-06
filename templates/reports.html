@@ -25,7 +25,7 @@
         ]);
 
         // Set chart options
-        var options = {'title':'Einnahmen / Ausgaben je Jahr (Alle Konten)',
+        var options = {'title':'',
                        'width':700,
                        'height':300};
 
@@ -49,7 +49,7 @@
         ]);
 
         // Set chart options
-        var options = {'title':'Einnahmen / Ausgaben je Monat {{year}}',
+        var options = {'title':'',
                        'width':700,
                        'height':300};
 
@@ -59,9 +59,9 @@
       }
     </script>
 <div class="container">
-<div id="yearly" class="chart"></div>
 <div class="report">
 <h2>Übersicht Ein-/Ausgaben je Jahr</h2>
+<div id="yearly" class="chart"></div>
 <table class="striped">
 	<thead>
 		<th>Jahr</th>
@@ -77,7 +77,6 @@
      {% endfor %}
 </table>
 </div>
-<div id="accounts" class="chart"></div>
 <div class="report">
 <h2>Übersicht Ein-/Ausgaben je Konto {{currentYear}}</h2>
 <table class="striped">
@@ -95,7 +94,10 @@
      {% endfor %}
 </table>
 </div>
+<div class="report">
+<h2>Einnahmen / Ausgaben je Monat {{currentYear}}</h2>
 <div id="monthly" class="chart"></div>
+</div>
 <div class="report">
 {% if tops[0] %}
 <h2>Top Einnahmen {{currentYear}}</h2>
@@ -113,6 +115,8 @@
 </table>
 {% endif %}
 {% if tops[1] %}
+</div>
+<div class="report">
 <h2>Top Ausgaben {{currentYear}}</h2>
 <table class="striped">
 	<thead>
@@ -128,6 +132,8 @@
 </table>
 {% endif %}
 {% if categories[0] %}
+</div>
+<div class="report">
 <h2>Alle Einnahmen {{currentYear}} nach Kategorie</h2>
 <table class="striped">
 	<thead>
@@ -144,6 +150,8 @@
 </table>
 {% endif %}
 {% if categories[1] %}
+</div>
+<div class="report">
 <h2>Alle Ausgaben {{currentYear}} nach Kategorie</h2>
 <table class="striped">
 	<thead>

@@ -67,10 +67,11 @@ class DB{
 		}
 		return $csv;
 	}
-	public function getYearStats($account=null,$yearsBack=10){
-		$year=date("Y")-$yearsBack;
+	public function getYearStats($account=null,$yearsBack=10,$targetYear=NULL){
+	    if(!$targetYear) $targetYear=date("Y");
+	    $year=$targetYear-$yearsBack;
 		$result=[];
-		for(;$year<=date("Y");$year++){
+		for(;$year<=$targetYear;$year++){
 			//$stmt = $this->db->prepare('SELECT strftime("%Y",datetime(date,"unixepoch")) FROM BOOKING');
 			//$stmt->execute();
 			//print_r($stmt->fetchAll());
@@ -150,7 +151,7 @@ class DB{
 			strftime("%Y",datetime(date,"unixepoch")) = :year AND 
 			strftime("%m",datetime(date,"unixepoch")) = :month
 			GROUP BY type');
-			$stmt->execute([":year"=>date("Y"),":month"=>$month<10 ? "0".$month : $month]);
+			$stmt->execute([":year"=>$_SESSION["filter"]["year"],":month"=>$month<10 ? "0".$month : $month]);
 			$result[$month]=["label"=>$labels[$month]];
 			foreach($stmt->fetchAll() as $r){
 				$result[$month][$r["type"]]=$r["value"];
