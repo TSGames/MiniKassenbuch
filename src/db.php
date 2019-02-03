@@ -276,7 +276,7 @@ class DB{
 	public function getBookingsForAccount($filter=true,$account){
 		$number=0;
 		$saldo=0;
-		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE account = :account ORDER BY date');
+		$stmt = $this->db->prepare('SELECT B.*, (SELECT COUNT(*) FROM DOCUMENT D WHERE B.id = D.booking) AS documents FROM BOOKING B WHERE account = :account ORDER BY date');
 		$stmt->execute([":account"=>$account]);
 		$data=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$i=0;
