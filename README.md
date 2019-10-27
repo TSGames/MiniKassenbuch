@@ -13,6 +13,7 @@ Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests 
 # Installation
 Das System muss mittels 
 ```
+./update-composer.sh
 php composer.phar install
 ```
 konfiguriert werden.
