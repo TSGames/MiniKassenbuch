@@ -29,7 +29,7 @@ class DB{
 		/*
 		$this->db->beginTransaction();
 		for($i=0;$i<10000;$i++){
-			$this->db->exec("INSERT INTO BOOKING VALUES (NULL,1,'Test $i',".(time()+rand(-100000000,100000000)).",".(rand(10,10000)).",".(rand(0,1)).",'')");   
+			$this->db->exec("INSERT INTO BOOKING VALUES (NULL,1,'Test $i',".(time()+rand(-100000000,100000000)).",".(rand(10,10000)).",".(rand(0,1)).",'')");
 		}
 		$this->db->commit();
 		*/
@@ -114,7 +114,7 @@ class DB{
 	public function getTopBookingsYear(){
 		$result=[];
 		for($type=0;$type<2;$type++){
-			$stmt = $this->db->prepare('SELECT label,amount as amount FROM BOOKING WHERE 
+			$stmt = $this->db->prepare('SELECT label,amount as amount FROM BOOKING WHERE
 				strftime("%Y",datetime(date,"unixepoch")) = :year
 				AND type = :type
 				ORDER BY amount DESC LIMIT 5');
@@ -150,8 +150,8 @@ class DB{
 		$labels[11]="Nov";
 		$labels[12]="Dez";
 		for($month=1;$month<=12;$month++){
-			$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE 
-			strftime("%Y",datetime(date,"unixepoch")) = :year AND 
+			$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE
+			strftime("%Y",datetime(date,"unixepoch")) = :year AND
 			strftime("%m",datetime(date,"unixepoch")) = :month
 			GROUP BY type');
 			$stmt->execute([":year"=>$_SESSION["filter"]["year"],":month"=>$month<10 ? "0".$month : $month]);
