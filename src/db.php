@@ -5,20 +5,23 @@ class DB{
 	public static $DOCUMENTS="../documents/";
 	public function __construct(){
 		@mkdir(self::$DOCUMENTS);
+		$db_already_existed = file_exists(self::$FILE);
 		$this->db = new PDO('sqlite:'.self::$FILE);
-		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INTEGER,filename TEXT)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS CATEGORY (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT UNIQUE)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (2,'Bank',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (3,'Konto 1',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (4,'Konto 2',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (5,'Konto 3',NULL)");  
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (6,'Konto 4',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (7,'Konto 5',NULL)");
-		
+		if (!$db_already_existed) {
+			$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");
+			$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");
+			$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INTEGER,filename TEXT)");
+			$this->db->exec("CREATE TABLE IF NOT EXISTS CATEGORY (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT UNIQUE)");
+			$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (2,'Bank',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (3,'Konto 1',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (4,'Konto 2',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (5,'Konto 3',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (6,'Konto 4',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (7,'Konto 5',NULL)");
+		}
+
 		if(!isset($_SESSION["filter"])){
 			$_SESSION["filter"]["month"]=0;
 			$_SESSION["filter"]["year"]=date("Y");
