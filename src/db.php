@@ -5,20 +5,23 @@ class DB{
 	public static $DOCUMENTS="../documents/";
 	public function __construct(){
 		@mkdir(self::$DOCUMENTS);
+		$db_already_existed = file_exists(self::$FILE);
 		$this->db = new PDO('sqlite:'.self::$FILE);
-		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INTEGER,filename TEXT)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS CATEGORY (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT UNIQUE)");   
-		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (2,'Bank',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (3,'Konto 1',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (4,'Konto 2',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (5,'Konto 3',NULL)");  
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (6,'Konto 4',NULL)");   
-		$this->db->exec("INSERT INTO ACCOUNT VALUES (7,'Konto 5',NULL)");
-		
+		if (!$db_already_existed) {
+			$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");
+			$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");
+			$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INTEGER,filename TEXT)");
+			$this->db->exec("CREATE TABLE IF NOT EXISTS CATEGORY (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT UNIQUE)");
+			$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (2,'Bank',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (3,'Konto 1',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (4,'Konto 2',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (5,'Konto 3',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (6,'Konto 4',NULL)");
+			$this->db->exec("INSERT INTO ACCOUNT VALUES (7,'Konto 5',NULL)");
+		}
+
 		if(!isset($_SESSION["filter"])){
 			$_SESSION["filter"]["month"]=0;
 			$_SESSION["filter"]["year"]=date("Y");
@@ -26,7 +29,7 @@ class DB{
 		/*
 		$this->db->beginTransaction();
 		for($i=0;$i<10000;$i++){
-			$this->db->exec("INSERT INTO BOOKING VALUES (NULL,1,'Test $i',".(time()+rand(-100000000,100000000)).",".(rand(10,10000)).",".(rand(0,1)).",'')");   
+			$this->db->exec("INSERT INTO BOOKING VALUES (NULL,1,'Test $i',".(time()+rand(-100000000,100000000)).",".(rand(10,10000)).",".(rand(0,1)).",'')");
 		}
 		$this->db->commit();
 		*/
@@ -111,7 +114,7 @@ class DB{
 	public function getTopBookingsYear(){
 		$result=[];
 		for($type=0;$type<2;$type++){
-			$stmt = $this->db->prepare('SELECT label,amount as amount FROM BOOKING WHERE 
+			$stmt = $this->db->prepare('SELECT label,amount as amount FROM BOOKING WHERE
 				strftime("%Y",datetime(date,"unixepoch")) = :year
 				AND type = :type
 				ORDER BY amount DESC LIMIT 5');
@@ -147,8 +150,8 @@ class DB{
 		$labels[11]="Nov";
 		$labels[12]="Dez";
 		for($month=1;$month<=12;$month++){
-			$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE 
-			strftime("%Y",datetime(date,"unixepoch")) = :year AND 
+			$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE
+			strftime("%Y",datetime(date,"unixepoch")) = :year AND
 			strftime("%m",datetime(date,"unixepoch")) = :month
 			GROUP BY type');
 			$stmt->execute([":year"=>$_SESSION["filter"]["year"],":month"=>$month<10 ? "0".$month : $month]);
