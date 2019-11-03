@@ -26,6 +26,18 @@ $app->get('/export', function ($request, $response, $args) {
 	
 	echo file_get_contents($db->export());
 });
+$app->get('/settings', function ($request, $response, $args) {
+    $db=new DB();
+    return $this->view->render($response, 'settings.html', 
+        $db->getSettings()
+    );
+});
+$app->post('/settings', function ($request, $response, $args) {
+    $db=new DB();
+    
+    $db->updateSettings($request->getParsedBody());
+    return $response->withRedirect($request->getUri()->getBaseUrl()."/settings");   
+});
 $app->get('/reports', function ($request, $response, $args) {
 	$db=new DB();
 	$yearStats=$db->getYearStats(null,0,$_SESSION["filter"]["year"]);

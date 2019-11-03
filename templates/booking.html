@@ -28,8 +28,8 @@
 </div>
 <label>Datum</label>
 <input type="date" name="date" value="{{date}}">
-<label>Betrag in Euro</label>
-<input type="number" name="amount" value="{{amount}}">
+<label>Betrag</label>
+<div class="flex-input"><input type="number" name="amount" value="{{amount}}"><div>{{currency}}</div></div>
 <div class="group">
 <input type="radio" id="in" name="type" value="0" {% if type==0 %}checked{% endif %}><label for="in">Einnahme</label>
 <input type="radio" id="out" name="type" value="1" {% if type==1 %}checked{% endif %}><label for="out">Ausgabe</label>

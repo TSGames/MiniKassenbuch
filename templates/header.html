@@ -136,6 +136,18 @@ td.label a{
 td.label a:hover{
 	color:#333;
 }
+.flex-input{
+	display:flex;
+	align-items:center;
+}
+.flex-input >input{
+	flex-grow:1;
+	margin-right:10px!important;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	display:none;
+}
 @media only screen 
 and (max-width : 600px) {
 	td,th{

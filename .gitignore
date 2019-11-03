@@ -2,3 +2,4 @@ composer.phar
 vendor
 storage.sqlite
 .htpasswd
+exports/

@@ -1,0 +1,14 @@
+{% include 'menu.html' %}
+
+<div class="container">
+
+<form action="{{base_url}}settings" name="form" method="POST" enctype="multipart/form-data">
+{% if error %}
+    <div class="error">{{error}}</div>
+{% endif %}
+    <h4>Voreinstellungen</h4>
+<label>W&auml;hrungsformat</label>
+<input type="text" name="currency" value="{{currency}}">
+
+<a class="btn" onclick="form.submit()">Speichern</a>
+</div>

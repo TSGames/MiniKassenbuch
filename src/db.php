@@ -7,12 +7,13 @@ class DB{
 		@mkdir(self::$DOCUMENTS);
 		$db_already_existed = file_exists(self::$FILE);
 		$this->db = new PDO('sqlite:'.self::$FILE);
+		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");
+		$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");
+		$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INTEGER,filename TEXT)");
+		$this->db->exec("CREATE TABLE IF NOT EXISTS CATEGORY (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT UNIQUE)");
+		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");
+		$this->db->exec("CREATE TABLE IF NOT EXISTS SETTINGS (name TEXT PRIMARY KEY,value TEXT)");
 		if (!$db_already_existed) {
-			$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");
-			$this->db->exec("CREATE TABLE IF NOT EXISTS ACCOUNT (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT,comment TEXT)");
-			$this->db->exec("CREATE TABLE IF NOT EXISTS DOCUMENT (id INTEGER PRIMARY KEY AUTOINCREMENT,booking INTEGER,filename TEXT)");
-			$this->db->exec("CREATE TABLE IF NOT EXISTS CATEGORY (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT UNIQUE)");
-			$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (2,'Bank',NULL)");
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (3,'Konto 1',NULL)");
@@ -33,6 +34,23 @@ class DB{
 		}
 		$this->db->commit();
 		*/
+	}
+	public function getSettings(){
+	    $stmt = $this->db->prepare('SELECT * FROM SETTINGS');
+	    $stmt->execute();	 
+	    $result=$stmt->fetchAll();
+	    $settings=[];
+	    foreach($result as $r){
+	        $settings[$r['name']]=$r['value'];
+	    }
+	    if(!isset($settings['currency'])) $settings['currency']="€";
+	    return $settings;
+	}
+	public function updateSettings($settings){
+	    foreach($settings as $name=>$value){
+            $stmt = $this->db->prepare('INSERT OR REPLACE INTO SETTINGS VALUES (:name,:value)');
+            $stmt->execute([':name'=>$name,':value'=>$value]);
+	    }
 	}
 	public function export(){
 		@mkdir("../exports");
