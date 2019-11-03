@@ -20,10 +20,10 @@
 	<label>Kategorie(n)</label>
 	<div>
 	{% for category in categories %}
-	<input type="radio" name="category" class="filled-in" value="{{category.id}}" id="{{category.id}}" {% if category.active %}checked{% endif %}> <label for="{{category.id}}">{{category.label}}</label>
+	<label><input type="radio" name="category" class="filled-in" value="{{category.id}}" id="{{category.id}}" {% if category.active %}checked{% endif %}> <span>{{category.label}}</span></label>
 	{% endfor %}
-	{% if categories %}<a onclick="$('[name=\'category\']').prop('checked',false)">Auswahl aufheben</a>{% endif %}
 	</div>
+	{% if categories %}<a class="cancel-selection" onclick="$('[name=\'category\']').prop('checked',false)">Auswahl aufheben</a>{% endif %}
 	<div class="notice" style="padding-bottom:20px;">Kategorieren können über den Menüpunkt <a href="{{base_url}}categories">Kategorien</a> angelegt und verwaltet werden</div>
 </div>
 <label>Datum</label>
@@ -31,8 +31,8 @@
 <label>Betrag</label>
 <div class="flex-input"><input type="number" name="amount" value="{{amount}}"><div>{{currency}}</div></div>
 <div class="group">
-<input type="radio" id="in" name="type" value="0" {% if type==0 %}checked{% endif %}><label for="in">Einnahme</label>
-<input type="radio" id="out" name="type" value="1" {% if type==1 %}checked{% endif %}><label for="out">Ausgabe</label>
+<label><input type="radio" id="in" name="type" value="0" {% if type==0 %}checked{% endif %}><span>Einnahme</span></label>
+<label><input type="radio" id="out" name="type" value="1" {% if type==1 %}checked{% endif %}><span>Ausgabe</span></label>
 </div>
 <label>Bemerkungen, Kommentare etc.</label>
 <textarea name="notes" class="materialize-textarea">{{notes}}</textarea>
