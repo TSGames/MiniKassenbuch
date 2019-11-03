@@ -22,6 +22,7 @@ $container['view'] = function ($container) {
 	$settings=$db->getSettings();
 	$view->offsetSet('activeAccount', $db->getAccount());
 	$view->offsetSet('accounts', $db->getAccounts());
+	$view->offsetSet('path', $container['request']->getUri()->getPath());
 	$view->offsetSet('currency', $settings['currency']);
 	$view->offsetSet('year', date("Y"));
 	$view->offsetSet('month', date("m"));

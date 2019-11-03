@@ -3,12 +3,30 @@
     <div class="nav-wrapper">
 	 <a href="#" onclick="$('#accounts').fadeIn()" class="brand-logo right">{{activeAccount.label}} <i class="material-icons">keyboard_arrow_down</i></a>
       <ul id="nav-mobile" class="left">
-		<li><a href="{{base_url}}./">Liste</a>
-		<li><a href="{{base_url}}add">Buchung anlegen</a>
-		<li><a href="{{base_url}}reports">Berichte</a>
-		<li><a href="{{base_url}}categories">Kategorien</a>
-		<li><a href="{{base_url}}export">Exportieren</a>
-		<li><a href="{{base_url}}settings">Voreinstellungen</a>
+		<li class="{% if path=='/' %}active{% endif %}"><a href="{{base_url}}./">
+			<span class="show-on-large">Liste</span>
+			<i class="material-icons hide-on-large-only">list</i>
+		</a></li>
+		<li class="{% if path=='add' %}active{% endif %}"><a href="{{base_url}}add">
+			<span class="show-on-large">Buchung anlegen</span>
+			<i class="material-icons hide-on-large-only">add_circle_outline</i>
+		</a></li>
+		<li class="{% if path=='reports' %}active{% endif %}"><a href="{{base_url}}reports">
+			<span class="show-on-large">Berichte</span>
+			<i class="material-icons hide-on-large-only">timeline</i>
+		</a></li>
+		<li class="{% if path=='categories' %}active{% endif %}"><a href="{{base_url}}categories">
+			<span class="show-on-large">Kategorien</span>
+			<i class="material-icons hide-on-large-only">view_comfy</i>
+		</a></li>
+		<li><a href="{{base_url}}export">
+			<span class="show-on-large">Exportieren</span>
+			<i class="material-icons hide-on-large-only">cloud_download</i>
+		</a></li>
+		<li class="{% if path=='settings' %}active{% endif %}"><a href="{{base_url}}settings">
+			<span class="show-on-large">Voreinstellungen</span>
+			<i class="material-icons hide-on-large-only">settings</i>
+		</a></li>
 	</ul>
 	</div>
 </nav>
