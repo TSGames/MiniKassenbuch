@@ -1,0 +1,12 @@
+{% include 'menu.html' %}
+<style>
+.container form >*{
+    padding:20px 0;
+}
+</style>
+<div class="container">
+<form action="{{base_url}}import" name="form" method="POST" enctype="multipart/form-data">
+    <h5>Bitte wählen Sie eine CSV-Datei (Kommagetrennte Tabellenwerte) aus:</h5>
+    <div><input type="file" name="csv" accept=".csv"></div>
+    <div><a class="btn" onclick="form.submit()">Weiter</a></div>
+</form>

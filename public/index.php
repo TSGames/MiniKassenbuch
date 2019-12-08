@@ -11,6 +11,7 @@ if (PHP_SAPI == 'cli-server') {
 
 require __DIR__ . '/../vendor/autoload.php';
 require '../src/db.php';
+require '../src/csv.php';
 
 session_start();
 if(!isset($_SESSION["account"]))

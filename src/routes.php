@@ -63,6 +63,25 @@ $app->get('/reports', function ($request, $response, $args) {
 		'categories' => $categories
     ]);
 });
+$app->get('/import', function ($request, $response, $args) {
+	return $this->view->render($response, 'import_select.html');
+});
+$app->post('/import', function ($request, $response, $args) {
+	$files = $request->getUploadedFiles();	
+	if($files["csv"]){
+		$_SESSION["csv"]["src"]=$files["csv"]->getStream()->__toString();
+		$_SESSION["csv"]["config"]["seperator"]=",";
+		return $response->withRedirect($request->getUri()->getBaseUrl().'/import-setup');
+	}else{
+		return $response->withRedirect($request->getUri()->getBaseUrl().'/import');
+	}
+});
+$app->get('/import-setup', function ($request, $response, $args) {
+	$data=$_SESSION["csv"];
+	$csv=new CSV($_SESSION["csv"]["config"]);
+	$data["rows"]=$csv->parse($_SESSION["csv"]["src"]);
+	return $this->view->render($response, 'import_setup.html', $data);
+});
 $app->get('/add', function ($request, $response, $args) {
 	$db=new DB();
 	$data['categories']=$db->getCategories();

@@ -9,7 +9,7 @@
 		</a></li>
 		<li class="{% if 'add' in path %}active{% endif %}"><a href="{{base_url}}add">
 			<i class="material-icons">add_circle_outline</i>
-			<span class="show-on-large">Buchung anlegen</span>
+			<span class="show-on-large">Buchung</span>
 		</a></li>
 		<li class="{% if 'reports' in path %}active{% endif %}"><a href="{{base_url}}reports">
 			<i class="material-icons">timeline</i>
@@ -19,13 +19,17 @@
 			<i class="material-icons">view_comfy</i>
 			<span class="show-on-large">Kategorien</span>
 		</a></li>
+		<li><a href="{{base_url}}import">
+			<i class="material-icons">cloud_upload</i>
+			<span class="show-on-large">Importieren</span>
+		</a></li>
 		<li><a href="{{base_url}}export">
 			<i class="material-icons">cloud_download</i>
 			<span class="show-on-large">Exportieren</span>
 		</a></li>
 		<li class="{% if 'settings' in path %}active{% endif %}"><a href="{{base_url}}settings">
 			<i class="material-icons">settings</i>
-			<span class="show-on-large">Voreinstellungen</span>
+			<span class="show-on-large">Einstellungen</span>
 		</a></li>
 	</ul>
 	</div>
