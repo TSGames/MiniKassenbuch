@@ -18,7 +18,7 @@ php composer.phar install
 ```
 konfiguriert werden.
 
-Alternativ können Binaries (Coming Soon) bezogen werden. Ein PHP 7.x Webserver wird benötigt.
+Alternativ können Binaries bezogen werden. Ein PHP 7.x Webserver mit Unterstützung für SQLite wird benötigt.
 
 ## Konfiguration unter Debian oder Ubuntu mit Apache
 
