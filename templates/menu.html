@@ -4,28 +4,28 @@
 	 <a href="#" onclick="$('#accounts').fadeIn()" class="brand-logo right">{{activeAccount.label}} <i class="material-icons">keyboard_arrow_down</i></a>
       <ul id="nav-mobile" class="left">
 		<li class="{% if path=='/' %}active{% endif %}"><a href="{{base_url}}./">
+			<i class="material-icons">list</i>
 			<span class="show-on-large">Liste</span>
-			<i class="material-icons hide-on-large-only">list</i>
 		</a></li>
 		<li class="{% if 'add' in path %}active{% endif %}"><a href="{{base_url}}add">
+			<i class="material-icons">add_circle_outline</i>
 			<span class="show-on-large">Buchung anlegen</span>
-			<i class="material-icons hide-on-large-only">add_circle_outline</i>
 		</a></li>
 		<li class="{% if 'reports' in path %}active{% endif %}"><a href="{{base_url}}reports">
+			<i class="material-icons">timeline</i>
 			<span class="show-on-large">Berichte</span>
-			<i class="material-icons hide-on-large-only">timeline</i>
 		</a></li>
 		<li class="{% if 'categories' in path %}active{% endif %}"><a href="{{base_url}}categories">
+			<i class="material-icons">view_comfy</i>
 			<span class="show-on-large">Kategorien</span>
-			<i class="material-icons hide-on-large-only">view_comfy</i>
 		</a></li>
 		<li><a href="{{base_url}}export">
+			<i class="material-icons">cloud_download</i>
 			<span class="show-on-large">Exportieren</span>
-			<i class="material-icons hide-on-large-only">cloud_download</i>
 		</a></li>
 		<li class="{% if 'settings' in path %}active{% endif %}"><a href="{{base_url}}settings">
+			<i class="material-icons">settings</i>
 			<span class="show-on-large">Voreinstellungen</span>
-			<i class="material-icons hide-on-large-only">settings</i>
 		</a></li>
 	</ul>
 	</div>
