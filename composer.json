@@ -1,4 +1,6 @@
 {
+    "name": "MiniKassenbuch",
+    "license": "Apache License 2.0",
     "require": {
         "twig/twig": "^2.0",
         "slim/slim": "^3.0",
