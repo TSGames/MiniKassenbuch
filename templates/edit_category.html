@@ -1,0 +1,11 @@
+{% include 'menu.html' %}
+
+<div class="container">
+<form action="{{base_url}}edit_category" name="form" method="POST">
+<input type="hidden" name="id" value="{{id}}">
+<label>Bezeichnung</label>
+<input type="text" name="label" value="{{label}}" required="true">
+</form>
+<a class="btn-flat" onclick="window.history.back()">Abbrechen</a>
+<a class="btn" onclick="form.submit()">Bearbeiten</a>
+</div>
