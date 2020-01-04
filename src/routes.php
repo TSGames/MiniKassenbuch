@@ -46,7 +46,7 @@ $app->get('/reports', function ($request, $response, $args) {
 	foreach($db->getAccounts() as $a){
 	    // get stats for account, only current year
 	    $stats=$db->getYearStats($a["id"],0,$_SESSION["filter"]["year"]);
-	    if(count($stats))
+	    if(@count($stats))
 	        $yearsAccount[]=["account"=>$a,"stats"=>$stats];
 	}
     $months=$db->getMonthStats();
