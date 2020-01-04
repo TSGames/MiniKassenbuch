@@ -23,7 +23,8 @@ body{
 	background-color:#f8f8f8;
 }
 /* color overrides for materialize start */
-a{
+a,
+.dropdown-content li>a, .dropdown-content li>span{
 	color: #0069c0;
 }
 .btn,
@@ -31,6 +32,7 @@ a{
 	background-color: #0069c0;
 }
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before, [type="radio"].with-gap:checked+span:after,
+.select-wrapper input.select-dropdown:focus,
 input:not([type]):focus:not([readonly]), input[type=text]:not(.browser-default):focus:not([readonly]), input[type=password]:not(.browser-default):focus:not([readonly]), input[type=email]:not(.browser-default):focus:not([readonly]), input[type=url]:not(.browser-default):focus:not([readonly]), input[type=time]:not(.browser-default):focus:not([readonly]), input[type=date]:not(.browser-default):focus:not([readonly]), input[type=datetime]:not(.browser-default):focus:not([readonly]), input[type=datetime-local]:not(.browser-default):focus:not([readonly]), input[type=tel]:not(.browser-default):focus:not([readonly]), input[type=number]:not(.browser-default):focus:not([readonly]), input[type=search]:not(.browser-default):focus:not([readonly]), textarea.materialize-textarea:focus:not([readonly]){
 	border-color:#0069c0;
 }
@@ -193,6 +195,9 @@ td.label .category{
 td.label .category i{
 	font-size:16px;
 	padding-right:5px;
+}
+td.label .category-error{
+	color: #800;
 }
 .flex-input{
 	display:flex;

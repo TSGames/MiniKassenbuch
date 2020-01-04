@@ -40,7 +40,11 @@ function setFilter(){
         <td class='number'>{{booking.number}}</td>
         <td class='label'>
 			<a href="{{base_url}}edit?id={{booking.id}}">{{booking.label}}</a>
-			<div class="category"><i class="material-icons">view_comfy</i>{{booking.category}}</div>
+			{% if booking.category==null %}
+				<div class="category category-error"><i class="material-icons">warning</i>Ohne Zuordnung</div>
+			{% else %}
+				<div class="category"><i class="material-icons">view_comfy</i>{{booking.category}}</div>
+			{% endif %}
 		</td>
 		<td class='date'>{{booking.date|date("d.m.Y")}}</td>
 		<td class='documents'>{{booking.documents}}</td>
