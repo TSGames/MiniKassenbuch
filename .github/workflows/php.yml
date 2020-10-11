@@ -21,3 +21,9 @@ jobs:
 
     # - name: Run test suite
     #   run: composer run-script test
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v2
+      with:
+        name: Create Artifact
+        path: /
+        
