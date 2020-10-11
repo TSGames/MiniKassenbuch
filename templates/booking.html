@@ -1,6 +1,5 @@
 {% include 'menu.html' %}
 <script>
-	var categoryAutoSet = false;
 	function guessCategory(title){
 		const splitted = title.split(' ');
 		const categories = document.querySelectorAll('form input[name=category]');
@@ -21,7 +20,22 @@
 		}
 		if(matched){
 			matched.checked = true;
+			matched.onchange(matched);
 		}
+	}
+	function loadCategory(cat){
+		const amount = cat.getAttribute('data-amount');
+		const amountInput = document.querySelector('form input[name=amount]');
+		const amountType = document.querySelectorAll('form input[name=type]');
+		if(amount && amountInput.value === ''){
+			amountInput.value = amount;
+			if(amount >= 0){
+				amountType[0].checked = true;
+			} else {
+				amountType[1].checked = true;
+			}
+		}
+		//if()
 	}
 </script>
 <div class="container">
@@ -44,8 +58,9 @@
 	<label>Kategorie(n)</label>
 	<div>
 	{% for category in categories %}
-	<label><input type="radio" name="category" class="filled-in" value="{{category.id}}" id="{{category.id}}" {% if category.active %}checked{% endif %}> <span>{{category.label}}</span></label>
-	{% endfor %}
+	<label><input type="radio" name="category"
+		 class="filled-in" data-amount="{{category.amount}}" value="{{category.id}}" onchange="loadCategory(this)"
+		 id="{{category.id}}" {% if category.active %}checked{% endif %}> <span>{{category.label}}</span></label>	{% endfor %}
 	</div>
 	{% if categories %}<a class="cancel-selection" onclick="$('[name=\'category\']').prop('checked',false)">Auswahl aufheben</a>{% endif %}
 	<div class="notice" style="padding-bottom:20px;">Kategorieren können über den Menüpunkt <a href="{{base_url}}categories">Kategorien</a> angelegt und verwaltet werden</div>

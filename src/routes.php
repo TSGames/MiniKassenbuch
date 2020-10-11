@@ -111,7 +111,7 @@ $app->post('/delete_category', function ($request, $response, $args) {
 $app->post('/edit_category', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$db=new DB();
-	$db->editCategory($post["id"],$post["label"]);
+	$db->editCategory($post["id"],$post["label"],$post["amount"] * ($post["type"] == 0 ? 1 : -1));
 	return $response->withRedirect($request->getUri()->getBaseUrl()."/categories");
 });
 $app->post('/delete_document', function ($request, $response, $args) {

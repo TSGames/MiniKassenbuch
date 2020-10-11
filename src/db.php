@@ -13,6 +13,10 @@ class DB{
 		$this->db->exec("CREATE TABLE IF NOT EXISTS CATEGORY (id INTEGER PRIMARY KEY AUTOINCREMENT,label TEXT UNIQUE)");
 		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");
 		$this->db->exec("CREATE TABLE IF NOT EXISTS SETTINGS (name TEXT PRIMARY KEY,value TEXT)");
+
+		// update tables
+		$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN amount NUMERIC default NULL");
+
 		if (!$db_already_existed) {
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (2,'Bank',NULL)");
@@ -144,7 +148,7 @@ class DB{
 	public function getTopBookingsCategories(){
 		$result=[];
 		for($type=0;$type<2;$type++){
-			$stmt = $this->db->prepare('SELECT CATEGORY.label,SUM(amount) as amount FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=CATEGORY.id) LEFT JOIN BOOKING ON (booking=booking.id) WHERE
+			$stmt = $this->db->prepare('SELECT c.label,SUM(b.amount) as amount FROM CATEGORY c LEFT JOIN BOOKING_CATEGORY ON (category=c.id) LEFT JOIN BOOKING b ON (booking=b.id) WHERE
 					strftime("%Y",datetime(date,"unixepoch")) = :year
 					AND type = :type
 					GROUP BY category
@@ -182,9 +186,9 @@ class DB{
 		}
 		return $result;
 	}
-	public function editCategory($id,$label){
-		$stmt = $this->db->prepare('UPDATE CATEGORY SET label = :label WHERE id = :id');
-		$stmt->execute([":id"=>$id,":label"=>$label]);
+	public function editCategory($id,$label,$amount){
+		$stmt = $this->db->prepare('UPDATE CATEGORY SET label = :label, amount = :amount WHERE id = :id');
+		$stmt->execute([":id"=>$id,":label"=>$label, ":amount"=>$amount*100]);
 	}
 	public function deleteCategory($id){
 		$stmt = $this->db->prepare('DELETE FROM CATEGORY WHERE id = :id');
@@ -236,7 +240,7 @@ class DB{
 	public function addCategory($label){
 		$data=[];
 		$data["label"]=$label;
-		$stmt = $this->db->prepare('INSERT INTO CATEGORY VALUES (NULL,:label)');
+		$stmt = $this->db->prepare('INSERT INTO CATEGORY (id,label) VALUES (NULL,:label)');
 		$stmt->execute($data);
 		return $this->db->lastInsertId();
 	}
@@ -277,19 +281,26 @@ class DB{
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getCategories($booking=null){
-		$stmt = $this->db->prepare('SELECT id,label,(category>0) as active FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (booking = :booking AND category=id) ORDER BY upper(label)');
+		$stmt = $this->db->prepare('SELECT id,label,amount,(category>0) as active FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (booking = :booking AND category=id) ORDER BY upper(label)');
 		$stmt->execute([":booking"=>$booking]);
-		return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		for($i=0;$i<count($categories);$i++){
+			$categories[$i]["amount"] /= 100;
+		}
+		return $categories;
 	}
 	public function getAllCategories(){
-		$stmt = $this->db->prepare('SELECT id,label,COUNT(booking) as count FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=id) GROUP BY id ORDER BY upper(label)');
+		$stmt = $this->db->prepare('SELECT c.id,c.label,c.amount as amount,COUNT(booking) as count FROM CATEGORY c LEFT JOIN BOOKING_CATEGORY ON (category=id) GROUP BY id ORDER BY upper(label)');
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getCategory($id){
-		$stmt = $this->db->prepare('SELECT id,label,COUNT(booking) as count FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=id) WHERE id = :id GROUP BY id ORDER BY upper(label)');
+		$stmt = $this->db->prepare('SELECT id,label,amount,COUNT(booking) as count FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=id) WHERE id = :id GROUP BY id ORDER BY upper(label)');
 		$stmt->execute([":id"=>$id]);
-		return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+		$category=$stmt->fetchAll()[0];
+		$category["amount"] /= 100;
+		return $category;
 	}
 	public function getBookings($filter=true){
 		return $this->getBookingsForAccount($filter,$_SESSION["account"]);
