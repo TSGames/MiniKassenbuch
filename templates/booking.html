@@ -1,5 +1,29 @@
 {% include 'menu.html' %}
+<script>
+	var categoryAutoSet = false;
+	function guessCategory(title){
+		const splitted = title.split(' ');
+		const categories = document.querySelectorAll('form input[name=category]');
+		let matched;
+		for(let i=0;i<categories.length;i++){
+			if(categories[i].checked){
+				return;
+			}
 
+			for(let j=0;j<splitted.length;j++){
+				if(splitted[j].length > 3) {
+					const search = splitted[j].substr(0, Math.round(splitted[j].length * 0.8)).toLowerCase();
+					if(categories[i].parentNode.innerText.toLowerCase().indexOf(search) !== -1){
+						matched = categories[i];
+					}
+				}
+			}
+		}
+		if(matched){
+			matched.checked = true;
+		}
+	}
+</script>
 <div class="container">
 <form action="{{base_url}}delete_document?booking={{id}}" name="document" method="POST">
 <input type="hidden" name="id">
@@ -15,7 +39,7 @@
 <label>Aktuelles Konto</label>
 <input type="text" name="label" value="{{activeAccount.label}}" readonly disabled>
 <label>Bezeichnung</label>
-<input type="text" name="label" value="{{label}}">
+<input type="text" name="label" value="{{label}}" onblur="guessCategory(this.value)">
 <div class="categories">
 	<label>Kategorie(n)</label>
 	<div>
