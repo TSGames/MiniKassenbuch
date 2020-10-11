@@ -28,7 +28,7 @@
 		const amountInput = document.querySelector('form input[name=amount]');
 		const amountType = document.querySelectorAll('form input[name=type]');
 		if(amount && amountInput.value === ''){
-			amountInput.value = amount;
+			amountInput.value = Math.abs(amount);
 			if(amount >= 0){
 				amountType[0].checked = true;
 			} else {
