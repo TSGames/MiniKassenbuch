@@ -55,7 +55,7 @@ function setFilter(){
 		</tr>
     {% endfor %}
 	{% if list==null %}
-		<tr><td colspan="999">Noch keine Buchungen im gewählten Zeitraum für das Konto {{account.label}}. Über das Menü können Sie Buchungen anlegen</td></tr>
+		<tr><td colspan="999">Noch keine Buchungen im gewählten Zeitraum für das Konto '{{accountActive.label}}'. Über das Menü können Sie Buchungen anlegen</td></tr>
 	{% endif %}
 	</table>
 	<hr>
