@@ -32,13 +32,15 @@ class DB{
 			$_SESSION["filter"]["month"]=0;
 			$_SESSION["filter"]["year"]=date("Y");
 		}
-		/*
+		
 		$this->db->beginTransaction();
-		for($i=0;$i<10000;$i++){
-			$this->db->exec("INSERT INTO BOOKING VALUES (NULL,1,'Test $i',".(time()+rand(-100000000,100000000)).",".(rand(10,10000)).",".(rand(0,1)).",'')");
+		/*
+		for($i=0;$i<20000;$i++){
+			$this->db->exec("INSERT INTO BOOKING VALUES (NULL,1,'Test $i',".(time()+rand(-100000000,100000000)).",".(rand(10,10000)).",".(rand(0,1)).",'',0)");
 		}
-		$this->db->commit();
 		*/
+		$this->db->commit();
+		
 	}
 	public function getSettings(){
 	    $stmt = $this->db->prepare('SELECT * FROM SETTINGS');
@@ -275,11 +277,12 @@ class DB{
 		return $this->db->lastInsertId();
 	}
 	public function hasBooking($booking){
-		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE label = :label AND date = :date AND amount = :amount AND source = 1');
+		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE label = :label AND strftime("%Y%m%d",datetime(date,"unixepoch")) = :date AND amount = :amount AND type = :type');
 		$stmt->execute([
 			':label'=>$booking['label'],
-			':date'=>strtotime($booking['date']),
+			':date'=>date('Ymd', $booking['date']),
 			':amount'=>$booking['amount'] * 100,
+			':type'=>$booking['type'],
 		]);
 		return count($stmt->fetchAll()) > 0;
 	}
