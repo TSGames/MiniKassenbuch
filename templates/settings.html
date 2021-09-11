@@ -1,7 +1,10 @@
 {% include 'menu.html' %}
 
 <div class="container">
-
+    <h5>Export/Backup</h5>
+    <a class="btn" href="{{base_url}}backup">
+        <span>Backup herunterladen</span>
+    </a>
 <form action="{{base_url}}settings" name="form" method="POST" enctype="multipart/form-data">
 {% if error %}
     <div class="error">{{error}}</div>

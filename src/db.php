@@ -243,7 +243,7 @@ class DB{
 		}
 		$data["id"]=$id;
 		$data["label"]=$post["label"];
-		$data["date"]=strtotime($post["date"]);
+		$data["date"]=$post["date"];
 		$data["amount"]=$post["amount"]*100;		
 		$data["type"]=$post["type"];
 		$data["notes"]=$post["notes"];

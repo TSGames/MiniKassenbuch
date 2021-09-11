@@ -214,6 +214,7 @@ $app->post('/save', function ($request, $response, $args) {
 	}
 	else{
 		$db=new DB();
+		$post["date"]=strtotime($post['date']);
 		$post['source'] = 0; // enforce source "manually created"
 		$id=$db->setBooking($post,$get["id"]);
 		foreach($files as $file){

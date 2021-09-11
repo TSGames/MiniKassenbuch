@@ -4,8 +4,8 @@
 <form action="{{base_url}}delete" name="form" method="POST">
 <input type="hidden" name="id" value="{{id}}">
 </form>
-<div class="info">
-Möchten Sie {{label}} wirklich löschen?
+<div class="error">
+Möchten Sie '{{label}}' wirklich löschen?
 </div>
 <a class="btn-flat" onclick="window.history.back()">Abbrechen</a>
 <a class="btn" onclick="form.submit()">Löschen</a>

@@ -20,13 +20,29 @@ class CSV{
 		}
 		return doubleval(str_replace(',', '.', $numeric));
 	}
+	private function convertDate($date) {
+		$formats = [
+			"d.m.y",
+			"d.m.Y",
+			"Y-m-d"
+		];
+		foreach($formats as $format) {
+			$parsed = DateTime::createFromFormat("d.m.y", $date);
+			if($parsed) {
+				return $parsed->getTimestamp();
+			}
+		}
+		return null;
+	
+	}
 	public function map($headers, $post) {
 		$data["label"]=$this->getData('label', $headers, $post);
-		$data["date"]=$this->getData('date', $headers, $post);
-		$data["_date"]=date("d.m.Y",@strtotime($data['date']));
+		$data["date"]=$this->convertDate($this->getData('date', $headers, $post));
+		$data["_date"]=@date("d.m.Y",($data['date']));
 		$data["amount"]=$this->convertCurrencyValue($this->getData('amount', $headers, $post));
 		$data["_amount"] = number_format($data['amount'], 2, ',', '.').' '.$this->currency;
 		$data["type"]=@$data["amount"] >= 0 ? 0 : 1;
+		$data["amount"] = abs($data["amount"]);
 		$data["source"]=1; // equals imported
 		$data["notes"]=$this->getData('notes', $headers, $post);
 		$data["_invalid"]=!$data["date"] || count($post) != count($headers);
