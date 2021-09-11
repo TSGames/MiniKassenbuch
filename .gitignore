@@ -4,3 +4,4 @@ storage.sqlite
 .htpasswd
 exports/
 documents/*
+backups/*

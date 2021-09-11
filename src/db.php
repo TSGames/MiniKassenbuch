@@ -61,6 +61,29 @@ class DB{
 		$zip = new ZipArchive();
 		$path='../exports/'.date('Y-m-d').'.zip';
 		$zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);		
+		foreach($this->getAccounts() as $account){
+			$csv=$this->getCSV($account['id'], true);
+			if($csv){
+				$zip->addFromString($account['label'].".csv",$csv);
+			}
+			
+			$bookings=$this->getBookingsForAccount(true, $account['id']);
+			foreach($bookings as $b) {
+				$docs = $this->getDocuments($b['id']);
+				foreach($docs as $doc) {
+					$zip->addFile(self::$DOCUMENTS.$doc['id'],"documents/".$doc['filename']);
+				}
+			}
+			
+		}
+		$zip->close();
+		return $path;
+	}
+	public function backup(){
+		@mkdir("../backups");
+		$zip = new ZipArchive();
+		$path='../backups/'.date('Y-m-d').'.zip';
+		$zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);		
 		$zip->addFile(self::$FILE,'storage.sqlite');
 		foreach(@scandir(self::$DOCUMENTS) as $file){
 			if($file=="." || $file=="..")
@@ -68,7 +91,7 @@ class DB{
 			$zip->addFile(self::$DOCUMENTS.$file,"documents/".$file);
 		}
 		foreach($this->getAccounts() as $account){
-			$csv=$this->getCSV($account['id']);
+			$csv=$this->getCSV($account['id'], false);
 			if($csv){
 				$zip->addFromString($account['label'].".csv",$csv);
 			}
@@ -76,19 +99,25 @@ class DB{
 		$zip->close();
 		return $path;
 	}
-	public function getCSV($account){
-		$bookings=$this->getBookingsForAccount(false,$account);
+	public function getCSV($account, $filter = false){
+		$bookings=$this->getBookingsForAccount($filter,$account);
 		if(count($bookings)==0)
 			return null;
 		
-		$csv="Datum;Laufende Nr.;Vorgang;Betrag;Saldo";
+		$csv="Datum;Laufende Nr.;Vorgang;Betrag;Saldo;Belege";
 		foreach($bookings as $booking){
 			$date=date("Y-m-d",$booking['date']);
 			$number=$booking['number'];
 			$label=$booking['label'];
 			$amount=number_format($booking['amount']/100,2,",",".");
 			$saldo=number_format($booking['saldo']/100,2,",",".");
-			$csv.="\n$date;$number;$label;$amount;$saldo";
+			$docs = $this->getDocuments($booking['id']);
+			$documents = '';
+			foreach($docs as $doc) {
+				$documents .= $doc['filename'] . "\n";
+			}
+			$documents = trim($documents);
+			$csv.="\n$date;$number;$label;$amount;$saldo;\"$documents\"";
 		}
 		return $csv;
 	}

@@ -21,10 +21,16 @@ $app->get('/', function ($request, $response, $args) {
     ]);
 });
 $app->get('/export', function ($request, $response, $args) {
-	header('Content-Disposition: attachment; filename='.'export-'.date('Y-m-d').'.zip');
+	header('Content-Disposition: attachment; filename='.'export-'.$_SESSION["filter"]["year"].'.zip');
 	$db=new DB();
 	
 	echo file_get_contents($db->export());
+});
+$app->get('/backup', function ($request, $response, $args) {
+	header('Content-Disposition: attachment; filename='.'backup-'.date('Y-m-d').'.zip');
+	$db=new DB();
+	
+	echo file_get_contents($db->backup());
 });
 $app->get('/settings', function ($request, $response, $args) {
     $db=new DB();
