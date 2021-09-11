@@ -2,7 +2,9 @@
   <nav>
     <div class="nav-wrapper">
 	 <a href="#" onclick="$('#accounts').fadeIn()" class="brand-logo right">{{activeAccount.label}} <i class="material-icons">keyboard_arrow_down</i></a>
-      <ul id="nav-mobile" class="left">
+	 <div class="nav-controls left">
+	  <a href="{{base_url}}./"><img src="{{base_url}}logo.png" alt="Mini Kassenbuch Logo" class="logo"></a>
+      <ul id="nav-mobile">
 		<li class="{% if path=='/' %}active{% endif %}"><a href="{{base_url}}./">
 			<i class="material-icons">list</i>
 			<span class="show-on-large">Liste</span>
@@ -25,13 +27,18 @@
 		</a></li>
 		<li><a href="{{base_url}}export">
 			<i class="material-icons">cloud_download</i>
-			<span class="show-on-large">Exportieren</span>
+			<span class="show-on-large">Export ({{filter.year}})</span>
+		</a></li>
+		<li><a href="{{base_url}}backup">
+			<i class="material-icons">save</i>
+			<span class="show-on-large">Backup</span>
 		</a></li>
 		<li class="{% if 'settings' in path %}active{% endif %}"><a href="{{base_url}}settings">
 			<i class="material-icons">settings</i>
-			<span class="show-on-large">Einstellungen</span>
+			<span class="show-on-large">Konfiguration</span>
 		</a></li>
 	</ul>
+	</div>
 	</div>
 </nav>
 <form method="POST" name="account" action="{{base_url}}account">

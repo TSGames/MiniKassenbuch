@@ -29,7 +29,7 @@ function setFilter(){
 <table class='striped'>
 	<thead>
 		<th class='number'>Buchungsnr.</th>
-		<th class='label'>Bezeichnung</th>
+		<th class='label'>Bezeichnung </th>
 		<th class='date'>Datum</th>
 		<th class='documents'>Belege</th>
 		<th class='amount'>Betrag</th>
@@ -38,7 +38,14 @@ function setFilter(){
     {% for booking in list %}
 		<tr>
         <td class='number'>{{booking.number}}</td>
-        <td class='label'><a href="{{base_url}}edit?id={{booking.id}}">{{booking.label}}</a></td>
+        <td class='label'>
+			<a href="{{base_url}}edit?id={{booking.id}}">{{booking.label}}</a>
+			{% if booking.category==null %}
+				<div class="category category-error"><i class="material-icons">warning</i>Ohne Zuordnung</div>
+			{% else %}
+				<div class="category"><i class="material-icons">view_comfy</i>{{booking.category}}</div>
+			{% endif %}
+		</td>
 		<td class='date'>{{booking.date|date("d.m.Y")}}</td>
 		<td class='documents'>{{booking.documents}}</td>
 		<td class='amount {% if booking.type==0 %}positive{% else %}negative{% endif %}'>{{(booking.amount/100)|number_format(2)}} {{currency}}</td>

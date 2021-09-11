@@ -1,7 +1,12 @@
 # MiniKassenbuch
+<p align="center">
+  <img style="background-color:black" src="http://torsten-simon.de/pub/kassenbuch/badge.png">
+</p>
+<p>
 A simple PHP and Javascript application to manage accounting (for german law)
 
 Eine simple PHP &amp; Javascript Applikation zum führen einfacher Kassenbücher &amp; Vereinskassen
+</p>
 
 # Ziel
 Ziel soll es sein, eine offene, kostenfreie Plattform für die Verwaltung von Kassenbeständen oder Konten durchzuführen. Einfache Statistiken sollen bei der Auswertung helfen.
@@ -18,7 +23,7 @@ php composer.phar install
 ```
 konfiguriert werden.
 
-Alternativ können Binaries (Coming Soon) bezogen werden. Ein PHP 7.x Webserver wird benötigt.
+Alternativ können Binaries bezogen werden. Ein PHP 7.x Webserver mit Unterstützung für SQLite wird benötigt.
 
 ## Konfiguration unter Debian oder Ubuntu mit Apache
 

@@ -1,0 +1,17 @@
+{% include 'menu.html' %}
+
+<div class="container">
+<form action="{{base_url}}edit_category" name="form" method="POST">
+<input type="hidden" name="id" value="{{id}}">
+<label>Bezeichnung</label>
+<input type="text" name="label" value="{{label}}" required="true">
+<label>Standard-Betrag (Optional)</label>
+<div class="flex-input"><input type="number" name="amount" value="{{amount|abs}}"><div>{{currency}}</div></div>
+<div class="group">
+    <label><input type="radio" id="in" name="type" value="0" {% if amount >= 0 %}checked{% endif %}><span>Einnahme</span></label>
+    <label><input type="radio" id="out" name="type" value="1" {% if amount < 0 %}checked{% endif %}><span>Ausgabe</span></label>
+    </div>
+</form>
+<a class="btn-flat" onclick="window.history.back()">Abbrechen</a>
+<a class="btn" onclick="form.submit()">Bearbeiten</a>
+</div>
