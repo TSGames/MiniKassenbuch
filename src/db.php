@@ -16,6 +16,7 @@ class DB{
 
 		// update tables
 		$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN amount NUMERIC default NULL");
+		$this->db->exec("ALTER TABLE BOOKING ADD COLUMN source NUMERIC default 0");
 
 		if (!$db_already_existed) {
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
@@ -246,10 +247,10 @@ class DB{
 		$data["amount"]=$post["amount"]*100;		
 		$data["type"]=$post["type"];
 		$data["notes"]=$post["notes"];
+		$data["source"]=$post["source"];
 		$data["account"]=$_SESSION["account"];
-		$category=$post["category"];
-		
-		$stmt = $this->db->prepare('INSERT INTO BOOKING VALUES (:id,:account,:label,:date,:amount,:type,:notes)');
+		$category=@$post["category"];
+		$stmt = $this->db->prepare('INSERT INTO BOOKING VALUES (:id,:account,:label,:date,:amount,:type,:notes,:source)');
 		$stmt->execute($data);
 		if(!$id)
 			$id=$this->db->lastInsertId();
@@ -272,6 +273,15 @@ class DB{
 		$stmt = $this->db->prepare('INSERT INTO CATEGORY (id,label) VALUES (NULL,:label)');
 		$stmt->execute($data);
 		return $this->db->lastInsertId();
+	}
+	public function hasBooking($booking){
+		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE label = :label AND date = :date AND amount = :amount AND source = 1');
+		$stmt->execute([
+			':label'=>$booking['label'],
+			':date'=>strtotime($booking['date']),
+			':amount'=>$booking['amount'] * 100,
+		]);
+		return count($stmt->fetchAll()) > 0;
 	}
 	public function getBooking($id){
 		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE id = :id');
@@ -348,12 +358,12 @@ class DB{
 			else
 				$saldo-=$d["amount"];
 			$number++;
-			if(date("Y",$d["date"])!=@$oldDate){
+			if(@date("Y",$d["date"])!=@$oldDate){
 				$number=1;
 			}
-			$oldDate=date("Y",$d["date"]);
+			$oldDate=@date("Y",$d["date"]);
 			if($filter){
-				if(date("Y",$d["date"])!=@$_SESSION["filter"]["year"])
+				if(@date("Y",$d["date"])!=@$_SESSION["filter"]["year"])
 					continue;
 				if($_SESSION["filter"]["month"]!=0 && date("m",$d["date"])!=$_SESSION["filter"]["month"])
 					continue;

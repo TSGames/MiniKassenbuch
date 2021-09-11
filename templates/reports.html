@@ -135,6 +135,11 @@
 </div>
 <div class="report">
 <h2>Alle Einnahmen&nbsp;{{currentYear}} nach Kategorie</h2>
+{% if categoriesMissing %}
+	<div class="error">
+		Es existieren {{categoriesMissing}} Buchungen ohne Kategoriezuordnung. Die folgenden Daten sind unvollständig bzw. ungültig.
+	</div>
+{% endif %}
 <table class="striped">
 	<thead>
 		<th>Kategorie</th>
@@ -153,6 +158,11 @@
 </div>
 <div class="report">
 <h2>Alle Ausgaben&nbsp;{{currentYear}} nach Kategorie</h2>
+{% if categoriesMissing %}
+	<div class="error">
+		Es existieren {{categoriesMissing}} Buchungen ohne Kategoriezuordnung. Die folgenden Daten sind unvollständig bzw. ungültig.
+	</div>
+{% endif %}
 <table class="striped">
 	<thead>
 		<th>Kategorie</th>
