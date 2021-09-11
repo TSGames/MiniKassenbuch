@@ -3,3 +3,4 @@ vendor
 storage.sqlite
 .htpasswd
 exports/
+documents/*
