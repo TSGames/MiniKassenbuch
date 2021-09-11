@@ -34,9 +34,10 @@ $app->get('/backup', function ($request, $response, $args) {
 });
 $app->get('/settings', function ($request, $response, $args) {
     $db=new DB();
-    return $this->view->render($response, 'settings.html', 
-        $db->getSettings()
-    );
+    return $this->view->render($response, 'settings.html', [
+		'settings' => $db->getSettings(),
+		'stats' => $db->getStats()
+	]);
 });
 $app->get('/settings/json', function ($request, $response, $args) {
     $db=new DB();

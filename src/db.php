@@ -53,6 +53,28 @@ class DB{
 	    if(!isset($settings['currency'])) $settings['currency']="€";
 	    return $settings;
 	}
+	public function getStats(){
+	    $stmt = $this->db->prepare('SELECT COUNT(*) FROM BOOKING');
+		$stmt->execute();
+		$bookings=$stmt->fetchAll()[0][0];
+		$stmt = $this->db->prepare('SELECT COUNT(*) FROM DOCUMENT');
+		$stmt->execute();
+		$documents=$stmt->fetchAll()[0][0];
+		$documentsSize = 0;
+		foreach(@scandir(DB::$DOCUMENTS) as $doc){
+			if($doc == '.' ||$doc === '..') {
+				continue;
+			}
+			$documentsSize += filesize(DB::$DOCUMENTS . DIRECTORY_SEPARATOR . $doc);
+		}
+	    return [
+			'bookings' => $bookings,
+			'documents' => $documents,
+			'documentsSize' => $documentsSize,
+			'databaseSize' => filesize(DB::$FILE)
+		];
+	    
+	}
 	public function updateSettings($settings){
 	    foreach($settings as $name=>$value){
             $stmt = $this->db->prepare('INSERT OR REPLACE INTO SETTINGS VALUES (:name,:value)');
