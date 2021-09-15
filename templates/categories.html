@@ -21,7 +21,7 @@
 		</tr>
     {% endfor %}
 	{% if categories==null %}
-		<tr><td colspan="999">Noch keine Kategorien angelegt. Kategorien können beim Erstellen einer Buchung angelegt werden.</td></tr>
+		<tr><td colspan="999">Noch keine Kategorien angelegt. Legen Sie eine Kategorie unten an.</td></tr>
 	{% endif %}
 </table>
 <form class="add" action="{{base_url}}categories/add" name="form" method="POST" enctype="multipart/form-data">

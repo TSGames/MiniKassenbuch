@@ -1,0 +1,212 @@
+{% include 'menu.html' %}
+<style>
+    #preview .invalid td:not(:first-child) {
+        text-decoration: line-through;
+        opacity: 0.5;
+    }
+    #mappings > div {
+        display:flex;
+        align-items: center;
+    }
+    #mappings > div > label {
+        flex-grow: 1
+    }
+    #mappings > div > .select-wrapper {
+        min-width: 35%;
+    }
+</style>
+<script>
+    const headers = {
+        label: 'Bezeichnung',
+        date: 'Datum',
+        amount: 'Betrag',
+        notes: 'Bemerkungen',
+    }
+    let csv, response, settings;
+    function setFile(file) {
+        var reader = new FileReader();
+        reader.readAsText(file.files[0], "UTF-8");
+        reader.onload = function (evt) {
+            csv = evt.target.result;
+            updatePreview();
+            document.querySelector('#fileSelect').style.display = 'none';
+            document.querySelector('#config').style.display = null;
+        }
+    }
+    function getConfig() {
+        let mappings = {};
+        document.querySelectorAll('#mappings select').forEach((s) => mappings[s.id] = s.value);
+        if(!Object.keys(mappings).length) {
+            return settings;
+        }
+        return {
+            seperator: document.querySelector('#seperator').value,
+            mappings: mappings
+        };
+    }
+    function loadConfig() {
+        var request = new XMLHttpRequest();
+    
+        request.open("GET", "{{base_url}}settings/json");
+        request.addEventListener('load', function(event) {
+            if (request.status >= 200 && request.status < 300) {
+                const all = JSON.parse(request.responseText);
+                console.log(all);
+                let useDefault = false;
+                if(all['csv_import']) {
+                    try {
+                    settings = JSON.parse(all['csv_import']);
+                    } catch(e) {
+                        console.warn(e);
+                        useDefault = true;
+                    }
+                } else {
+                    useDefault = true;
+                }
+                if(useDefault) {
+                    settings = {
+                        seperator: ';'
+                    }
+                }
+                applySettings();
+            }
+        });
+        request.send();
+    }
+    function storeConfig() {
+        var request = new XMLHttpRequest();
+    
+        request.open("POST", "{{base_url}}settings/json");
+        request.addEventListener('load', function(event) {
+           
+        });
+        request.send(JSON.stringify({
+            csv_import: JSON.stringify(getConfig())
+        }));
+    }
+    function applySettings(){
+        document.querySelector('#seperator').value = settings.seperator;
+    }
+    function importAPI(dryRun, callback) {
+        var request = new XMLHttpRequest();
+        const data = {
+            csv,
+            config: getConfig()
+        };
+        request.open("POST", "{{base_url}}import/" + (dryRun ? "preview" : "start"));
+        request.addEventListener('load', function(event) {
+            if (request.status >= 200 && request.status < 300) {
+                response = JSON.parse(request.responseText);
+                callback();
+            }
+        });
+        request.send(JSON.stringify(data));
+    }
+    function updatePreview() {
+        importAPI(true, () => {
+            showResult();
+            showMappings();
+        });
+    }
+    function doImport() {
+        importAPI(false, () => {
+            const done = response.bookings.filter((b) => !b['_invalid'] && !b['_duplicate']).length;
+            window.location.href = '{{baseUrl}}import-done?imported=' + done + '&skipped=' + (response.bookings.length - done);
+        });
+    }
+    function showResult() {
+        let html = '<tr>';  
+        html += '<th>Import-Hinweis</th>';
+        Object.keys(headers).forEach((key) => {
+            html += '<th>' + headers[key] + '</th>';
+        });
+        html += '</tr>';
+        response.bookings.forEach((b) => {
+            html += '<tr class="';
+            if(b._invalid | b._duplicate) {
+                html += 'invalid';
+            }
+            html += `">
+            <td>`;
+            if(b._invalid) {
+                html += 'CSV-Eintrag ungültig';
+            } else if(b._duplicate) {
+                html += 'Eintrag bereits importiert';
+            } else {
+                html += 'OK';
+            }
+            html += '</td>';
+            Object.keys(headers).forEach((key) => {
+             html += '<td>' + (b['_'+key] || b[key]) + '</td>';
+            });
+            html += '</tr>';
+        })
+        document.querySelector('#preview').innerHTML = html;
+    }
+    function showMappings() {
+        if(document.querySelectorAll('#mappings select').length > 0) {
+            return;
+        }
+        let html = '';
+        if(headers)
+        Object.keys(headers).forEach((key) => {
+            html += `<div>
+                <label>`+ headers[key] + `</label>
+                <select id="` + key + `" onchange="updatePreview()">
+                <option></option>`;
+            response.headers.forEach((h) => html += `<option>` + h + `</option>`);
+
+            html += `</select>
+            </div>`;
+        });
+        document.querySelector('#mappings').innerHTML = html;
+        $('select').formSelect();
+        if(settings.mappings) {
+            console.log(settings.mappings);
+            Object.keys(headers).forEach((key) => {
+                console.log(key, settings.mappings[key], $('#' + key));
+                $('#' + key).val(settings.mappings[key])
+            });
+            $('select').formSelect();
+        }
+       
+    
+    }
+    function confirm() {
+        document.querySelector('#confirm').style.display = 'none';
+        document.querySelector('#start').style.display = null;
+    }
+    loadConfig();
+</script>
+<div class="container">
+<form id="fileSelect">
+    <h5>Bitte wählen Sie eine CSV-Datei (Kommagetrennte Tabellenwerte) aus:</h5>
+    <div><input type="file" name="csv" accept=".csv" onchange="setFile(this)"></div>
+</form>
+
+<form id="config" style="display:none">
+    <h5>Passen Sie die Einstellungen an:</h5>
+    <label>Seperator-Zeichen (z.B. ",", ";", " ")</label>
+    <input id="seperator" value="{{config.seperator}}">
+    <h6>Felder Mapping festlegen:</h6>
+    <div id="mappings">
+        Mapping-Einstellungen sind nach Auswahl einer CSV verfügbar.
+    </div>
+    <!--<div class="notice" style="padding-bottom:20px;">Die erste Zeile der Datei muss eine Kopfzeile sein. Prüfen Sie die Ergebnisse unten</div>-->
+    <a class="btn" onclick="updatePreview()">Vorschau aktualisieren</a>
+    <a class="btn" onclick="storeConfig()">Einstellungen Speichern</a>
+
+    <div class="preview">
+        <h5>Vorschau</h5>
+        <table id="preview">
+            
+        </table>
+        <div class="info">
+            Der Import erfolgt in den Account {{activeAccount.label}}
+        </div>
+    <hr>
+    <div>
+        <a class="btn" id="confirm" onclick="confirm()">Auswahl bestätigen</a>
+        <a class="btn" id="start" onclick="doImport()" style="display: none;">Import beginnen</a>
+    </div>
+</form>

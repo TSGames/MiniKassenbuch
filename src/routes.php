@@ -34,9 +34,19 @@ $app->get('/backup', function ($request, $response, $args) {
 });
 $app->get('/settings', function ($request, $response, $args) {
     $db=new DB();
-    return $this->view->render($response, 'settings.html', 
-        $db->getSettings()
-    );
+    return $this->view->render($response, 'settings.html', [
+		'settings' => $db->getSettings(),
+		'stats' => $db->getStats()
+	]);
+});
+$app->get('/settings/json', function ($request, $response, $args) {
+    $db=new DB();
+    return json_encode($db->getSettings());
+});
+$app->post('/settings/json', function ($request, $response, $args) {
+	$data = json_decode($request->getBody()->getContents(), true);
+	$db=new DB();
+    $db->updateSettings($data);
 });
 $app->post('/settings', function ($request, $response, $args) {
     $db=new DB();
@@ -55,6 +65,13 @@ $app->get('/reports', function ($request, $response, $args) {
 	    if(@count($stats))
 	        $yearsAccount[]=["account"=>$a,"stats"=>$stats];
 	}
+	$bookings = $db->getBookings(false);
+	$categoriesMissing = 0;
+	foreach($bookings as $b){
+		if(!$b['category']){
+			$categoriesMissing++;
+		}
+	}
     $months=$db->getMonthStats();
 	$tops=$db->getTopBookingsYear();
 	$categories=$db->getTopBookingsCategories();
@@ -66,8 +83,33 @@ $app->get('/reports', function ($request, $response, $args) {
 	    'yearsAccount' => $yearsAccount,
 	    'months' => $months,
 		'tops' => $tops,
-		'categories' => $categories
+		'categories' => $categories,
+		'categoriesMissing' => $categoriesMissing
     ]);
+});
+$app->get('/import', function ($request, $response, $args) {
+	return $this->view->render($response, 'import.html');
+});
+$app->get('/import-done', function ($request, $response, $args) {
+	$params=$request->getQueryParams();
+	return $this->view->render($response, 'import_done.html', [
+        'imported' => $params['imported'],
+        'skipped' => $params['skipped']
+    ]);
+});
+$app->post('/import/preview', function ($request, $response, $args) {
+	$data = json_decode($request->getBody()->getContents());
+	$csv=new CSV($data->config);
+	$response  = $response->withHeader('Content-Type', 'application/json');
+	echo json_encode($csv->parse($data->csv, false));
+	return $response;
+});
+$app->post('/import/start', function ($request, $response, $args) {
+	$data = json_decode($request->getBody()->getContents());
+	$csv=new CSV($data->config);
+	$response  = $response->withHeader('Content-Type', 'application/json');
+	echo json_encode($csv->parse($data->csv, true));
+	return $response;
 });
 $app->get('/add', function ($request, $response, $args) {
 	$db=new DB();
@@ -173,6 +215,8 @@ $app->post('/save', function ($request, $response, $args) {
 	}
 	else{
 		$db=new DB();
+		$post["date"]=strtotime($post['date']);
+		$post['source'] = 0; // enforce source "manually created"
 		$id=$db->setBooking($post,$get["id"]);
 		foreach($files as $file){
 			if($file->file)

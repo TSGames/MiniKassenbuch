@@ -34,7 +34,7 @@ function setFilter(){
 		<th class='documents'>Belege</th>
 		<th class='amount'>Betrag</th>
 		<th class='saldo'>Saldo</th>
-	</thead
+	</thead>
     {% for booking in list %}
 		<tr>
         <td class='number'>{{booking.number}}</td>
@@ -55,6 +55,11 @@ function setFilter(){
 		</tr>
     {% endfor %}
 	{% if list==null %}
-		<tr><td colspan="999">Noch keine Buchungen im gewählten Zeitraum für das Konto {{account.label}}. Über das Menü können Sie Buchungen anlegen</td></tr>
+		<tr><td colspan="999">Noch keine Buchungen im gewählten Zeitraum für das Konto '{{accountActive.label}}'. Über das Menü können Sie Buchungen anlegen</td></tr>
 	{% endif %}
+	</table>
+	<hr>
+	<a class="btn" href="{{base_url}}export">
+        <span>{{filter.year}} exportieren als CSV</span>
+    </a></li>
 </div>

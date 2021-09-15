@@ -16,6 +16,7 @@ class DB{
 
 		// update tables
 		$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN amount NUMERIC default NULL");
+		$this->db->exec("ALTER TABLE BOOKING ADD COLUMN source NUMERIC default 0");
 
 		if (!$db_already_existed) {
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
@@ -31,13 +32,15 @@ class DB{
 			$_SESSION["filter"]["month"]=0;
 			$_SESSION["filter"]["year"]=date("Y");
 		}
-		/*
+		
 		$this->db->beginTransaction();
-		for($i=0;$i<10000;$i++){
-			$this->db->exec("INSERT INTO BOOKING VALUES (NULL,1,'Test $i',".(time()+rand(-100000000,100000000)).",".(rand(10,10000)).",".(rand(0,1)).",'')");
+		/*
+		for($i=0;$i<20000;$i++){
+			$this->db->exec("INSERT INTO BOOKING VALUES (NULL,1,'Test $i',".(time()+rand(-100000000,100000000)).",".(rand(10,10000)).",".(rand(0,1)).",'',0)");
 		}
-		$this->db->commit();
 		*/
+		$this->db->commit();
+		
 	}
 	public function getSettings(){
 	    $stmt = $this->db->prepare('SELECT * FROM SETTINGS');
@@ -49,6 +52,28 @@ class DB{
 	    }
 	    if(!isset($settings['currency'])) $settings['currency']="€";
 	    return $settings;
+	}
+	public function getStats(){
+	    $stmt = $this->db->prepare('SELECT COUNT(*) FROM BOOKING');
+		$stmt->execute();
+		$bookings=$stmt->fetchAll()[0][0];
+		$stmt = $this->db->prepare('SELECT COUNT(*) FROM DOCUMENT');
+		$stmt->execute();
+		$documents=$stmt->fetchAll()[0][0];
+		$documentsSize = 0;
+		foreach(@scandir(DB::$DOCUMENTS) as $doc){
+			if($doc == '.' ||$doc === '..') {
+				continue;
+			}
+			$documentsSize += filesize(DB::$DOCUMENTS . DIRECTORY_SEPARATOR . $doc);
+		}
+	    return [
+			'bookings' => $bookings,
+			'documents' => $documents,
+			'documentsSize' => $documentsSize,
+			'databaseSize' => filesize(DB::$FILE)
+		];
+	    
 	}
 	public function updateSettings($settings){
 	    foreach($settings as $name=>$value){
@@ -242,14 +267,14 @@ class DB{
 		}
 		$data["id"]=$id;
 		$data["label"]=$post["label"];
-		$data["date"]=strtotime($post["date"]);
+		$data["date"]=$post["date"];
 		$data["amount"]=$post["amount"]*100;		
 		$data["type"]=$post["type"];
 		$data["notes"]=$post["notes"];
+		$data["source"]=$post["source"];
 		$data["account"]=$_SESSION["account"];
-		$category=$post["category"];
-		
-		$stmt = $this->db->prepare('INSERT INTO BOOKING VALUES (:id,:account,:label,:date,:amount,:type,:notes)');
+		$category=@$post["category"];
+		$stmt = $this->db->prepare('INSERT INTO BOOKING VALUES (:id,:account,:label,:date,:amount,:type,:notes,:source)');
 		$stmt->execute($data);
 		if(!$id)
 			$id=$this->db->lastInsertId();
@@ -272,6 +297,16 @@ class DB{
 		$stmt = $this->db->prepare('INSERT INTO CATEGORY (id,label) VALUES (NULL,:label)');
 		$stmt->execute($data);
 		return $this->db->lastInsertId();
+	}
+	public function hasBooking($booking){
+		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE label = :label AND strftime("%Y%m%d",datetime(date,"unixepoch")) = :date AND amount = :amount AND type = :type');
+		$stmt->execute([
+			':label'=>$booking['label'],
+			':date'=>date('Ymd', $booking['date']),
+			':amount'=>$booking['amount'] * 100,
+			':type'=>$booking['type'],
+		]);
+		return count($stmt->fetchAll()) > 0;
 	}
 	public function getBooking($id){
 		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE id = :id');
@@ -348,12 +383,12 @@ class DB{
 			else
 				$saldo-=$d["amount"];
 			$number++;
-			if(date("Y",$d["date"])!=@$oldDate){
+			if(@date("Y",$d["date"])!=@$oldDate){
 				$number=1;
 			}
-			$oldDate=date("Y",$d["date"]);
+			$oldDate=@date("Y",$d["date"]);
 			if($filter){
-				if(date("Y",$d["date"])!=@$_SESSION["filter"]["year"])
+				if(@date("Y",$d["date"])!=@$_SESSION["filter"]["year"])
 					continue;
 				if($_SESSION["filter"]["month"]!=0 && date("m",$d["date"])!=$_SESSION["filter"]["month"])
 					continue;
