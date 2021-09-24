@@ -11,9 +11,9 @@ Eine simple PHP &amp; Javascript Applikation zum führen einfacher Kassenbücher
 # Ziel
 Ziel soll es sein, eine offene, kostenfreie Plattform für die Verwaltung von Kassenbeständen oder Konten durchzuführen. Einfache Statistiken sollen bei der Auswertung helfen.
 
-Das System ist insbesondere an Vereine ausgerichtet.
+Das System ist insbesondere an Vereine, private Personen oder zur persönlichen Benutzung ausgerichtet.
 
-Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests bis ca. 100.000 Buchungen waren, je nach Serverperformance, erfolgreich.
+Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests bis ca. 100.000 Buchungen waren, je nach Serverperformance, erfolgreich. Das System hat keine spezifischen Performance-Optimierungen für große Datenmengen. 
 
 # Installation
 Das System muss mittels 
@@ -67,7 +67,7 @@ chgrp www-data /pfad/zum/MiniKassenbuch
 ```
 
 Damit nicht jeder weltweit auf das Kassenbuch zugreifen und auch verändern
-kann, ist standardmässig nur der Zugriff vom Webserver selbst erlaubt
+kann, ist standardmäßig nur der Zugriff vom Webserver selbst erlaubt
 (`Require host localhost`). Alle anderen müssen sich mittels Passwort
 authentifizieren (`Require valid-user`). Diese Nutzer müssen nun mittels
 ```sh
