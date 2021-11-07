@@ -15,6 +15,17 @@ Das System ist insbesondere an Vereine, private Personen oder zur persönlichen 
 
 Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests bis ca. 100.000 Buchungen waren, je nach Serverperformance, erfolgreich. Das System hat keine spezifischen Performance-Optimierungen für große Datenmengen. 
 
+# Features
+* Verwaltung von Kasse und bis zu 6 Bankkonten
+* Kategorisierung von einzelnen Buchungen
+* Intelligente Kategorieerkennung nach Eingabe von Buchungen
+* Speichern von Bemerkungen und beliebigen Dokumenten (PDF, JPG, ...) an Buchungen
+* Import-Konfigurator für CSV-Import von Bankdaten
+* Statisik-Auswertung für gesamten Zeitraum + Jahr
+* Export pro Monat
+* 1-Klick Backup des gesamten Datenbestands
+* Responsive-Design (Desktop + Mobile optimiert)
+
 # Installation
 Das System muss mittels 
 ```sh
