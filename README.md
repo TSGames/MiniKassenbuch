@@ -21,7 +21,7 @@ Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests 
 * Intelligente Kategorieerkennung nach Eingabe von Buchungen
 * Speichern von Bemerkungen und beliebigen Dokumenten (PDF, JPG, ...) an Buchungen
 * Import-Konfigurator für CSV-Import von Bankdaten
-* Statisik-Auswertung für gesamten Zeitraum + Jahr
+* Statistik-Auswertung für gesamten Zeitraum + Jahr
 * Export pro Monat
 * 1-Klick Backup des gesamten Datenbestands
 * Responsive-Design (Desktop + Mobile optimiert)
