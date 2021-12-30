@@ -18,6 +18,10 @@ class CSV{
 		if(strpos($numeric, '.') === false && strpos($numeric, ',') === false) {
 			return intval($numeric) / 100;
 		}
+		if(strpos($numeric, '.') !== false && strpos($numeric, ',') !== false && 
+		strpos($numeric, '.') < strpos($numeric, ',')) {
+			$numeric = str_replace('.', '', $numeric); 
+		}
 		return doubleval(str_replace(',', '.', $numeric));
 	}
 	private function convertDate($date) {
@@ -27,7 +31,7 @@ class CSV{
 			"Y-m-d"
 		];
 		foreach($formats as $format) {
-			$parsed = DateTime::createFromFormat("d.m.y", $date);
+			$parsed = DateTime::createFromFormat($format, $date);
 			if($parsed) {
 				return $parsed->getTimestamp();
 			}

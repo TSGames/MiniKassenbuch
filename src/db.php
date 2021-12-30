@@ -129,11 +129,14 @@ class DB{
 		if(count($bookings)==0)
 			return null;
 		
-		$csv="Datum;Laufende Nr.;Vorgang;Betrag;Saldo;Belege";
+		$data = [];
+		$data[] = ["Datum","Laufende Nr.","Vorgang","Kategorie","Bemerkungen","Betrag","Saldo","Belege"];
 		foreach($bookings as $booking){
 			$date=date("Y-m-d",$booking['date']);
 			$number=$booking['number'];
 			$label=$booking['label'];
+			$category=$booking['category'];
+			$notes=$booking['notes'];
 			$amount=number_format($booking['amount']/100,2,",",".");
 			$saldo=number_format($booking['saldo']/100,2,",",".");
 			$docs = $this->getDocuments($booking['id']);
@@ -142,8 +145,15 @@ class DB{
 				$documents .= $doc['filename'] . "\n";
 			}
 			$documents = trim($documents);
-			$csv.="\n$date;$number;$label;$amount;$saldo;\"$documents\"";
+			$data[] = [
+				$date,$number,$label,$category,$notes,$amount,$saldo,$documents
+			];
 		}
+		$file = tmpfile();	
+		foreach ($data as $fields) {
+			fputcsv($file, $fields);
+		}
+		$csv = file_get_contents(stream_get_meta_data($file)['uri']);
 		return $csv;
 	}
 	public function getYearStats($account=null,$yearsBack=10,$targetYear=NULL){
