@@ -190,7 +190,7 @@ $app->post('/categories/add', function ($request, $response, $args) {
 });
 $app->post('/save', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
-	$get=$request->getQueryParams();
+	$get = $request->getQueryParams();
 	$files = $request->getUploadedFiles();
 	$error=null;
 	//print_r($files);
@@ -209,6 +209,7 @@ $app->post('/save', function ($request, $response, $args) {
 	}
 	if($error){
 		$db=new DB();
+		$post["id"] = $get["id"];
 		$post["error"]=$error;
 		$post["categories"]=$db->getCategories();
 		return $this->view->render($response, 'booking.html', $post);
