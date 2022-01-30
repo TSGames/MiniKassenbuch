@@ -17,6 +17,7 @@ Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests 
 
 # Features
 * Verwaltung von Kasse und bis zu 6 Bankkonten
+* Integrierter Login mit Nutzername + Passwort
 * Kategorisierung von einzelnen Buchungen
 * Intelligente Kategorieerkennung nach Eingabe von Buchungen
 * Speichern von Bemerkungen und beliebigen Dokumenten (PDF, JPG, ...) an Buchungen
@@ -34,7 +35,7 @@ php composer.phar install
 ```
 konfiguriert werden.
 
-Alternativ können Binaries bezogen werden. Ein PHP 7.x Webserver mit Unterstützung für SQLite wird benötigt.
+Alternativ können Binaries ([hier](https://github.com/TSGames/MiniKassenbuch/actions) bezogen werden. Ein PHP 7.x Webserver mit Unterstützung für SQLite wird benötigt.
 
 ## Konfiguration unter Debian oder Ubuntu mit Apache
 
@@ -57,13 +58,6 @@ sind.)
 	<Directory /pfad/zum/MiniKassenbuch/public/>
 		Options Indexes FollowSymLinks
 		AllowOverride All
-		AuthType Basic
-		AuthName "MiniKassenbuch"
-		AuthUserFile "/pfad/zum/MiniKassenbuch/.htpasswd"
-		<RequireAny>
-			Require host localhost
-			Require valid-user
-		</RequireAny>
 	</Directory>
 ```
 Natürlich muss `/pfad/zum/MiniKassenbuch` durch den Installationspfad auf
@@ -77,17 +71,12 @@ chmod g+w /pfad/zum/MiniKassenbuch
 chgrp www-data /pfad/zum/MiniKassenbuch
 ```
 
-Damit nicht jeder weltweit auf das Kassenbuch zugreifen und auch verändern
-kann, ist standardmäßig nur der Zugriff vom Webserver selbst erlaubt
-(`Require host localhost`). Alle anderen müssen sich mittels Passwort
-authentifizieren (`Require valid-user`). Diese Nutzer müssen nun mittels
-```sh
-touch /pfad/zum/MiniKassenbuch/.htpasswd
-htpasswd /pfad/zum/MiniKassenbuch/.htpasswd benutzer
-```
-eingetragen werden. Die erste Zeile ist nur vor dem Anlegen des ersten Nutzers
-notwendig; mehrfache Anwendung ist aber unschädlich. Anstelle von `benutzer`
-muss der jeweilige Name des Benutzers angegeben werden.
+# Erster Login
+Nach dem ersten Hochladen der Webanwendung und Aufruf der Seite muss ein Login-Screen inkl. einer Hinweis-Meldung, dass es sich um den ersten Login handelt, erscheinen. Sollte dieser Hinweis nicht erscheinen, auf jeden Fall die Zugangsdaten zurücksetzen (s. unten)!
+Die nun erfolgende Eingabe wird für spätere Zugriffe als Login verwendet.
+
+# Login zurücksetzen
+Der Login ist (Passwort verschlüsselt) in der Datei `src/authentication.json` gespeichert. Diese kann auf dem Server gelöscht werden, der anschließend erfolgende Login wird wieder für zukünftige Zugriffe verwendet
 
 
 # Screenshots
