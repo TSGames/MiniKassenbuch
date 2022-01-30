@@ -71,11 +71,11 @@ chmod g+w /pfad/zum/MiniKassenbuch
 chgrp www-data /pfad/zum/MiniKassenbuch
 ```
 
-# Erster Login
+## Erster Login
 Nach dem ersten Hochladen der Webanwendung und Aufruf der Seite muss ein Login-Screen inkl. einer Hinweis-Meldung, dass es sich um den ersten Login handelt, erscheinen. Sollte dieser Hinweis nicht erscheinen, auf jeden Fall die Zugangsdaten zurücksetzen (s. unten)!
 Die nun erfolgende Eingabe wird für spätere Zugriffe als Login verwendet.
 
-# Login zurücksetzen
+## Login zurücksetzen
 Der Login ist (Passwort verschlüsselt) in der Datei `src/authentication.json` gespeichert. Diese kann auf dem Server gelöscht werden, der anschließend erfolgende Login wird wieder für zukünftige Zugriffe verwendet
 
 
