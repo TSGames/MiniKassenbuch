@@ -188,6 +188,10 @@ $app->post('/categories/add', function ($request, $response, $args) {
 	}
 	return $response->withRedirect($request->getUri()->getBaseUrl()."/categories");
 });
+$app->get('/logout', function ($request, $response, $args) {
+	unset($_SESSION['user']);
+	return $response->withRedirect($request->getUri()->getBaseUrl());
+});
 $app->post('/save', function ($request, $response, $args) {
 	$post = $request->getParsedBody();
 	$get = $request->getQueryParams();

@@ -1,0 +1,22 @@
+{% include 'header.html' %}
+<div class="container-center">
+    <div class="container">
+        <h5>Login</h5>
+        {% if firstTime %}
+            <div class="error">
+                Willkommen! Es wurde keine Nutzer-Konfiguration gefunden. Die nun erfolgende Eingabe wird für zukünftige Anmeldungen verwendet.
+            </div>
+        {% endif %}
+        {% if valid is same as (false) %}
+        <div class="error">
+            Ungültige Zugangsdaten. Falls Sie die Zugangsdaten vergessen haben, können Sie die Datei "authentication.json" löschen.
+        </div>
+    {% endif %}
+    <form action="{{base_url}}login" name="form" method="POST" enctype="multipart/form-data">
+    <label>Nutzername</label>
+    <input type="text" name="user">
+    <label>Passwort</label>
+    <input type="password" name="password">
+    <a class="btn" onclick="form.submit()">Login</a>
+    </div>
+</div>
