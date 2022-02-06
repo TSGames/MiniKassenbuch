@@ -15,8 +15,12 @@ class DB{
 		$this->db->exec("CREATE TABLE IF NOT EXISTS SETTINGS (name TEXT PRIMARY KEY,value TEXT)");
 
 		// update tables
-		$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN amount NUMERIC default NULL");
-		$this->db->exec("ALTER TABLE BOOKING ADD COLUMN source NUMERIC default 0");
+		try {
+			$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN amount NUMERIC default NULL");
+		} catch(Exception $ignored) {}
+		try {
+			$this->db->exec("ALTER TABLE BOOKING ADD COLUMN source NUMERIC default 0");
+		} catch(Exception $ignored) {}
 
 		if (!$db_already_existed) {
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
