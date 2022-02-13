@@ -95,3 +95,15 @@
 {% endif %}
 <a class="btn" onclick="form.submit()">Speichern</a>
 </div>
+<div class="navigation">
+	{% if previousId %}
+	<a class="btn previous" href="{{base_url}}/edit?id={{previousId}}">
+		<i class="material-icons">keyboard_arrow_left</i>
+	</a>
+	{% endif %}
+	{% if nextId %}
+	<a class="btn next" href="{{base_url}}/edit?id={{nextId}}">
+		<i class="material-icons">keyboard_arrow_right</i>
+	</a>
+	{% endif %}
+</div>

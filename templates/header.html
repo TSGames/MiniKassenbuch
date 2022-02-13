@@ -218,6 +218,18 @@ td.label .category-error{
 	flex-grow:1;
 	margin-right:10px!important;
 }
+.navigation {
+	position: fixed;
+	top: 40%;
+}
+.navigation .previous {
+	position: fixed;
+	left: 0;
+}
+.navigation .next {
+	position: fixed;
+	right: 0;
+}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -227,6 +239,9 @@ input::-webkit-inner-spin-button {
 and (max-width : 600px) {
 	td,th{
 		font-size:10pt;
+	}
+	.navigation {
+		display:none;
 	}
 	th.number,td.number{
 		display:none;

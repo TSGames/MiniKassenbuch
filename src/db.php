@@ -323,7 +323,10 @@ class DB{
 		return count($stmt->fetchAll()) > 0;
 	}
 	public function getBooking($id){
-		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE id = :id');
+		$stmt = $this->db->prepare('SELECT *,
+		(SELECT id FROM BOOKING WHERE date < b.date AND account=b.account ORDER BY date DESC) as previousId,
+		(SELECT id FROM BOOKING WHERE date > b.date AND account=b.account ORDER BY date ASC) as nextId
+			 FROM BOOKING b WHERE id = :id');
 		$stmt->execute([':id'=>$id]);
 		$booking=$stmt->fetchAll()[0];
 		$booking["date"]=explode("T",date("c",$booking["date"]))[0];
