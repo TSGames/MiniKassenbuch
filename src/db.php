@@ -100,7 +100,7 @@ class DB{
 			foreach($bookings as $b) {
 				$docs = $this->getDocuments($b['id']);
 				foreach($docs as $doc) {
-					$zip->addFile(self::$DOCUMENTS.$doc['id'],"documents/".$doc['filename']);
+					$zip->addFile(self::$DOCUMENTS.$doc['id'],"documents/".$b['number'] . ' - ' . $doc['filename']);
 				}
 			}
 			
@@ -146,7 +146,7 @@ class DB{
 			$docs = $this->getDocuments($booking['id']);
 			$documents = '';
 			foreach($docs as $doc) {
-				$documents .= $doc['filename'] . "\n";
+				$documents .= $booking['number'] . ' - ' . $doc['filename'] . "\n";
 			}
 			$documents = trim($documents);
 			$data[] = [
