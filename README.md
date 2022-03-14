@@ -8,6 +8,9 @@ A simple PHP and Javascript application to manage accounting (for german law)
 Eine simple PHP &amp; Javascript Applikation zum führen einfacher Kassenbücher &amp; Vereinskassen
 </p>
 
+# Build Status
+[![PHP Composer](https://github.com/TSGames/MiniKassenbuch/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/TSGames/MiniKassenbuch/actions/workflows/php.yml)
+
 # Ziel
 Ziel soll es sein, eine offene, kostenfreie Plattform für die Verwaltung von Kassenbeständen oder Konten durchzuführen. Einfache Statistiken sollen bei der Auswertung helfen.
 
