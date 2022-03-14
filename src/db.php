@@ -158,6 +158,7 @@ class DB{
 			fputcsv($file, $fields);
 		}
 		$csv = file_get_contents(stream_get_meta_data($file)['uri']);
+		$csv = preg_replace('~\R~u', "\r\n", $csv);
 		return $csv;
 	}
 	public function getYearStats($account=null,$yearsBack=10,$targetYear=NULL){
