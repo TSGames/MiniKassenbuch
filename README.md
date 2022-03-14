@@ -11,6 +11,10 @@ Eine simple PHP &amp; Javascript Applikation zum führen einfacher Kassenbücher
 # Build Status
 [![PHP Composer](https://github.com/TSGames/MiniKassenbuch/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/TSGames/MiniKassenbuch/actions/workflows/php.yml)
 
+# Releases
+Direkt loslegen & installieren: Auf der Release-Page gibt es fertige Binaries zum kopieren auf einen PHP-Server:
+https://github.com/TSGames/MiniKassenbuch/releases
+
 # Ziel
 Ziel soll es sein, eine offene, kostenfreie Plattform für die Verwaltung von Kassenbeständen oder Konten durchzuführen. Einfache Statistiken sollen bei der Auswertung helfen.
 
