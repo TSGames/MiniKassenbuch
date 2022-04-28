@@ -70,6 +70,15 @@ nav .nav-controls .logo{
 	height:50px;
 	margin:5px 20px;
 }
+nav .brand-logo {
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-gap: 10px;
+	font-size: 110%;
+}
+nav .brand-logo .show-on-large {
+	display: none;
+}
 @media only screen and (max-width: 600px){
 	nav .nav-controls .logo{
 		display:none;
@@ -236,7 +245,7 @@ input::-webkit-inner-spin-button {
 	display:none;
 }
 @media only screen 
-and (max-width : 600px) {
+and (max-width : 650px) {
 	td,th{
 		font-size:10pt;
 	}

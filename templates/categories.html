@@ -3,7 +3,7 @@
 <h4>Kategorien verwalten</h4>
 <table class='striped'>
 	<thead>
-		<th class='id'>Kategorie-Id</th>
+		<!-- <th class='id'>Kategorie-Id</th> -->
 		<th class='label'>Bezeichnung</th>
 		<th class='type'>Standard-Typ</th>
 		<th class='amount'>Standard-Betrag</th>
@@ -11,7 +11,7 @@
 	</thead
     {% for category in categories %}
 		<tr>
-        <td class='id'>{{category.id}}</td>
+        <!-- <td class='id'>{{category.id}}</td> -->
         <td class='label'>{{category.label}}</td>
         <td class='type'>{{category.amount == 0 ? '-' : category.amount > 0 ? 'Einnahme' : 'Ausgabe'}}</td>
         <td class='amount'>{{(category.amount/100)|abs|number_format(2)}} {{currency}}</td>
