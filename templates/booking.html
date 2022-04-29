@@ -80,8 +80,10 @@
 <label>Aktuell angeheftete Dokumente</label>
 <ul class="collection">
 {% for document in documents %}
-<li class="collection-item"><a href="{{base_url}}document/{{document.id}}-{{document.filename}}" target="_blank">{{document.filename}}</a>
-<i class="clickable material-icons" onclick="document.id.value={{document.id}};document.submit()">clear</i>
+<li class="collection-item document-list">
+	<i class="material-icons">description</i>
+	<a href="{{base_url}}document/{{document.id}}-{{document.filename}}" target="_blank">{{document.filename}}</a>
+	<i class="clickable material-icons delete" onclick="document.id.value={{document.id}};document.submit()">clear</i>
 </li>
 {% endfor %}
 </ul>
