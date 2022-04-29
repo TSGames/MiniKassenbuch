@@ -2,7 +2,7 @@
 <nav>
 	<div class="nav-wrapper">
 		<div class="brand-logo right">
-			<div class="show-on-large">{{year}}</div>
+			<div class="show-on-large">{{currentYear|default(filter.year)}}</div>
 			<a href="#" onclick="$('#accounts').fadeIn()">
 				{{activeAccount.label}} <i class="material-icons">keyboard_arrow_down</i>
 			</a>
