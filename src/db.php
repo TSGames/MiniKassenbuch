@@ -82,6 +82,12 @@ class DB{
 	public function updateSettings($settings){
 	    foreach($settings as $name=>$value){
             $stmt = $this->db->prepare('INSERT OR REPLACE INTO SETTINGS VALUES (:name,:value)');
+			if($name == 'readOnlyPassword') {
+				if(!$value) {
+					continue;
+				}
+				$value = password_hash($value, PASSWORD_BCRYPT);
+			}
             $stmt->execute([':name'=>$name,':value'=>$value]);
 	    }
 	}

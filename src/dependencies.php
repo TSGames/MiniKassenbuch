@@ -27,5 +27,6 @@ $container['view'] = function ($container) {
 	$view->offsetSet('year', date("Y"));
 	$view->offsetSet('month', date("m"));
 	$view->offsetSet('filter', $_SESSION["filter"]);
+	$view->offsetSet('readonly', $_SESSION["readonly"]);
     return $view;
 };

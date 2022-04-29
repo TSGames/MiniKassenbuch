@@ -14,10 +14,12 @@
 						<i class="material-icons">list</i>
 						<span class="show-on-large">Liste</span>
 					</a></li>
-				<li class="{% if 'add' in path %}active{% endif %}"><a href="{{base_url}}add">
-						<i class="material-icons">add_circle_outline</i>
-						<span class="show-on-large">Buchung</span>
+				{% if readonly == false %}
+					<li class="{% if 'add' in path %}active{% endif %}"><a href="{{base_url}}add">
+							<i class="material-icons">add_circle_outline</i>
+							<span class="show-on-large">Buchung</span>
 					</a></li>
+				{% endif %}	
 				<li class="{% if 'reports' in path %}active{% endif %}"><a href="{{base_url}}reports">
 						<i class="material-icons">timeline</i>
 						<span class="show-on-large">Berichte</span>
@@ -30,10 +32,12 @@
 						<i class="material-icons">cloud_upload</i>
 						<span class="show-on-large">Importieren</span>
 					</a></li>
-				<li class="{% if 'settings' in path %}active{% endif %}"><a href="{{base_url}}settings">
-						<i class="material-icons">settings</i>
-						<span class="show-on-large">Konfiguration</span>
+				{% if readonly == false %}
+					<li class="{% if 'settings' in path %}active{% endif %}"><a href="{{base_url}}settings">
+							<i class="material-icons">settings</i>
+							<span class="show-on-large">Konfiguration</span>
 					</a></li>
+				{% endif %}	
 			</ul>
 		</div>
 	</div>
@@ -50,3 +54,12 @@
 		{% endfor %}
 	</ul>
 </div>
+{% if readonly %}
+<div class="container">
+	<div class="info">
+		Der aktuelle Zugang hat keine Schreibrechte.
+		<br>
+		Jegliche Speicher- oder Bearbeitungsoperationen werden nicht ausgeführt.
+	</div>	
+</div>
+{% endif %}

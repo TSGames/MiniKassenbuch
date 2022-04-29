@@ -27,12 +27,22 @@ a,
 .dropdown-content li>a, .dropdown-content li>span{
 	color: #0069c0;
 }
+.settings label {
+	display: flex;
+}
+.settings .btn {
+	margin-top: 20px;
+}
 .btn,
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before, [type="radio"].with-gap:checked+span:after,
 .collection .collection-item.active{
 	background-color: #0069c0;
 }
 .btn:hover{
+	background-color: #004c8a;
+}
+[type="checkbox"].filled-in:checked+span:not(.lever):after {
+	border-color: #004c8a;
 	background-color: #004c8a;
 }
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before, [type="radio"].with-gap:checked+span:after,
@@ -108,6 +118,11 @@ a{
 	font-weight: bold;
 }
 .info{
+}
+a.link-disabled {
+	color: #888;
+	cursor: default;
+	pointer-events: none;
 }
 .header,.table-row{
 	display:table-row;

@@ -55,7 +55,7 @@
 <label>Bezeichnung</label>
 <input type="text" name="label" value="{{label}}" onblur="guessCategory(this.value)">
 <div class="categories">
-	<label>Kategorie(n)</label>
+	<label>Kategorie</label>
 	<div>
 	{% for category in categories %}
 	<label><input type="radio" name="category"
@@ -91,9 +91,11 @@
 <input type="file" name="documents" multiple>
 </div>
 {% if id %}
-<a class="btn-flat" href="{{base_url}}./">Abbrechen</a>
+<a class="btn-flat" href="{{base_url}}./">Abbrechen & Zurück</a>
 {% endif %}
-<a class="btn" onclick="form.submit()">Speichern</a>
+<a class="btn" onclick="form.submit()"{% if readonly %}
+disabled
+{% endif %}>Speichern</a>
 </div>
 <div class="navigation">
 	{% if previousId %}

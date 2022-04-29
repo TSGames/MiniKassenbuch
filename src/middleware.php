@@ -2,14 +2,12 @@
 $app->add(function ($request, $response, $next) {
     if(@$_SESSION["readonly"] === true) {
         $isAllowed = false;
-        if($request->getMethod() === 'GET' || $isAllowed) {
+        if(!($request->getMethod() === 'GET' || $isAllowed)) {
             return $response->withStatus(403);
-        } else {
-            return $response->withRedirect($request->getUri()->getBaseUrl());
         }
-    } else {
-        return $next($request, $response);
     }
+    return $next($request, $response);
+
 });
 $app->add(function ($request, $response, $next) {
     if(isset($_SESSION["user"])) {
@@ -28,7 +26,13 @@ $app->add(function ($request, $response, $next) {
         } else {
             $data = json_decode(file_get_contents(__DIR__ . '/authentication.json'));
             $valid = (strtolower($post['user']) === strtolower($data->user) && password_verify($post['password'], $data->password));
-            $validReadOnly = (strtolower($post['user']) === strtolower($data->readonly->user) && password_verify($post['password'], $data->readonly->password));
+            if(!$valid) {
+            $db = new DB();
+            $settings = $db->getSettings();
+            if($settings['readOnlyEnabled']) {
+                $validReadOnly = (strtolower($post['user']) === strtolower($settings['readOnlyUsername']) && password_verify($post['password'], $settings['readOnlyPassword']));
+            }
+        }
         }
         if($valid || $validReadOnly) {
             $_SESSION['user'] = strtolower($post['user']);
