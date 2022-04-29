@@ -2,7 +2,7 @@
 $app->add(function ($request, $response, $next) {
     if(@$_SESSION["readonly"] === true) {
         $isAllowed = false;
-        if($request->getUri()->getPath() == 'account') {
+        if(trim($request->getUri()->getPath(), '/') == 'account') {
             $isAllowed = true;
         }
         if(!($request->getMethod() === 'GET' || $isAllowed)) {
