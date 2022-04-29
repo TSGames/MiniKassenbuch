@@ -2,8 +2,12 @@
 $app->add(function ($request, $response, $next) {
     if(@$_SESSION["readonly"] === true) {
         $isAllowed = false;
+        if($request->getUri()->getPath() == 'account') {
+            $isAllowed = true;
+        }
         if(!($request->getMethod() === 'GET' || $isAllowed)) {
-            return $response->withStatus(403);
+            throw new \Exception('Keine Schreibrechte zum Durchführen des Vorgangs: ' . $request->getUri()->getPath());
+            // return $response->withStatus(403)->write('Keine Schreibrechte zum Durchführen des Vorgangs');
         }
     }
     return $next($request, $response);
