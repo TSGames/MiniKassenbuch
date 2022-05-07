@@ -51,11 +51,13 @@ function setFilter(){
 		<td class='amount {% if booking.type==0 %}positive{% else %}negative{% endif %}'>{{(booking.amount/100)|number_format(2)}} {{currency}}</td>
 		<td class='saldo {% if booking.saldo>=0 %}positive{% else %}negative{% endif %}'>{{(booking.saldo/100)|number_format(2)}} {{currency}}</td>
 		<td><a href="{{base_url}}edit?id={{booking.id}}"><i class="material-icons">edit</i></a></td>
-		<td><a href="{{base_url}}delete?id={{booking.id}}"><i class="material-icons">delete</i></a></td>
+		<td><a href="{{base_url}}delete?id={{booking.id}}"{% if readonly %}
+			class="link-disabled"
+			{% endif %}><i class="material-icons">delete</i></a></td>
 		</tr>
     {% endfor %}
 	{% if list==null %}
-		<tr><td colspan="999">Noch keine Buchungen im gewählten Zeitraum für das Konto '{{accountActive.label}}'. Über das Menü können Sie Buchungen anlegen</td></tr>
+		<tr><td colspan="999">Noch keine Buchungen im gewählten Zeitraum für das Konto '{{activeAccount.label}}'. Über das Menü können Sie Buchungen anlegen</td></tr>
 	{% endif %}
 	</table>
 	<hr>

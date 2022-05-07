@@ -55,7 +55,7 @@
 <label>Bezeichnung</label>
 <input type="text" name="label" value="{{label}}" onblur="guessCategory(this.value)">
 <div class="categories">
-	<label>Kategorie(n)</label>
+	<label>Kategorie</label>
 	<div>
 	{% for category in categories %}
 	<label><input type="radio" name="category"
@@ -80,8 +80,10 @@
 <label>Aktuell angeheftete Dokumente</label>
 <ul class="collection">
 {% for document in documents %}
-<li class="collection-item"><a href="{{base_url}}document/{{document.id}}-{{document.filename}}" target="_blank">{{document.filename}}</a>
-<i class="clickable material-icons" onclick="document.id.value={{document.id}};document.submit()">clear</i>
+<li class="collection-item document-list">
+	<i class="material-icons">description</i>
+	<a href="{{base_url}}document/{{document.id}}-{{document.filename}}" target="_blank">{{document.filename}}</a>
+	<i class="clickable material-icons delete" onclick="document.id.value={{document.id}};document.submit()">clear</i>
 </li>
 {% endfor %}
 </ul>
@@ -91,9 +93,11 @@
 <input type="file" name="documents" multiple>
 </div>
 {% if id %}
-<a class="btn-flat" href="{{base_url}}./">Abbrechen</a>
+<a class="btn-flat" href="{{base_url}}./">Abbrechen & Zurück</a>
 {% endif %}
-<a class="btn" onclick="form.submit()">Speichern</a>
+<a class="btn" onclick="form.submit()"{% if readonly %}
+disabled
+{% endif %}>Speichern</a>
 </div>
 <div class="navigation">
 	{% if previousId %}

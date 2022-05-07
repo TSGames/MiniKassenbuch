@@ -27,12 +27,22 @@ a,
 .dropdown-content li>a, .dropdown-content li>span{
 	color: #0069c0;
 }
+.settings label {
+	display: flex;
+}
+.settings .btn {
+	margin-top: 20px;
+}
 .btn,
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before, [type="radio"].with-gap:checked+span:after,
 .collection .collection-item.active{
 	background-color: #0069c0;
 }
 .btn:hover{
+	background-color: #004c8a;
+}
+[type="checkbox"].filled-in:checked+span:not(.lever):after {
+	border-color: #004c8a;
 	background-color: #004c8a;
 }
 [type="radio"]:checked+span:after, [type="radio"].with-gap:checked+span:before, [type="radio"].with-gap:checked+span:after,
@@ -70,6 +80,15 @@ nav .nav-controls .logo{
 	height:50px;
 	margin:5px 20px;
 }
+nav .brand-logo {
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-gap: 10px;
+	font-size: 110%;
+}
+nav .brand-logo .show-on-large {
+	display: none;
+}
 @media only screen and (max-width: 600px){
 	nav .nav-controls .logo{
 		display:none;
@@ -100,6 +119,11 @@ a{
 }
 .info{
 }
+a.link-disabled {
+	color: #888;
+	cursor: default;
+	pointer-events: none;
+}
 .header,.table-row{
 	display:table-row;
 	width:100%;
@@ -129,8 +153,19 @@ a{
 }
 .container-center{
 	display: flex;
+	flex-direction: column;
 	height: 100%;
-	align-items: center;
+	justify-content: center;
+}
+.login-logo{
+	padding: 20px;
+	background-color: #2196f3;
+	display: flex;
+	justify-content: center;
+}
+.login-logo img {
+	height: 80px;
+	width: auto;
 }
 .chart{
 	margin:30px;
@@ -153,8 +188,11 @@ a{
 h2{
 	font-size:14pt;
 }
-.collection-item i{
-	float:right;
+.document-list {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	grid-gap: 10px;
+	align-items: center;
 }
 .dialog{
 	position:fixed;
@@ -236,7 +274,7 @@ input::-webkit-inner-spin-button {
 	display:none;
 }
 @media only screen 
-and (max-width : 600px) {
+and (max-width : 650px) {
 	td,th{
 		font-size:10pt;
 	}

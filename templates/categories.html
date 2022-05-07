@@ -3,7 +3,7 @@
 <h4>Kategorien verwalten</h4>
 <table class='striped'>
 	<thead>
-		<th class='id'>Kategorie-Id</th>
+		<!-- <th class='id'>Kategorie-Id</th> -->
 		<th class='label'>Bezeichnung</th>
 		<th class='type'>Standard-Typ</th>
 		<th class='amount'>Standard-Betrag</th>
@@ -11,13 +11,15 @@
 	</thead
     {% for category in categories %}
 		<tr>
-        <td class='id'>{{category.id}}</td>
+        <!-- <td class='id'>{{category.id}}</td> -->
         <td class='label'>{{category.label}}</td>
         <td class='type'>{{category.amount == 0 ? '-' : category.amount > 0 ? 'Einnahme' : 'Ausgabe'}}</td>
         <td class='amount'>{{(category.amount/100)|abs|number_format(2)}} {{currency}}</td>
 		<td class='count'>{{category.count}}</td>
 		<td><a href="{{base_url}}edit_category?id={{category.id}}"><i class="material-icons">edit</i></a></td>
-		<td><a href="{{base_url}}delete_category?id={{category.id}}"><i class="material-icons">delete</i></a></td>
+		<td><a href="{{base_url}}delete_category?id={{category.id}}"{% if readonly %}
+			class="link-disabled"
+			{% endif %}><i class="material-icons">delete</i></a></td>
 		</tr>
     {% endfor %}
 	{% if categories==null %}
@@ -26,6 +28,10 @@
 </table>
 <form class="add" action="{{base_url}}categories/add" name="form" method="POST" enctype="multipart/form-data">
 	<input type="text" name="category" placeholder="z.B. Mitgliedsbeiträge" required>
-	<a class="btn" onclick="form.submit()">Anlegen</a>
+	<a class="btn" onclick="form.submit()"
+	{% if readonly %}
+	disabled
+	{% endif %}
+	>Anlegen</a>
 </form>
 </div>

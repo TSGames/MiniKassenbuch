@@ -12,13 +12,31 @@
         <div>Gesamtgröße Dokumente: {{(stats.documentsSize/1024/1024) | number_format(2) }} MB</div>
         <div>Gesamtgröße Datenbank: {{(stats.databaseSize/1024/1024) | number_format(2) }} MB</div>
     </div>
-<form action="{{base_url}}settings" name="form" method="POST" enctype="multipart/form-data">
-{% if error %}
-    <div class="error">{{error}}</div>
-{% endif %}
-    <h4>Voreinstellungen</h4>
-<label>W&auml;hrungsformat</label>
-<input type="text" name="currency" value="{{currency}}">
-
-<a class="btn" onclick="form.submit()">Speichern</a>
+    <form action="{{base_url}}settings" class="settings" name="form" method="POST" enctype="multipart/form-data">
+        {% if error %}
+        <div class="error">{{error}}</div>
+        {% endif %}
+        <h4>Voreinstellungen</h4>
+        <label>W&auml;hrungsformat</label>
+        <input type="text" name="currency" value="{{currency}}">
+        <h4>Lese-Zugang</h4>
+        <div class="info">Wenn aktiviert, kann der unten festgelegte Nutzer für einen Lesezugriff auf die Datenbestände und Statisitken verwendet werden.</div>
+        <label>
+            <input type="checkbox" class="filled-in" id="readonly-checkbox" name="readOnlyEnabled" value="true" onchange="$('#readonly-user').toggle()">
+            <span>Lesezugang aktivieren</span>
+        </label>
+        <div id="readonly-user" style="display:none">
+            <label>Nutzername</label>
+            <input type="text" name="readOnlyUsername" value="{{settings.readOnlyUsername}}">
+            <label>Passwort</label>
+            <input type="password" name="readOnlyPassword" autocomplete="off">
+        </div>
+        <a class="btn" onclick="form.submit()">Speichern</a>
 </div>
+<script>
+    const readonlyEnabled = {{settings.readOnlyEnabled}};
+    $('#readonly-checkbox').prop('checked',readonlyEnabled);
+    if(readonlyEnabled) {
+        $('#readonly-user').toggle()
+    }
+</script>

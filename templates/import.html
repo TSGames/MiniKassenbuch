@@ -206,7 +206,9 @@
         </div>
     <hr>
     <div>
-        <a class="btn" id="confirm" onclick="confirm()">Auswahl bestätigen</a>
+        <a class="btn" id="confirm" onclick="confirm()"{% if readonly %}
+        disabled
+        {% endif %}>Auswahl bestätigen</a>
         <a class="btn" id="start" onclick="doImport()" style="display: none;">Import beginnen</a>
     </div>
 </form>
