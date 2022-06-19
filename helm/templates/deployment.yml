@@ -21,6 +21,13 @@ spec:
         volumeMounts:
           - mountPath: "/var/www/html/data"
             name: data-storage
+        resources:
+          limits:
+            cpu: {{.Values.limitCPU | default "500m" }}
+            memory: {{.Values.limitMemory | default "512Mi" }}
+          requests:
+            cpu: {{.Values.requestCPU | default "50m" }}
+            memory: {{.Values.requestMemory | default "128Mi" }}
       volumes:
       - name: data-storage
         persistentVolumeClaim:
@@ -33,7 +40,7 @@ spec:
         - ReadWriteOnce
       resources:
         requests:
-          storage: 16Gi
+          storage: {{.Values.storageCapacity | default "16Gi" }}
 
 ---
 
