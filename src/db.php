@@ -1,8 +1,8 @@
 <?php
 
 class DB{
-	public static $FILE="../storage.sqlite";
-	public static $DOCUMENTS="../documents/";
+	public static $FILE="../data/storage.sqlite";
+	public static $DOCUMENTS="../data/documents/";
 	public function __construct(){
 		@mkdir(self::$DOCUMENTS);
 		$db_already_existed = file_exists(self::$FILE);
