@@ -12,7 +12,7 @@
         {% endif %}
         {% if valid is same as (false) %}
         <div class="error">
-            Ungültige Zugangsdaten. Falls Sie die Zugangsdaten vergessen haben, können Sie die Datei "authentication.json" löschen.
+            Ungültige Zugangsdaten. Falls Sie die Zugangsdaten vergessen haben, können Sie die Datei "data/authentication.json" löschen.
         </div>
     {% endif %}
     <form action="{{base_url}}login" name="form" method="POST" enctype="multipart/form-data">

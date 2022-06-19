@@ -17,18 +17,18 @@ $app->add(function ($request, $response, $next) {
     if(isset($_SESSION["user"])) {
         return $next($request, $response);
     }
-    $firstTime = !file_exists(__DIR__ . '/authentication.json');
+    $firstTime = !file_exists(__DIR__ . '/data/authentication.json');
     $post = $request->getParsedBody();
     $valid = null;
     if($post && $post["user"] && $post["password"]) {
         if($firstTime) {
-            file_put_contents(__DIR__ . '/authentication.json', json_encode([
+            file_put_contents(__DIR__ . '/data/authentication.json', json_encode([
                 "user" => strtolower($post["user"]),
                 "password" => password_hash($post["password"], PASSWORD_BCRYPT)
             ]));
             $valid = true;
         } else {
-            $data = json_decode(file_get_contents(__DIR__ . '/authentication.json'));
+            $data = json_decode(file_get_contents(__DIR__ . '/data/authentication.json'));
             $valid = (strtolower($post['user']) === strtolower($data->user) && password_verify($post['password'], $data->password));
             if(!$valid) {
             $db = new DB();
