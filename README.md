@@ -11,6 +11,16 @@ Eine simple PHP &amp; Javascript Applikation zum führen einfacher Kassenbücher
 # Build Status
 [![PHP Composer](https://github.com/TSGames/MiniKassenbuch/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/TSGames/MiniKassenbuch/actions/workflows/php.yml)
 
+# Docker
+Direkt loslegen:
+```bash
+git clone https://github.com/TSGames/MiniKassenbuch
+docker-compose up -d
+```
+
+anschließend [http://localhost:8080/](http://localhost:8080/) aurufen.
+(Alternativ kann auch der Inhalt der `docker-compose.yml` kopiert werden)
+
 # Releases
 Direkt loslegen & installieren: Auf der Release-Page gibt es fertige Binaries zum kopieren auf einen PHP-Server:
 https://github.com/TSGames/MiniKassenbuch/releases
