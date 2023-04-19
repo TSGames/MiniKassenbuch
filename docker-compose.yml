@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  kassenbuch:
+    image: tsgames/mini-kassenbuch:latest
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+        - data:/var/www/html/data
+
+volumes:
+  data:

@@ -2,6 +2,7 @@ composer.phar
 vendor
 authentication.json
 storage.sqlite
+helm/values.yaml
 .htpasswd
 exports/
 documents/*
