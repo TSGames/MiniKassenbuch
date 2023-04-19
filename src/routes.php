@@ -23,7 +23,7 @@ $app->get('/', function ($request, $response, $args) {
 $app->get('/export', function ($request, $response, $args) {
 	header('Content-Disposition: attachment; filename='.'export-'.$_SESSION["filter"]["year"].'.zip');
 	$db=new DB();
-	
+
 	echo file_get_contents($db->export());
 });
 $app->get('/backup', function ($request, $response, $args) {

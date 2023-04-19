@@ -7,11 +7,14 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 
 COPY composer.json /var/www/html
 WORKDIR /var/www/html
-RUN composer install
+RUN composer install --ignore-platform-reqs
 
 # build the final release container
-FROM php:8.1-apache-buster
+FROM php:8.1-apache-bullseye
 RUN a2enmod rewrite
+RUN apt-get update && apt-get install -y libzip-dev zip zlib1g zlib1g-dev libpng-dev
+RUN docker-php-ext-configure gd
+RUN docker-php-ext-install zip
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf

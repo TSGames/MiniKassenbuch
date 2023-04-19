@@ -20,6 +20,13 @@ docker-compose up -d
 
 anschließend [http://localhost:8080/](http://localhost:8080/) aurufen.
 (Alternativ kann auch der Inhalt der `docker-compose.yml` kopiert werden)
+## Entwickeln mit Docker
+```bash
+git clone https://github.com/TSGames/MiniKassenbuch
+cd MiniKassenbuch
+composer install
+docker-compose -f docker-compose.dev.yml up
+```
 
 # Releases
 Direkt loslegen & installieren: Auf der Release-Page gibt es fertige Binaries zum kopieren auf einen PHP-Server:
