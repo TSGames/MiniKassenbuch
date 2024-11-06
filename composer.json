@@ -3,7 +3,7 @@
     "description": "A simple PHP and Javascript application to manage accounting (for german law)",
     "license": "Apache-2.0",
     "require": {
-        "twig/twig": "^2.0",
+        "twig/twig": "^3.11",
         "slim/slim": "^3.0",
         "slim/twig-view": "^2.3",
         "phpoffice/phpspreadsheet": "^1.28"
