@@ -150,7 +150,7 @@ class DB{
 			$label=$booking['label'];
 			$category=$booking['category'];
 			$notes=$booking['notes'];
-			$amount=number_format($booking['amount']/100,2,",",".");
+			$amount=number_format($booking['amount']/100 * ($booking["type"]==0 ? 1 : -1),2,",",".");
 			$saldo=number_format($booking['saldo']/100,2,",",".");
 			$docs = $this->getDocuments($booking['id']);
 			$documents = '';
@@ -197,7 +197,7 @@ class DB{
 			$label=$booking['label'];
 			$category=$booking['category'];
 			$notes=$booking['notes'];
-			$amount=$booking['amount'] / 100;
+			$amount=$booking['amount'] / 100 * ($booking["type"]==0 ? 1 : -1);
 			$saldo=$booking['saldo'] / 100;
 			$docs = $this->getDocuments($booking['id']);
 			$documents = '';
