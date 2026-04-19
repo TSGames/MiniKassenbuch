@@ -227,6 +227,6 @@ $app->post('/save', function ($request, $response, $args) {
 			if($file->file)
 				$db->addDocument($id,$file);
 		}
-		return $response->withRedirect($request->getUri()->getBaseUrl());
+		return $response->withRedirect($request->getUri()->getBaseUrl()."/edit?id=$id");
 	}
 });
