@@ -1,0 +1,11 @@
+<div class="container">
+  <form (ngSubmit)="onSubmit()" #deleteForm="ngForm">
+    <input type="hidden" name="id" [value]="id()">
+    <div class="error">
+      Möchten Sie die Kategorie '{{label()}}' wirklich löschen?<br />
+      Durch das Löschen wird die Kategorie von&nbsp;{{count()}} Buchungen entfernt
+    </div>
+    <a class="btn-flat" (click)="goBack()">Abbrechen</a>
+    <button type="submit" class="btn">Löschen</button>
+  </form>
+</div>

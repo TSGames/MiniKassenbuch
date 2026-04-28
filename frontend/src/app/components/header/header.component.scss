@@ -1,0 +1,185 @@
+/* Header component styles */
+nav {
+  background-color: #2196f3;
+  margin-bottom: 50px;
+}
+
+nav ul li a {
+  display: flex;
+}
+
+nav ul li span {
+  display: none;
+  padding-left: 5px;
+}
+
+nav .nav-controls {
+  display: flex;
+}
+
+nav .nav-controls .logo {
+  width: auto;
+  height: 50px;
+  margin: 5px 20px;
+}
+
+nav .brand-logo {
+  display: grid;
+  align-items: center;
+  grid-template-columns: auto 250px;
+  grid-gap: 10px;
+  font-size: 110%;
+}
+
+nav .brand-logo .show-on-large {
+  display: none;
+}
+
+mat-form-field.account-select {
+  width: 250px;
+  line-height: 40px;
+  .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  nav .nav-controls .logo {
+    display: none;
+  }
+}
+
+a {
+  cursor: pointer;
+}
+
+.container {
+  margin-bottom: 20px;
+}
+
+.container-center {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.login-logo {
+  padding: 20px;
+  background-color: #2196f3;
+  display: flex;
+  justify-content: center;
+}
+
+.login-logo img {
+  height: 80px;
+  width: auto;
+}
+
+.accounts {
+  position: fixed;
+  right: 10px;
+  top: 50px;
+  width: 300px;
+}
+
+.clickable {
+  cursor: hand;
+}
+
+.dialog {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.darken {
+  background-color: rgba(0,0,0,.75);
+}
+
+.addCategory {
+  max-width: 200px;
+}
+
+.categories > div {
+  margin: 20px 10px;
+  margin-bottom: 0;
+}
+
+.categories .cancel-selection {
+  display: flex;
+  margin: 10px 20px 0 20px;
+}
+
+.categories input[type=radio]+label {
+  padding-right: 20px;
+  min-width: 150px;
+  margin-bottom: 0;
+}
+
+.report tr td:last-child {
+  width: 150px;
+}
+
+th.documents,
+td.documents {
+  text-align: center;
+}
+
+td.label a {
+  color: #000;
+}
+
+td.label a:hover {
+  color: #333;
+}
+
+td.label .category {
+  color: #666;
+  padding-top: 2px;
+  font-size: 70%;
+  display: flex;
+  align-items: center;
+}
+
+td.label .category i {
+  font-size: 16px;
+  padding-right: 5px;
+}
+
+td.label .category-error {
+  color: #800;
+}
+
+.flex-input {
+  display: flex;
+  align-items: center;
+}
+
+.flex-input > input {
+  flex-grow: 1;
+  margin-right: 10px !important;
+}
+
+.navigation {
+  position: fixed;
+  top: 40%;
+}
+
+.navigation .previous {
+  position: fixed;
+  left: 0;
+}
+
+.navigation .next {
+  position: fixed;
+  right: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+}

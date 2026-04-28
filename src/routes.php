@@ -17,7 +17,7 @@ $app->get('/', function ($request, $response, $args) {
 	$db=new DB();
 	$list=$db->getBookings();
 	return $this->view->render($response, 'list.html', [
-        'list' => $list		
+        'list' => $list	
     ]);
 });
 $app->get('/settings', function ($request, $response, $args) {

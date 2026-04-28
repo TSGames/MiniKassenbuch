@@ -1,0 +1,51 @@
+<style>
+    #preview .invalid td:not(:first-child) {
+        text-decoration: line-through;
+        opacity: 0.5;
+    }
+    #mappings > div {
+        display:flex;
+        align-items: center;
+    }
+    #mappings > div > label {
+        flex-grow: 1
+    }
+    #mappings > div > .select-wrapper {
+        min-width: 35%;
+    }
+</style>
+<div class="container">
+  <form id="fileSelect">
+    <h5>Bitte wählen Sie eine CSV-Datei (Kommagetrennte Tabellenwerte) aus:</h5>
+    <div><input type="file" name="csv" accept=".csv" (change)="onFileSelected($event)"></div>
+  </form>
+
+  <form id="config" style="display:none">
+    <h5>Passen Sie die Einstellungen an:</h5>
+    <label>Seperator-Zeichen (z.B. ",", ";", " ")</label>
+    <input id="seperator" [(ngModel)]="csvSeparator">
+
+    <h6>Felder Mapping festlegen:</h6>
+    <div id="mappings">
+      <!-- Mappings will be populated by Angular -->
+    </div>
+
+    <button type="button" class="btn" (click)="updatePreview()">Vorschau aktualisieren</button>
+    <button type="button" class="btn" (click)="storeConfig()">Einstellungen Speichern</button>
+
+    <div class="preview">
+      <h5>Vorschau</h5>
+      <table id="preview">
+        <!-- Preview data will be populated by Angular -->
+      </table>
+      <div class="info">
+        Der Import erfolgt in den Account {{activeAccount?.label}}
+      </div>
+      <hr>
+      <div>
+        <button type="button" class="btn" id="confirm" (click)="confirmImport()" [disabled]="readonly">Auswahl bestätigen</button>
+        <button type="button" class="btn" id="start" (click)="doImport()" style="display: none;">Import beginnen</button>
+      </div>
+    </div>
+  </form>
+</div>

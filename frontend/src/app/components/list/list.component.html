@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="filter row">
+    <h2>Ansicht filtern</h2>
+    <div class="input-field col s12 m6">
+      <select id="year" (change)="setFilter()">
+        <option *ngFor="let i of yearRange" [value]="i" [selected]="i === filterYear">{{i}}</option>
+      </select>
+      <label>Jahr</label>
+    </div>
+    <div class="input-field col s12 m6">
+      <select id="month" (change)="setFilter()">
+        <option value="0" [selected]="0 === filterMonth">Gesamtes Jahr</option>
+        <option *ngFor="let i of months" [value]="i" [selected]="i === filterMonth">{{i < 10 ? '0' + i : i}}</option>
+      </select>
+      <label>Monat</label>
+    </div>
+  </div>
+  <table class='striped'>
+    <thead>
+      <th class='number'>Nr.</th>
+      <th class='label'>Bezeichnung </th>
+      <th class='date'>Datum</th>
+      <th class='documents'>Belege</th>
+      <th class='amount'>Betrag</th>
+      <th class='saldo'>Saldo</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let booking of bookings">
+        <td class='number'>{{booking.number}}</td>
+        <td class='label'>
+          <a [routerLink]="['/edit', booking.id]">{{booking.label}}</a>
+          <div *ngIf="!booking.category" class="category category-error">
+            <i class="material-icons">warning</i>Ohne Zuordnung
+          </div>
+          <div *ngIf="booking.category" class="category">
+            <i class="material-icons">view_comfy</i>{{booking.category}}
+          </div>
+        </td>
+        <td class='date'>{{booking.date | date:'dd.MM.yyyy'}}</td>
+        <td class='documents'>{{booking.documents}}</td>
+        <td class='amount' [class.positive]="booking.type === 0" [class.negative]="booking.type === 1">
+          {{(booking.amount/100) | number:'1.2-2'}} {{currency}}
+        </td>
+        <td class='saldo' [class.positive]="booking.saldo >= 0" [class.negative]="booking.saldo < 0">
+          {{(booking.saldo/100) | number:'1.2-2'}} {{currency}}
+        </td>
+        <td><a [routerLink]="['/edit', booking.id]"><i class="material-icons">edit</i></a></td>
+        <td><a [routerLink]="['/delete', booking.id]" [class.link-disabled]="readonly"><i class="material-icons">delete</i></a></td>
+      </tr>
+    </tbody>
+  </table>
+  <hr>
+  <a class="btn" routerLink="/export">
+    <span>{{filterYear}} exportieren als CSV</span>
+  </a>
+</div>

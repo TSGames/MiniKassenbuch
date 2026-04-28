@@ -1,0 +1,77 @@
+<div class="container">
+  <form (ngSubmit)="onSubmit()" #bookingForm="ngForm">
+    <div *ngIf="error" class="error">{{error}}</div>
+    <h4 *ngIf="id">Buchung {{label}} bearbeiten</h4>
+    
+    <label>Aktuelles Konto</label>
+    <input type="text" name="label" [value]="activeAccount?.label" readonly disabled>
+    
+    <label>Bezeichnung</label>
+    <input type="text" name="label" [(ngModel)]="label" (blur)="guessCategory($event)">
+    
+    <div class="categories">
+      <label>Kategorie</label>
+      <div>
+        <label *ngFor="let category of categories">
+          <input type="radio" name="category" [(ngModel)]="selectedCategory" [value]="category.id" (change)="loadCategory(category)">
+          <span>{{category.label}}</span>
+        </label>
+      </div>
+      <a *ngIf="categories" class="cancel-selection" (click)="clearCategorySelection()">Auswahl aufheben</a>
+      <div class="notice" style="padding-bottom:20px;">
+        Kategorieren können über den Menüpunkt <a [routerLink]="['/categories']">Kategorien</a> angelegt und verwaltet werden
+      </div>
+    </div>
+    
+    <label>Datum</label>
+    <input type="date" name="date" [(ngModel)]="date">
+    
+    <label>Betrag</label>
+    <div class="flex-input">
+      <input type="number" name="amount" [(ngModel)]="amount">
+      <div>{{currency}}</div>
+    </div>
+    
+    <div class="group">
+      <label>
+        <input type="radio" id="in" name="type" value="0" [(ngModel)]="type">
+        <span>Einnahme</span>
+      </label>
+      <label>
+        <input type="radio" id="out" name="type" value="1" [(ngModel)]="type">
+        <span>Ausgabe</span>
+      </label>
+    </div>
+    
+    <label>Bemerkungen, Kommentare etc.</label>
+    <textarea name="notes" class="materialize-textarea" [(ngModel)]="notes"></textarea>
+    
+    <div *ngIf="documents">
+      <label>Aktuell angeheftete Dokumente</label>
+      <ul class="collection">
+        <li *ngFor="let document of documents" class="collection-item document-list">
+          <i class="material-icons">description</i>
+          <a [href]="getDocumentUrl(document.id)" target="_blank">{{document.filename}}</a>
+          <i class="clickable material-icons delete" (click)="deleteDocument(document.id)">clear</i>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="group addDocuments">
+      <label>Belege/Dokumente anheften</label>
+      <input type="file" name="documents" multiple (change)="onFileChange($event)">
+    </div>
+    
+    <a *ngIf="id" class="btn-flat" [routerLink]="['/']">Abbrechen & Zurück</a>
+    <button type="submit" class="btn" [disabled]="readonly">Speichern</button>
+  </form>
+  
+  <div class="navigation">
+    <a *ngIf="previousId" class="btn previous" [routerLink]="['/edit', previousId]">
+      <i class="material-icons">keyboard_arrow_left</i>
+    </a>
+    <a *ngIf="nextId" class="btn next" [routerLink]="['/edit', nextId]">
+      <i class="material-icons">keyboard_arrow_right</i>
+    </a>
+  </div>
+</div>

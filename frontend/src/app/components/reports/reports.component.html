@@ -1,0 +1,137 @@
+<div class="container">
+  <div class="report">
+    <h2>Übersicht Ein-/Ausgaben je Jahr</h2>
+    <div id="yearly" class="chart"></div>
+    <table class="striped">
+      <thead>
+        <th>Jahr</th>
+        <th>Einnahmen</th>
+        <th>Ausgaben</th>
+        <th>Ergebnis</th>
+        <th>Start-Saldo</th>
+        <th>End-Saldo</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let yearStats of yearsStats">
+          <td>{{yearStats.year}}</td>
+          <td>{{(yearStats[0]/100) | number:'1.2-2'}} {{currency}}</td>
+          <td>{{(yearStats[1]/100) | number:'1.2-2'}} {{currency}}</td>
+          <td [class.positive]="yearStats[0]-yearStats[1] >= 0" [class.negative]="yearStats[0]-yearStats[1] < 0">
+            {{((yearStats[0]-yearStats[1])/100) | number:'1.2-2'}} {{currency}}
+          </td>
+          <td>{{(yearStats["saldo"]/100) | number:'1.2-2'}} {{currency}}</td>
+          <td>{{((yearStats["saldo"]+(yearStats[0]-yearStats[1]))/100) | number:'1.2-2'}} {{currency}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="report">
+    <h2>Übersicht Ein-/Ausgaben je Konto&nbsp;{{currentYear}}</h2>
+    <table class="striped">
+      <thead>
+        <th>Konto</th>
+        <th>Einnahmen</th>
+        <th>Ausgaben</th>
+        <th>Ergebnis</th>
+        <th>Start-Saldo</th>
+        <th>End-Saldo</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let accountStats of yearsAccountStats">
+          <td>{{accountStats.account.label}}</td>
+          <td>{{(accountStats.stats[0]/100) | number:'1.2-2'}} {{currency}}</td>
+          <td>{{(accountStats.stats[1]/100) | number:'1.2-2'}} {{currency}}</td>
+          <td [class.positive]="accountStats.stats[0]-accountStats.stats[1] >= 0" [class.negative]="accountStats.stats[0]-accountStats.stats[1] < 0">
+            {{((accountStats.stats[0]-accountStats.stats[1])/100) | number:'1.2-2'}} {{currency}}
+          </td>
+          <td>{{(accountStats.stats["saldo"]/100) | number:'1.2-2'}} {{currency}}</td>
+          <td>{{((accountStats.stats["saldo"]+(accountStats.stats[0]-accountStats.stats[1]))/100) | number:'1.2-2'}} {{currency}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="report" style="page-break-before: always">
+    <h2>Einnahmen / Ausgaben je Monat&nbsp;{{currentYear}}</h2>
+    <div id="monthly" class="chart"></div>
+  </div>
+  
+  <div class="report" *ngIf="tops[0]">
+    <h2>Top Einnahmen&nbsp;{{currentYear}}</h2>
+    <table class="striped">
+      <thead>
+        <th>Bezeichnung</th>
+        <th>Betrag</th>
+        <th>% von Gesamt</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let top of tops[0]">
+          <td>{{top.label}}</td>
+          <td class="positive">{{(top.amount/100) | number:'1.2-2'}} {{currency}}</td>
+          <td class="positive">{{((top.amount/yearStats[0])*100) | number:'1.1'}} %</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="report" *ngIf="tops[1]">
+    <h2>Top Ausgaben&nbsp;{{currentYear}}</h2>
+    <table class="striped">
+      <thead>
+        <th>Bezeichnung</th>
+        <th>Betrag</th>
+        <th>% von Gesamt</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let top of tops[1]">
+          <td>{{top.label}}</td>
+          <td class="negative">{{(top.amount/100) | number:'1.2-2'}} {{currency}}</td>
+          <td class="negative">{{((top.amount/yearStats[1])*100) | number:'1.1'}} %</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="report" *ngIf="categories[0]">
+    <h2>Alle Einnahmen&nbsp;{{currentYear}} nach Kategorie</h2>
+    <div *ngIf="categoriesMissing" class="error">
+      Es existieren {{categoriesMissing}} Buchungen ohne Kategoriezuordnung. Die folgenden Daten sind unvollständig bzw. ungültig.
+    </div>
+    <table class="striped">
+      <thead>
+        <th>Kategorie</th>
+        <th>Betrag</th>
+        <th>% von Gesamt</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let category of categories[0]">
+          <td>{{category.label}}</td>
+          <td class="positive">{{(category.amount/100) | number:'1.2-2'}} {{currency}}</td>
+          <td class="positive">{{((category.amount/yearStats[0])*100) | number:'1.1'}} %</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="report" *ngIf="categories[1]">
+    <h2>Alle Ausgaben&nbsp;{{currentYear}} nach Kategorie</h2>
+    <div *ngIf="categoriesMissing" class="error">
+      Es existieren {{categoriesMissing}} Buchungen ohne Kategoriezuordnung. Die folgenden Daten sind unvollständig bzw. ungültig.
+    </div>
+    <table class="striped">
+      <thead>
+        <th>Kategorie</th>
+        <th>Betrag</th>
+        <th>% von Gesamt</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let category of categories[1]">
+          <td>{{category.label}}</td>
+          <td class="negative">{{(category.amount/100) | number:'1.2-2'}} {{currency}}</td>
+          <td class="negative">{{((category.amount/yearStats[1])*100) | number:'1.1'}} %</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

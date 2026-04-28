@@ -1,0 +1,36 @@
+<div class="container">
+  <h5>Export/Backup</h5>
+  <a class="btn" [routerLink]="['/backup']">
+    <span>Backup herunterladen</span>
+  </a>
+  
+  <h5>System-Statistiken</h5>
+  <div class="">
+    <div>Gesamtzahl Buchungen: {{stats?.bookings}}</div>
+    <div>Gesamtzahl Dokumente: {{stats?.documents}}</div>
+    <div>Gesamtgröße Dokumente: {{(stats?.documentsSize/1024/1024) | number:'1.2-2'}} MB</div>
+    <div>Gesamtgröße Datenbank: {{(stats?.databaseSize/1024/1024) | number:'1.2-2'}} MB</div>
+  </div>
+  
+  <form (ngSubmit)="onSubmit()" #settingsForm="ngForm">
+    <h4>Voreinstellungen</h4>
+    <label>W&auml;hrungsformat</label>
+    <input type="text" name="currency" [(ngModel)]="currency">
+    
+    <h4>Lese-Zugang</h4>
+    <div class="info">
+      Wenn aktiviert, kann der unten festgelegte Nutzer für einen Lesezugriff auf die Datenbestände und Statisitken verwendet werden.
+    </div>
+    <label>
+      <input type="checkbox" class="filled-in" id="readonly-checkbox" name="readOnlyEnabled" [(ngModel)]="readOnlyEnabled" (change)="toggleReadOnlyUser()">
+      <span>Lesezugang aktivieren</span>
+    </label>
+    <div id="readonly-user" [style.display]="readOnlyEnabled ? 'block' : 'none'">
+      <label>Nutzername</label>
+      <input type="text" name="readOnlyUsername" [(ngModel)]="readOnlyUsername">
+      <label>Passwort</label>
+      <input type="password" name="readOnlyPassword" [(ngModel)]="readOnlyPassword" autocomplete="off">
+    </div>
+    <button type="submit" class="btn">Speichern</button>
+  </form>
+</div>

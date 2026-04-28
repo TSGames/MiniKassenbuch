@@ -1,0 +1,30 @@
+/* Import component styles */
+#preview .invalid td:not(:first-child) {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+#mappings > div {
+  display: flex;
+  align-items: center;
+}
+
+#mappings > div > label {
+  flex-grow: 1;
+}
+
+#mappings > div > .select-wrapper {
+  min-width: 35%;
+}
+
+.preview {
+  margin: 20px 0;
+}
+
+.info {
+  padding: 10px;
+  margin: 20px 0;
+  color: #000;
+  background-color: #fff;
+  box-shadow: 1px 1px 4px rgba(0,0,0,.5);
+}

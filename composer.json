@@ -8,4 +8,10 @@
         "slim/twig-view": "^2.3",
         "phpoffice/phpspreadsheet": "^1.28"
     }
+    ,
+    "config": {
+        "audit": {
+            "block-insecure": false
+        }
+    }
 }

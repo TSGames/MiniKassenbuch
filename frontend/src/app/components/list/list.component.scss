@@ -1,0 +1,37 @@
+/* List component styles */
+.container {
+  margin-bottom: 20px;
+}
+
+.filter.row {
+  margin-bottom: 20px;
+}
+
+.filter h2 {
+  margin-top: 0;
+}
+
+/* Materialize fixes */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+}
+
+@media only screen and (max-width: 650px) {
+  td, th {
+    font-size: 10pt;
+  }
+  
+  .navigation {
+    display: none;
+  }
+  
+  th.number, td.number {
+    display: none;
+  }
+  
+  th.date, td.date {
+    max-width: 50px;
+    overflow: hidden;
+  }
+}

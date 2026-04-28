@@ -18,21 +18,21 @@ $authMiddleware = function ($request, $response, $next) {
 // Apply authentication to protected routes
 
 // Get all bookings
-$app->get('/api/bookings', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/bookings', function ($request, $response, $args) {
     $db = new DB();
     $list = $db->getBookings();
     return $response->withJson($list);
-});
+})->add($authMiddleware);
 
 // Get a specific booking
-$app->get('/api/bookings/{id}', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/bookings/{id}', function ($request, $response, $args) {
     $db = new DB();
     $data = $db->getBooking($args['id']);
     return $response->withJson($data);
-});
+})->add($authMiddleware);
 
 // Create a new booking
-$app->post('/api/bookings', $authMiddleware, function ($request, $response, $args) {
+$app->post('/api/bookings', function ($request, $response, $args) {
     $post = $request->getParsedBody();
     $db = new DB();
     
@@ -41,10 +41,10 @@ $app->post('/api/bookings', $authMiddleware, function ($request, $response, $arg
     $id = $db->setBooking($post, null);
     
     return $response->withJson(['id' => $id]);
-});
+})->add($authMiddleware);
 
 // Update a booking
-$app->put('/api/bookings/{id}', $authMiddleware, function ($request, $response, $args) {
+$app->put('/api/bookings/{id}', function ($request, $response, $args) {
     $post = $request->getParsedBody();
     $db = new DB();
     
@@ -53,32 +53,39 @@ $app->put('/api/bookings/{id}', $authMiddleware, function ($request, $response, 
     $db->setBooking($post, $args['id']);
     
     return $response->withJson(['success' => true]);
-});
+})->add($authMiddleware);
 
 // Delete a booking
-$app->delete('/api/bookings/{id}', $authMiddleware, function ($request, $response, $args) {
+$app->delete('/api/bookings/{id}', function ($request, $response, $args) {
     $db = new DB();
     $db->deleteBooking($args['id']);
     
     return $response->withJson(['success' => true]);
-});
+})->add($authMiddleware);
 
 // Get all categories
-$app->get('/api/categories', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/categories', function ($request, $response, $args) {
     $db = new DB();
     $categories = $db->getCategories();
     return $response->withJson($categories);
-});
+})->add($authMiddleware);
 
 // Get all categories (all levels)
-$app->get('/api/categories/all', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/categories/all', function ($request, $response, $args) {
     $db = new DB();
     $categories = $db->getAllCategories();
     return $response->withJson($categories);
-});
+})->add($authMiddleware);
+
+// Get a specific category
+$app->get('/api/categories/{id}', function ($request, $response, $args) {
+    $db = new DB();
+    $category = $db->getCategory($args['id']);
+    return $response->withJson($category);
+})->add($authMiddleware);
 
 // Add a new category
-$app->post('/api/categories', $authMiddleware, function ($request, $response, $args) {
+$app->post('/api/categories', function ($request, $response, $args) {
     $post = $request->getParsedBody();
     $db = new DB();
     
@@ -88,44 +95,44 @@ $app->post('/api/categories', $authMiddleware, function ($request, $response, $a
     }
     
     return $response->withJson(['success' => true]);
-});
+})->add($authMiddleware);
 
 // Update a category
-$app->put('/api/categories/{id}', $authMiddleware, function ($request, $response, $args) {
+$app->put('/api/categories/{id}', function ($request, $response, $args) {
     $post = $request->getParsedBody();
     $db = new DB();
     
     $db->editCategory($post["id"], $post["label"], $post["amount"] * ($post["type"] == 0 ? 1 : -1));
     
     return $response->withJson(['success' => true]);
-});
+})->add($authMiddleware);
 
 // Delete a category
-$app->delete('/api/categories/{id}', $authMiddleware, function ($request, $response, $args) {
+$app->delete('/api/categories/{id}', function ($request, $response, $args) {
     $db = new DB();
     $db->deleteCategory($args['id']);
     
     return $response->withJson(['success' => true]);
-});
+})->add($authMiddleware);
 
 // Get settings
-$app->get('/api/settings', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/settings', function ($request, $response, $args) {
     $db = new DB();
     $settings = $db->getSettings();
     return $response->withJson($settings);
-});
+})->add($authMiddleware);
 
 // Update settings
-$app->put('/api/settings', $authMiddleware, function ($request, $response, $args) {
+$app->put('/api/settings', function ($request, $response, $args) {
     $data = json_decode($request->getBody()->getContents(), true);
     $db = new DB();
     $db->updateSettings($data);
     
     return $response->withJson(['success' => true]);
-});
+})->add($authMiddleware);
 
 // Get reports data
-$app->get('/api/reports', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/reports', function ($request, $response, $args) {
     $db = new DB();
     
     // Get year stats
@@ -163,24 +170,24 @@ $app->get('/api/reports', $authMiddleware, function ($request, $response, $args)
         'categories' => $categories,
         'categoriesMissing' => $categoriesMissing
     ]);
-});
+})->add($authMiddleware);
 
 // Get accounts
-$app->get('/api/accounts', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/accounts', function ($request, $response, $args) {
     $db = new DB();
     $accounts = $db->getAccounts();
     return $response->withJson($accounts);
-});
+})->add($authMiddleware);
 
 // Get documents for a booking
-$app->get('/api/bookings/{id}/documents', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/bookings/{id}/documents', function ($request, $response, $args) {
     $db = new DB();
     $documents = $db->getDocuments($args['id']);
     return $response->withJson($documents);
-});
+})->add($authMiddleware);
 
 // Add document to booking
-$app->post('/api/bookings/{id}/documents', $authMiddleware, function ($request, $response, $args) {
+$app->post('/api/bookings/{id}/documents', function ($request, $response, $args) {
     $files = $request->getUploadedFiles();
     $db = new DB();
     
@@ -191,36 +198,36 @@ $app->post('/api/bookings/{id}/documents', $authMiddleware, function ($request, 
     }
     
     return $response->withJson(['success' => true]);
-});
+})->add($authMiddleware);
 
 // Delete document
-$app->delete('/api/documents/{id}', $authMiddleware, function ($request, $response, $args) {
+$app->delete('/api/documents/{id}', function ($request, $response, $args) {
     $db = new DB();
     $db->deleteDocument($args['id']);
     
     return $response->withJson(['success' => true]);
-});
+})->add($authMiddleware);
 
 // Import preview
-$app->post('/api/import/preview', $authMiddleware, function ($request, $response, $args) {
+$app->post('/api/import/preview', function ($request, $response, $args) {
     $data = json_decode($request->getBody()->getContents());
     $csv = new CSV($data->config);
     $response = $response->withHeader('Content-Type', 'application/json');
     
     return $response->withJson($csv->parse($data->csv, false));
-});
+})->add($authMiddleware);
 
 // Import start
-$app->post('/api/import/start', $authMiddleware, function ($request, $response, $args) {
+$app->post('/api/import/start', function ($request, $response, $args) {
     $data = json_decode($request->getBody()->getContents());
     $csv = new CSV($data->config);
     $response = $response->withHeader('Content-Type', 'application/json');
     
     return $response->withJson($csv->parse($data->csv, true));
-});
+})->add($authMiddleware);
 
 // Export data
-$app->get('/api/export', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/export', function ($request, $response, $args) {
     $db = new DB();
     $exportFile = $db->export();
     
@@ -228,10 +235,10 @@ $app->get('/api/export', $authMiddleware, function ($request, $response, $args) 
                        ->withHeader('Content-Disposition', 'attachment; filename=export-' . $_SESSION["filter"]["year"] . '.zip');
     
     return $response->write(file_get_contents($exportFile));
-});
+})->add($authMiddleware);
 
 // Backup data
-$app->get('/api/backup', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/backup', function ($request, $response, $args) {
     $db = new DB();
     $backupFile = $db->backup();
     
@@ -239,16 +246,23 @@ $app->get('/api/backup', $authMiddleware, function ($request, $response, $args) 
                        ->withHeader('Content-Disposition', 'attachment; filename=backup-' . date('Y-m-d') . '.zip');
     
     return $response->write(file_get_contents($backupFile));
-});
+})->add($authMiddleware);
 
 // Get stats
-$app->get('/api/stats', $authMiddleware, function ($request, $response, $args) {
+$app->get('/api/stats', function ($request, $response, $args) {
     $db = new DB();
     $stats = $db->getStats();
     return $response->withJson($stats);
-});
+})->add($authMiddleware);
 
 // Login endpoint
+$app->get('/api/login', function ($request, $response, $args) {
+    $firstTime = !file_exists(__DIR__ . '/../data/authentication.json');
+    return $response->withJson([
+        'firstTime' => $firstTime
+    ]);
+});
+
 $app->post('/api/login', function ($request, $response, $args) {
     $post = $request->getParsedBody();
     
@@ -293,7 +307,8 @@ $app->post('/api/login', function ($request, $response, $args) {
         return $response->withJson([
             'success' => true,
             'user' => $post['user'],
-            'readonly' => $validReadOnly
+            'readonly' => $validReadOnly,
+            'firstTime' => $firstTime
         ]);
     } else {
         // Return error response

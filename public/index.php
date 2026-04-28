@@ -25,12 +25,14 @@ $app = new \Slim\App($settings);
 // Set up dependencies
 require __DIR__ . '/../src/dependencies.php';
 
+// Register API routes (no global middleware - API handles auth per route)
+require __DIR__ . '/../src/api_routes.php';
+
 // Register middleware
 require __DIR__ . '/../src/middleware.php';
 
 // Register routes
 require __DIR__ . '/../src/routes.php';
-require __DIR__ . '/../src/api_routes.php';
 
 // Run app
 $app->run();

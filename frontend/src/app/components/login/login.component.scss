@@ -1,0 +1,19 @@
+/* Login component styles */
+.container-center {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.login-logo {
+  padding: 20px;
+  background-color: #2196f3;
+  display: flex;
+  justify-content: center;
+}
+
+.login-logo img {
+  height: 80px;
+  width: auto;
+}
