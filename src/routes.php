@@ -20,33 +20,12 @@ $app->get('/', function ($request, $response, $args) {
         'list' => $list		
     ]);
 });
-$app->get('/export', function ($request, $response, $args) {
-	header('Content-Disposition: attachment; filename='.'export-'.$_SESSION["filter"]["year"].'.zip');
-	$db=new DB();
-
-	echo file_get_contents($db->export());
-});
-$app->get('/backup', function ($request, $response, $args) {
-	header('Content-Disposition: attachment; filename='.'backup-'.date('Y-m-d').'.zip');
-	$db=new DB();
-	
-	echo file_get_contents($db->backup());
-});
 $app->get('/settings', function ($request, $response, $args) {
     $db=new DB();
     return $this->view->render($response, 'settings.html', [
 		'settings' => $db->getSettings(),
 		'stats' => $db->getStats()
 	]);
-});
-$app->get('/settings/json', function ($request, $response, $args) {
-    $db=new DB();
-    return json_encode($db->getSettings());
-});
-$app->post('/settings/json', function ($request, $response, $args) {
-	$data = json_decode($request->getBody()->getContents(), true);
-	$db=new DB();
-    $db->updateSettings($data);
 });
 $app->post('/settings', function ($request, $response, $args) {
     $db=new DB();
@@ -96,20 +75,6 @@ $app->get('/import-done', function ($request, $response, $args) {
         'imported' => $params['imported'],
         'skipped' => $params['skipped']
     ]);
-});
-$app->post('/import/preview', function ($request, $response, $args) {
-	$data = json_decode($request->getBody()->getContents());
-	$csv=new CSV($data->config);
-	$response  = $response->withHeader('Content-Type', 'application/json');
-	echo json_encode($csv->parse($data->csv, false));
-	return $response;
-});
-$app->post('/import/start', function ($request, $response, $args) {
-	$data = json_decode($request->getBody()->getContents());
-	$csv=new CSV($data->config);
-	$response  = $response->withHeader('Content-Type', 'application/json');
-	echo json_encode($csv->parse($data->csv, true));
-	return $response;
 });
 $app->get('/add', function ($request, $response, $args) {
 	$db=new DB();
