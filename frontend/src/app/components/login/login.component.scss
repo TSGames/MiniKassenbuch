@@ -1,13 +1,30 @@
-/* Login component styles */
 .container-center {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100vh;
   justify-content: center;
+  align-items: center;
+  padding: 32px 16px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.full-width {
+  width: 100%;
 }
 
 .login-logo {
-  padding: 20px;
+  padding: 12px;
   background-color: #2196f3;
   display: flex;
   justify-content: center;

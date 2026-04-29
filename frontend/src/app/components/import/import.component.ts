@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ImportService } from '../../services/import.service';
 import { AccountService } from '../../services/account.service';
@@ -14,7 +14,7 @@ import { HeaderComponent } from '../header/header.component';
 })
 export class ImportComponent implements OnInit {
   csvSeparator = ';';
-  activeAccount: any = null;
+  activeAccount = signal<any>(null);
   readonly = false;
   
   csvContent: string | null = null;
@@ -37,11 +37,7 @@ export class ImportComponent implements OnInit {
   }
 
   loadActiveAccount(): void {
-    this.accountService.getActiveAccount().subscribe({
-      next: (data) => {
-        this.activeAccount = data;
-      }
-    });
+    this.accountService.loadActiveAccount().subscribe();
   }
 
   onFileSelected(event: any): void {

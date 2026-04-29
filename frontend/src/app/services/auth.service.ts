@@ -47,6 +47,10 @@ export class AuthService {
     return localStorage.getItem(READONLY_STORAGE_KEY) === '1';
   }
 
+  clearSession(): void {
+    this.clearAuthStorage();
+  }
+
   private setAuthStorage(user: string, readonly: boolean): void {
     localStorage.setItem(AUTH_STORAGE_KEY, user);
     localStorage.setItem(READONLY_STORAGE_KEY, readonly ? '1' : '0');

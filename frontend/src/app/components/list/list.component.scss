@@ -4,34 +4,69 @@
 }
 
 .filter.row {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
-.filter h2 {
-  margin-top: 0;
+.booking-table {
+  display: grid;
+  gap: 1rem;
 }
 
-/* Materialize fixes */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  display: none;
+.booking-card {
+  padding: 1rem;
+  border-radius: 8px;
 }
 
-@media only screen and (max-width: 650px) {
-  td, th {
-    font-size: 10pt;
-  }
-  
-  .navigation {
-    display: none;
-  }
-  
-  th.number, td.number {
-    display: none;
-  }
-  
-  th.date, td.date {
-    max-width: 50px;
-    overflow: hidden;
-  }
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-title {
+  font-weight: 600;
+}
+
+.booking-meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.category-badge {
+  background-color: rgba(38, 166, 154, 0.1);
+  color: #00695c;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+}
+
+.category-badge.warning {
+  background-color: rgba(211, 47, 47, 0.15);
+  color: #b71c1c;
+}
+
+.booking-actions button {
+  margin-left: 0.25rem;
+}
+
+.booking-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+.positive {
+  color: #2e7d32;
+}
+
+.negative {
+  color: #c62828;
+}
+
+.export-row {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CategoryService } from '../../services/category.service';
@@ -7,12 +7,29 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-booking',
   templateUrl: './booking.component.html',
   styleUrls: ['./booking.component.scss'],
-  imports: [FormsModule, CommonModule, RouterModule, HeaderComponent],
+  imports: [
+    FormsModule,
+    CommonModule,
+    RouterModule,
+    HeaderComponent,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatIconModule
+  ],
   standalone: true
 })
 export class BookingComponent implements OnInit {
@@ -26,7 +43,7 @@ export class BookingComponent implements OnInit {
   selectedCategory: number | null = null;
   documents: any[] = [];
   error: string | null = null;
-  activeAccount: any = null;
+  activeAccount = signal<any>(null);
   currency = '€';
   readonly = false;
   previousId: number | null = null;
@@ -79,11 +96,7 @@ export class BookingComponent implements OnInit {
   }
 
   loadActiveAccount(): void {
-    this.accountService.getActiveAccount().subscribe({
-      next: (data) => {
-        this.activeAccount = data;
-      }
-    });
+    this.accountService.loadActiveAccount().subscribe();
   }
 
   guessCategory(event: any): void {

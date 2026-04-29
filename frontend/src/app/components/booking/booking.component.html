@@ -1,77 +1,105 @@
 <div class="container">
-  <form (ngSubmit)="onSubmit()" #bookingForm="ngForm">
-    <div *ngIf="error" class="error">{{error}}</div>
-    <h4 *ngIf="id">Buchung {{label}} bearbeiten</h4>
-    
-    <label>Aktuelles Konto</label>
-    <input type="text" name="label" [value]="activeAccount?.label" readonly disabled>
-    
-    <label>Bezeichnung</label>
-    <input type="text" name="label" [(ngModel)]="label" (blur)="guessCategory($event)">
-    
-    <div class="categories">
-      <label>Kategorie</label>
-      <div>
-        <label *ngFor="let category of categories">
-          <input type="radio" name="category" [(ngModel)]="selectedCategory" [value]="category.id" (change)="loadCategory(category)">
-          <span>{{category.label}}</span>
-        </label>
+  <mat-card
+    *ngIf="error"
+    class="error-card"
+    role="alert"
+  >
+    {{error}}
+  </mat-card>
+
+  <mat-card>
+    <mat-card-title>Buchung {{label}} bearbeiten</mat-card-title>
+    <form (ngSubmit)="onSubmit()" #bookingForm="ngForm" class="booking-form">
+      <mat-form-field class="full-width">
+        <mat-label>Aktuelles Konto</mat-label>
+        <input matInput [value]="activeAccount()?.label" readonly disabled>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Bezeichnung</mat-label>
+        <input matInput name="label" [(ngModel)]="label" (blur)="guessCategory($event)">
+      </mat-form-field>
+
+      <div class="category-group">
+        <label>Kategorie</label>
+        <mat-button-toggle-group
+          name="category"
+          [(ngModel)]="selectedCategory"
+          aria-label="Kategorie"
+        >
+          <mat-button-toggle
+            *ngFor="let category of categories"
+            [value]="category.id"
+            (change)="loadCategory(category)"
+          >
+            {{category.label}}
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+        <button mat-stroked-button color="primary" type="button" (click)="clearCategorySelection()" *ngIf="categories.length">
+          Auswahl aufheben
+        </button>
+        <div class="notice">Kategorien lassen sich unter <a [routerLink]="['/categories']">Kategorien</a> verwalten.</div>
       </div>
-      <a *ngIf="categories" class="cancel-selection" (click)="clearCategorySelection()">Auswahl aufheben</a>
-      <div class="notice" style="padding-bottom:20px;">
-        Kategorieren können über den Menüpunkt <a [routerLink]="['/categories']">Kategorien</a> angelegt und verwaltet werden
+
+      <mat-form-field class="full-width">
+        <mat-label>Datum</mat-label>
+        <input matInput type="date" name="date" [(ngModel)]="date">
+      </mat-form-field>
+
+      <div class="flex-input">
+        <mat-form-field class="full-width">
+          <mat-label>Betrag</mat-label>
+          <input matInput type="number" name="amount" [(ngModel)]="amount">
+        </mat-form-field>
+        <div class="currency-indicator">{{currency}}</div>
       </div>
-    </div>
-    
-    <label>Datum</label>
-    <input type="date" name="date" [(ngModel)]="date">
-    
-    <label>Betrag</label>
-    <div class="flex-input">
-      <input type="number" name="amount" [(ngModel)]="amount">
-      <div>{{currency}}</div>
-    </div>
-    
-    <div class="group">
-      <label>
-        <input type="radio" id="in" name="type" value="0" [(ngModel)]="type">
-        <span>Einnahme</span>
-      </label>
-      <label>
-        <input type="radio" id="out" name="type" value="1" [(ngModel)]="type">
-        <span>Ausgabe</span>
-      </label>
-    </div>
-    
-    <label>Bemerkungen, Kommentare etc.</label>
-    <textarea name="notes" class="materialize-textarea" [(ngModel)]="notes"></textarea>
-    
-    <div *ngIf="documents">
-      <label>Aktuell angeheftete Dokumente</label>
-      <ul class="collection">
-        <li *ngFor="let document of documents" class="collection-item document-list">
-          <i class="material-icons">description</i>
-          <a [href]="getDocumentUrl(document.id)" target="_blank">{{document.filename}}</a>
-          <i class="clickable material-icons delete" (click)="deleteDocument(document.id)">clear</i>
-        </li>
-      </ul>
-    </div>
-    
-    <div class="group addDocuments">
-      <label>Belege/Dokumente anheften</label>
-      <input type="file" name="documents" multiple (change)="onFileChange($event)">
-    </div>
-    
-    <a *ngIf="id" class="btn-flat" [routerLink]="['/']">Abbrechen & Zurück</a>
-    <button type="submit" class="btn" [disabled]="readonly">Speichern</button>
-  </form>
-  
+
+      <div class="type-toggle">
+        <mat-button-toggle-group name="type" [(ngModel)]="type" aria-label="Typ">
+          <mat-button-toggle value="0">Einnahme</mat-button-toggle>
+          <mat-button-toggle value="1">Ausgabe</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
+      <mat-form-field class="full-width">
+        <mat-label>Bemerkungen, Kommentare etc.</mat-label>
+        <textarea matInput name="notes" [(ngModel)]="notes" rows="4"></textarea>
+      </mat-form-field>
+
+      <div class="document-list">
+        <h3>Dokumente</h3>
+        <ul *ngIf="documents.length; else emptyDocuments">
+          <li *ngFor="let document of documents" class="document-item">
+            <mat-icon>description</mat-icon>
+            <a [href]="getDocumentUrl(document.id)" target="_blank">{{document.filename}}</a>
+            <button mat-icon-button color="warn" (click)="deleteDocument(document.id)">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </li>
+        </ul>
+        <ng-template #emptyDocuments>
+          <p>Keine Dokumente vorhanden.</p>
+        </ng-template>
+      </div>
+
+      <div class="add-documents">
+        <label>Belege/Dokumente anheften</label>
+        <input type="file" name="documents" multiple (change)="onFileChange($event)">
+      </div>
+
+      <div class="form-actions">
+        <button mat-button color="primary" routerLink="/">Abbrechen &amp; Zurück</button>
+        <button mat-raised-button color="accent" type="submit" [disabled]="readonly">Speichern</button>
+      </div>
+    </form>
+  </mat-card>
+
   <div class="navigation">
-    <a *ngIf="previousId" class="btn previous" [routerLink]="['/edit', previousId]">
-      <i class="material-icons">keyboard_arrow_left</i>
-    </a>
-    <a *ngIf="nextId" class="btn next" [routerLink]="['/edit', nextId]">
-      <i class="material-icons">keyboard_arrow_right</i>
-    </a>
+    <button mat-fab color="primary" *ngIf="previousId" [routerLink]="['/edit', previousId]">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+    </button>
+    <button mat-fab color="primary" *ngIf="nextId" [routerLink]="['/edit', nextId]">
+      <mat-icon>keyboard_arrow_right</mat-icon>
+    </button>
   </div>
 </div>

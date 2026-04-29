@@ -1,66 +1,53 @@
-<nav>
-  <div class="nav-wrapper">
-    <div class="brand-logo right">
-      <div class="show-on-large">{{currentYear}}</div>
-      <mat-form-field appearance="outline" class="account-select">
-        <mat-label>Konto</mat-label>
-        <mat-select [value]="activeAccount?.id" (selectionChange)="selectAccount($event.value)">
-          <mat-option *ngFor="let account of accounts" [value]="account.id">
-            {{account.label}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="nav-controls left">
-      <a href="/"><img src="/logo.png" alt="Mini Kassenbuch Logo" class="logo" width="48" height="48"></a>
-      <ul id="nav-mobile">
-        <li [class.active]="isActive('/')">
-          <a href="/" (click)="navigateTo('/')">
-            <i class="material-icons">list</i>
-            <span class="show-on-large">Liste</span>
-          </a>
-        </li>
-        <li *ngIf="!readonly" [class.active]="isActive('/add')">
-          <a href="/add" (click)="navigateTo('/add')">
-            <i class="material-icons">add_circle_outline</i>
-            <span class="show-on-large">Buchung</span>
-          </a>
-        </li>
-        <li [class.active]="isActive('/reports')">
-          <a href="/reports" (click)="navigateTo('/reports')">
-            <i class="material-icons">timeline</i>
-            <span class="show-on-large">Berichte</span>
-          </a>
-        </li>
-        <li [class.active]="isActive('/categories')">
-          <a href="/categories" (click)="navigateTo('/categories')">
-            <i class="material-icons">view_comfy</i>
-            <span class="show-on-large">Kategorien</span>
-          </a>
-        </li>
-        <li>
-          <a href="/import" (click)="navigateTo('/import')">
-            <i class="material-icons">cloud_upload</i>
-            <span class="show-on-large">Importieren</span>
-          </a>
-        </li>
-        <li *ngIf="!readonly" [class.active]="isActive('/settings')">
-          <a href="/settings" (click)="navigateTo('/settings')">
-            <i class="material-icons">settings</i>
-            <span class="show-on-large">Konfiguration</span>
-          </a>
-        </li>
-      </ul>
-    </div>
+<mat-toolbar color="primary" class="app-toolbar">
+  <div class="logo-group" role="presentation">
+    <a mat-icon-button routerLink="/" class="logo-link" aria-label="Home">
+      <img src="/logo.png" alt="Mini Kassenbuch Logo" />
+    </a>
   </div>
-</nav>
 
-<!-- Removed legacy account dropdown since MatSelect now provides switching -->
+  <nav class="nav-actions" aria-label="Primary">
+    <a mat-button [class.active]="isActive('/')" (click)="navigateTo('/')">
+      <mat-icon>list</mat-icon>
+      <span>Liste</span>
+    </a>
+    <a *ngIf="!readonly" mat-button [class.active]="isActive('/add')" (click)="navigateTo('/add')">
+      <mat-icon>add_circle_outline</mat-icon>
+      <span>Buchung</span>
+    </a>
+    <a mat-button [class.active]="isActive('/reports')" (click)="navigateTo('/reports')">
+      <mat-icon>timeline</mat-icon>
+      <span>Berichte</span>
+    </a>
+    <a mat-button [class.active]="isActive('/categories')" (click)="navigateTo('/categories')">
+      <mat-icon>view_comfy</mat-icon>
+      <span>Kategorien</span>
+    </a>
+    <a mat-button (click)="navigateTo('/import')">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Importieren</span>
+    </a>
+    <a *ngIf="!readonly" mat-button [class.active]="isActive('/settings')" (click)="navigateTo('/settings')">
+      <mat-icon>settings</mat-icon>
+      <span>Konfiguration</span>
+    </a>
+  </nav>
 
-<div class="container" *ngIf="readonly">
+  <div class="current-year-block" aria-label="Current year">
+    <span class="current-year">{{currentYear}}</span>
+  </div>
+
+  <mat-form-field class="account-select">
+    <mat-label>Konto</mat-label>
+    <mat-select [value]="activeAccount()?.id" (selectionChange)="selectAccount($event.value)">
+      <mat-option *ngFor="let account of accounts" [value]="account.id">
+        {{account.label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-toolbar>
+
+<div class="info-panel" *ngIf="readonly">
   <div class="info">
-    Der aktuelle Zugang hat keine Schreibrechte.
-    <br>
-    Jegliche Speicher- oder Bearbeitungsoperationen werden nicht ausgeführt.
-  </div>	
+    Der aktuelle Zugang hat keine Schreibrechte. Jegliche Speicher- oder Bearbeitungsoperationen werden nicht ausgeführt.
+  </div>
 </div>

@@ -3,8 +3,45 @@
   margin-bottom: 20px;
 }
 
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.edit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .group {
   margin: 20px 0;
+}
+
+@media (min-width: 768px) {
+  .edit-row {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .edit-row .mat-form-field,
+  .edit-row .flex-input {
+    flex: 1;
+  }
+}
+
+.type-toggle {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.type-toggle .mat-button-toggle {
+  flex: 1;
+  min-width: 120px;
+  white-space: nowrap;
 }
 
 .flex-input {
@@ -15,10 +52,4 @@
 .flex-input > input {
   flex-grow: 1;
   margin-right: 10px !important;
-}
-
-/* Materialize fixes */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  display: none;
 }

@@ -1,83 +1,76 @@
 /* Booking component styles */
 .container {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
-.error {
-  padding: 10px;
-  margin: 20px 0;
-  color: #000;
-  background-color: #fff;
-  box-shadow: 1px 1px 4px rgba(0,0,0,.5);
+.error-card {
+  margin-bottom: 1rem;
+  background-color: #fbe9ea;
+  color: #b71c1c;
 }
 
-.error {
-  background-color: #800;
-  color: #fff;
-  font-weight: bold;
-}
-
-.group {
-  margin: 20px 0;
-}
-
-.addDocuments div,
-.addDocuments label {
-  float: left;
-  width: 100%;
-  margin-bottom: 10px;
-}
-
-.categories > div {
-  margin: 20px 10px;
-  margin-bottom: 0;
-}
-
-.categories .cancel-selection {
-  display: flex;
-  margin: 10px 20px 0 20px;
-}
-
-.categories input[type=radio]+label {
-  padding-right: 20px;
-  min-width: 150px;
-  margin-bottom: 0;
-}
-
-.navigation {
-  position: fixed;
-  top: 40%;
-}
-
-.navigation .previous {
-  position: fixed;
-  left: 0;
-}
-
-.navigation .next {
-  position: fixed;
-  right: 0;
-}
-
-.document-list {
+.booking-form {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  grid-gap: 10px;
-  align-items: center;
+  gap: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.category-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.category-group .notice {
+  font-size: 0.85rem;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .flex-input {
   display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.currency-indicator {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.type-toggle {
+  display: flex;
+  justify-content: center;
+}
+
+.document-list {
+  margin-top: 1rem;
+}
+
+.document-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.5rem;
   align-items: center;
+  padding: 0.25rem 0;
 }
 
-.flex-input > input {
-  flex-grow: 1;
-  margin-right: 10px !important;
+.add-documents {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-/* Materialize fixes */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  display: none;
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
 }

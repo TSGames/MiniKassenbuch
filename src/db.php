@@ -393,9 +393,13 @@ class DB{
 		return $booking;
 	}
 	public function getAccount(){
+		return $this->getAccountById($_SESSION["account"]);
+	}
+
+	public function getAccountById($id){
 		$stmt = $this->db->prepare('SELECT * FROM ACCOUNT WHERE id = :id');
-		$stmt->execute([":id"=>$_SESSION["account"]]);
-		return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+		$stmt->execute([":id"=>$id]);
+		return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 	}
 	public function getAccounts(){
 		$stmt = $this->db->prepare('SELECT * FROM ACCOUNT ORDER BY id');

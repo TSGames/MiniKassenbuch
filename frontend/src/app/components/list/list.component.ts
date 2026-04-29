@@ -4,13 +4,16 @@ import { BookingService } from '../../services/booking.service';
 import { AccountService } from '../../services/account.service';
 import { DatePipe, DecimalPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  imports: [DatePipe, DecimalPipe, CommonModule, RouterModule, HeaderComponent],
+  imports: [DatePipe, DecimalPipe, CommonModule, RouterModule, HeaderComponent, MatCardModule, MatButtonModule, MatIconModule],
   standalone: true
 })
 export class ListComponent implements OnInit {

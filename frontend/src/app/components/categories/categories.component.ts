@@ -5,12 +5,28 @@ import { DecimalPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { AuthService } from '../../services/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-categories',
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.scss'],
-  imports: [FormsModule, DecimalPipe, CommonModule, RouterModule, HeaderComponent],
+  imports: [
+    FormsModule,
+    DecimalPipe,
+    CommonModule,
+    RouterModule,
+    HeaderComponent,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule
+  ],
   standalone: true
 })
 export class CategoriesComponent {

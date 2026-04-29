@@ -179,6 +179,32 @@ $app->get('/api/accounts', function ($request, $response, $args) {
     return $response->withJson($accounts);
 })->add($authMiddleware);
 
+// Get the active account (stored in session)
+$app->get('/api/account', function ($request, $response, $args) {
+    $db = new DB();
+    $account = $db->getAccount();
+    if (!$account) {
+        return $response->withJson(['error' => 'Account not found'], 404);
+    }
+    return $response->withJson(['account' => $account]);
+})->add($authMiddleware);
+
+// Set the active account
+$app->post('/api/account', function ($request, $response, $args) {
+    $post = $request->getParsedBody();
+    $id = isset($post['id']) ? (int) $post['id'] : null;
+    if (!$id) {
+        return $response->withJson(['error' => 'Account id required'], 400);
+    }
+    $db = new DB();
+    $account = $db->getAccountById($id);
+    if (!$account) {
+        return $response->withJson(['error' => 'Account not found'], 404);
+    }
+    $_SESSION['account'] = $account['id'];
+    return $response->withJson(['account' => $account]);
+})->add($authMiddleware);
+
 // Get documents for a booking
 $app->get('/api/bookings/{id}/documents', function ($request, $response, $args) {
     $db = new DB();

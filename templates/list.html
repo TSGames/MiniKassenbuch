@@ -9,21 +9,25 @@ function setFilter(){
 <div class="container">
 <div class="filter row">
 <h2>Ansicht filtern</h2>
-<div class="input-field col s12 m6">
-	<select id="year" onchange="setFilter()">
-		{% for i in range(year-20,year) %}
-			<option {% if i==filter.year %}selected{% endif %}>{{i}}</option>
-		{% endfor %}
-	</select>
-	<label>Jahr</label>
+<div class="input-field col s12 m6 mat-select-wrapper">
+    <mat-form-field>
+      <mat-label>Jahr</mat-label>
+      <mat-select id="year" panelClass="mat-select-panel" (selectionChange)="setFilter()">
+        {% for i in range(year-20,year) %}
+          <mat-option value="{{i}}" {% if i==filter.year %}selected{% endif %}>{{i}}</mat-option>
+        {% endfor %}
+      </mat-select>
+    </mat-form-field>
 </div>
-<div class="input-field col s12 m6">
-	<select id="month" onchange="setFilter()">
-		{% for i in range(0,12) %}
-			<option value="{{i}}" {% if i==filter.month %}selected{% endif %}>{% if i==0 %}Gesamtes Jahr{% elseif i<10 %}0{{i}}{% else %}{{i}}{% endif %}</option>
-		{% endfor %}
-	</select>
-	<label>Monat</label>
+<div class="input-field col s12 m6 mat-select-wrapper">
+    <mat-form-field>
+      <mat-label>Monat</mat-label>
+      <mat-select id="month" panelClass="mat-select-panel" (selectionChange)="setFilter()">
+        {% for i in range(0,12) %}
+          <mat-option value="{{i}}" {% if i==filter.month %}selected{% endif %}>{% if i==0 %}Gesamtes Jahr{% elseif i<10 %}0{{i}}{% else %}{{i}}{% endif %}</mat-option>
+        {% endfor %}
+      </mat-select>
+    </mat-form-field>
 </div>
 </div>
 <table class='striped'>
