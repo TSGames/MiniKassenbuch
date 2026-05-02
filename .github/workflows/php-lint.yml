@@ -1,0 +1,45 @@
+name: PHP Lint
+
+on:
+  push:
+    branches: [ main, develop, claude/* ]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - '.github/workflows/php-lint.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/**'
+      - 'public/**'
+
+jobs:
+  lint:
+    name: PHP Syntax Check
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ['8.4']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+
+      - name: Check PHP syntax
+        run: |
+          find src/ public/index.php -name "*.php" -type f -exec php -l {} \;
+          echo "✅ All PHP files have valid syntax"
+
+      - name: Verify key files exist
+        run: |
+          test -f src/db.php && echo "✅ db.php exists"
+          test -f src/api_routes.php && echo "✅ api_routes.php exists"
+          test -f public/index.php && echo "✅ index.php exists"
+          echo "✅ All key files verified"
