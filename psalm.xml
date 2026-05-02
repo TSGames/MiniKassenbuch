@@ -8,6 +8,16 @@
     </projectFiles>
 
     <issueHandlers>
+        <!-- The $app variable is passed to api_routes.php from index.php -->
+        <UndefinedGlobalVariable>
+            <errorLevel type="suppress">
+                <file name="src/api_routes.php" />
+                <file name="src/routes.php" />
+                <file name="src/middleware.php" />
+                <file name="src/dependencies.php" />
+            </errorLevel>
+        </UndefinedGlobalVariable>
+
         <!-- Slim framework uses closures with $this context -->
         <InvalidScope>
             <errorLevel type="suppress">
