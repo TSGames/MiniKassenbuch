@@ -20,19 +20,11 @@ class DB{
 		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING_CATEGORY (booking INTEGER,category INTEGER)");
 		$this->db->exec("CREATE TABLE IF NOT EXISTS SETTINGS (name TEXT PRIMARY KEY,value TEXT)");
 
-		// update tables
-		try {
-			$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN amount NUMERIC default NULL");
-		} catch(Exception $ignored) {}
-		try {
-			$this->db->exec("ALTER TABLE BOOKING ADD COLUMN source NUMERIC default 0");
-		} catch(Exception $ignored) {}
-		try {
-			$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN keywords TEXT default NULL");
-		} catch(Exception $ignored) {}
-		try {
-			$this->db->exec("ALTER TABLE BOOKING ADD COLUMN color TEXT default NULL");
-		} catch(Exception $ignored) {}
+		// update tables - add missing columns
+		$this->addColumnIfNotExists('CATEGORY', 'amount', 'NUMERIC default NULL');
+		$this->addColumnIfNotExists('BOOKING', 'source', 'NUMERIC default 0');
+		$this->addColumnIfNotExists('CATEGORY', 'keywords', 'TEXT default NULL');
+		$this->addColumnIfNotExists('BOOKING', 'color', 'TEXT default NULL');
 
 		if (!$db_already_existed) {
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
@@ -56,8 +48,27 @@ class DB{
 		}
 		*/
 		$this->db->commit();
-		
+
 	}
+
+	private function addColumnIfNotExists(string $table, string $column, string $definition): void {
+		$stmt = $this->db->prepare("PRAGMA table_info($table)");
+		$stmt->execute();
+		$columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+		$columnExists = false;
+		foreach ($columns as $col) {
+			if ($col['name'] === $column) {
+				$columnExists = true;
+				break;
+			}
+		}
+
+		if (!$columnExists) {
+			$this->db->exec("ALTER TABLE $table ADD COLUMN $column $definition");
+		}
+	}
+
 	/**
 	 * @return (mixed|string)[]
 	 *
