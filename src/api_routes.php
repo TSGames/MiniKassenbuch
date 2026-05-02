@@ -244,7 +244,10 @@ $app->get('/api/documents/{id}', function ($request, $response, $args) {
         // Validate file path is within documents directory
         $realPath = realpath($filePath);
         $docsDir = realpath(DB::$DOCUMENTS);
-        if ($realPath === false || $docsDir === false || strpos($realPath, $docsDir) !== 0) {
+        if ($realPath === false || $docsDir === false) {
+            return $response->withStatus(403)->withJson(['error' => 'Access denied']);
+        }
+        if (strpos($realPath, $docsDir) !== 0) {
             return $response->withStatus(403)->withJson(['error' => 'Access denied']);
         }
 

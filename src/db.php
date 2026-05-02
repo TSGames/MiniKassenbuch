@@ -390,8 +390,10 @@ class DB{
 				if(!@$result[$year][1]) $result[$year][1]=0;
 			}
 		}
-		if($yearsBack==0)
-		    return $result[$year-1] ?? [];
+		if($yearsBack==0) {
+		    $previousYear = $year - 1;
+		    return $result[$previousYear] ?? [];
+		}
 		return $result;
 	}
 	/**
