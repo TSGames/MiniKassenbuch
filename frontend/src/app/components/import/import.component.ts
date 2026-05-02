@@ -210,6 +210,16 @@ export class ImportComponent implements OnInit {
     });
   }
 
+  onSeparatorChange(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.csvSeparator.set(value);
+  }
+
+  onAutoDetectChange(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.autoDetectCategory.set(checked);
+  }
+
   goBack(): void {
     this.currentStep.set(ImportStep.FileSelect);
     this.csvContent.set(null);

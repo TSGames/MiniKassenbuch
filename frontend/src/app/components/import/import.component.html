@@ -56,12 +56,11 @@
 
         <mat-form-field class="full-width">
           <mat-label>Trennzeichen</mat-label>
-          <mat-input
+          <input matInput
             [value]="csvSeparator()"
-            (change)="csvSeparator.set($event.target.value)"
+            (input)="onSeparatorChange($event)"
             name="separator"
             placeholder="z.B. ',', ';', TAB">
-          </mat-input>
         </mat-form-field>
 
         <div class="auto-detect-section">
@@ -69,7 +68,7 @@
             <input
               type="checkbox"
               [checked]="autoDetectCategory()"
-              (change)="autoDetectCategory.set($event.target.checked)"
+              (change)="onAutoDetectChange($event)"
               class="auto-detect-checkbox"
             >
             <span>Kategorien automatisch erkennen</span>
