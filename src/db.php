@@ -129,6 +129,10 @@ class DB{
 			if($xlsx) {
 				$zip->addFromString($account['label'].".xlsx",$xlsx);
 			}
+			$pdf=$this->getPDF($account['id'], true, $account['label']);
+			if($pdf) {
+				$zip->addFromString($account['label'].".pdf",$pdf);
+			}
 			$bookings=$this->getBookingsForAccount(true, $account['id']);
 			foreach($bookings as $b) {
 				$docs = $this->getDocuments($b['id']);
@@ -136,7 +140,7 @@ class DB{
 					$zip->addFile(self::$DOCUMENTS.$doc['id'],"documents/".$b['number'] . ' - ' . $doc['filename']);
 				}
 			}
-			
+
 		}
 		$zip->close();
 		return $path;
@@ -255,6 +259,87 @@ class DB{
 		$meta = stream_get_meta_data($file);
 		$contents = file_get_contents($meta['uri']);
 		return $contents !== false ? $contents : null;
+	}
+	public function getPDF($account, $filter = false, $accountLabel = ''): string|null{
+		$bookings = $this->getBookingsForAccount($filter, $account);
+		if(count($bookings) == 0)
+			return null;
+
+		$mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
+
+		$year = isset($_SESSION["filter"]["year"]) ? $_SESSION["filter"]["year"] : date("Y");
+		$month = isset($_SESSION["filter"]["month"]) ? $_SESSION["filter"]["month"] : 0;
+
+		$periodStr = $year;
+		if($month != 0) {
+			$monthNames = ["", "Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+			$periodStr = $monthNames[$month] . " " . $year;
+		}
+
+		$html = '<h1>' . htmlspecialchars($accountLabel) . ' - ' . $periodStr . '</h1>';
+		$html .= '<table border="1" cellpadding="5" style="width: 100%; font-size: 10pt;">';
+		$html .= '<thead><tr style="background-color: #f5f5f5;">';
+		$html .= '<th>Datum</th><th>Nr.</th><th>Vorgang</th><th>Kategorie</th><th>Bemerkungen</th><th style="text-align: right;">Betrag</th><th style="text-align: right;">Saldo</th><th>Belege</th>';
+		$html .= '</tr></thead><tbody>';
+
+		foreach($bookings as $booking) {
+			$date = date("Y-m-d", $booking['date']);
+			$number = $booking['number'];
+			$label = htmlspecialchars($booking['label']);
+			$category = htmlspecialchars($booking['category'] ?? '');
+			$notes = htmlspecialchars($booking['notes']);
+			$amount = number_format($booking['amount']/100 * ($booking["type"]==0 ? 1 : -1), 2, ",", ".");
+			$saldo = number_format($booking['saldo']/100, 2, ",", ".");
+			$docs = $this->getDocuments($booking['id']);
+			$documentCount = count($docs);
+
+			$html .= '<tr>';
+			$html .= '<td>' . $date . '</td>';
+			$html .= '<td>' . $number . '</td>';
+			$html .= '<td>' . $label . '</td>';
+			$html .= '<td>' . $category . '</td>';
+			$html .= '<td>' . $notes . '</td>';
+			$html .= '<td style="text-align: right;">' . $amount . '</td>';
+			$html .= '<td style="text-align: right;">' . $saldo . '</td>';
+			$html .= '<td>' . ($documentCount > 0 ? $documentCount . ' Datei(en)' : '') . '</td>';
+			$html .= '</tr>';
+		}
+
+		$html .= '</tbody></table>';
+		$mpdf->WriteHTML($html);
+
+		foreach($bookings as $booking) {
+			$docs = $this->getDocuments($booking['id']);
+			foreach($docs as $doc) {
+				$docPath = self::$DOCUMENTS . $doc['id'];
+				$fileExt = strtolower(pathinfo($doc['filename'], PATHINFO_EXTENSION));
+
+				if(in_array($fileExt, ['jpg', 'jpeg', 'png', 'gif'])) {
+					$mpdf->AddPage();
+					$mpdf->SetFontSize(9);
+					$mpdf->WriteHTML('<p style="color: #666; margin-bottom: 10px;">Booking #' . $booking['number'] . ' - ' . htmlspecialchars($doc['filename']) . '</p>');
+					if(file_exists($docPath)) {
+						$mpdf->Image($docPath, 10, 30, 190);
+					}
+				} elseif($fileExt === 'pdf') {
+					try {
+						$pageCount = $mpdf->setSourceFile($docPath);
+						for($i = 1; $i <= $pageCount; $i++) {
+							$mpdf->AddPage();
+							$tpl = $mpdf->importPage($i);
+							$mpdf->useTemplate($tpl);
+							if($i == 1) {
+								$mpdf->SetFontSize(9);
+								$mpdf->WriteHTML('<div style="position: absolute; top: 10px; left: 10px; background: white; padding: 5px; color: #666; font-size: 9pt;">Booking #' . $booking['number'] . '</div>');
+							}
+						}
+					} catch(Exception $e) {
+					}
+				}
+			}
+		}
+
+		return $mpdf->Output('', 'S');
 	}
 	/**
 	 * @return (array|mixed)[]
