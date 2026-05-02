@@ -107,6 +107,6 @@ export class ListComponent implements OnInit {
     return new Intl.NumberFormat('de-DE', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    }).format(amount);
+    }).format(amount / 100);
   }
 }
