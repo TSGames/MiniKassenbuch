@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 interface ImportConfig {
   separator: string;
   mappings: { [key: string]: string };
+  autoDetectCategory?: boolean;
 }
 
 interface ImportRequest {

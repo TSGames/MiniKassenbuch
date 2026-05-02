@@ -4,11 +4,15 @@ class CSV{
 	private mixed $config;
 	private DB $db;
 	private string $currency;
+	private array $categories = [];
 
 	public function __construct($config){
 		$this->config=$config;
 		$this->db=new DB();
 		$this->currency = $this->db->getSettings()['currency'];
+		if(isset($this->config->autoDetectCategory) && $this->config->autoDetectCategory) {
+			$this->categories = $this->db->getCategoriesForAutoDetect();
+		}
 	}
 	private function getData($key, $headers, $post) {
 		$idx = array_search(@$this->config->mappings->{$key}, $headers);
@@ -40,7 +44,46 @@ class CSV{
 			}
 		}
 		return null;
-	
+	}
+	private function guessCategory($label): int|null {
+		if(!$label || empty($this->categories)) {
+			return null;
+		}
+
+		$matched = null;
+		$splitted = explode(' ', $label);
+
+		// First try keyword matching
+		foreach($this->categories as $category) {
+			if(!empty($category['keywords'])) {
+				$keywords = array_map('trim', explode(',', strtolower($category['keywords'])));
+				foreach($keywords as $keyword) {
+					if(!empty($keyword) && strpos(strtolower($label), $keyword) !== false) {
+						$matched = $category;
+						break;
+					}
+				}
+			}
+			if($matched) break;
+		}
+
+		// Fall back to label matching (original algorithm)
+		if(!$matched) {
+			foreach($this->categories as $category) {
+				foreach($splitted as $word) {
+					if(strlen($word) > 3) {
+						$search = substr($word, 0, (int)round(strlen($word) * 0.8));
+						if(stripos($category['label'], $search) !== false) {
+							$matched = $category;
+							break;
+						}
+					}
+				}
+				if($matched) break;
+			}
+		}
+
+		return $matched ? $matched['id'] : null;
 	}
 	/**
 	 * @return (mixed|scalar)[]
@@ -60,6 +103,15 @@ class CSV{
 		$data["notes"]=$this->getData('notes', $headers, $post);
 		$data["_invalid"]=!$data["date"] || count($post) != count($headers);
 		$data["_duplicate"]=$this->db->hasBooking($data);
+
+		// Auto-detect category if enabled
+		if(!empty($this->categories)) {
+			$categoryId = $this->guessCategory($data["label"]);
+			if($categoryId) {
+				$data["category"] = $categoryId;
+			}
+		}
+
 		return $data;
 	}
 	/**

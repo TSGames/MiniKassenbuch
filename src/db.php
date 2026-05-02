@@ -23,6 +23,9 @@ class DB{
 		try {
 			$this->db->exec("ALTER TABLE BOOKING ADD COLUMN source NUMERIC default 0");
 		} catch(Exception $ignored) {}
+		try {
+			$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN keywords TEXT default NULL");
+		} catch(Exception $ignored) {}
 
 		if (!$db_already_existed) {
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
@@ -472,7 +475,7 @@ class DB{
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getCategories($booking=null): array{
-		$stmt = $this->db->prepare('SELECT id,label,amount,(category>0) as active FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (booking = :booking AND category=id) ORDER BY upper(label)');
+		$stmt = $this->db->prepare('SELECT id,label,amount,keywords,(category>0) as active FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (booking = :booking AND category=id) ORDER BY upper(label)');
 		$stmt->execute([":booking"=>$booking]);
 
 		$categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -480,6 +483,11 @@ class DB{
 			$categories[$i]["amount"] /= 100;
 		}
 		return $categories;
+	}
+	public function getCategoriesForAutoDetect(): array{
+		$stmt = $this->db->prepare('SELECT id,label,keywords,amount FROM CATEGORY');
+		$stmt->execute();
+		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getAllCategories(): array{
 		$stmt = $this->db->prepare('SELECT c.id,c.label,c.amount as amount,COUNT(booking) as count FROM CATEGORY c LEFT JOIN BOOKING_CATEGORY ON (category=id) GROUP BY id ORDER BY upper(label)');
