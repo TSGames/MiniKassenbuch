@@ -10,8 +10,8 @@ if (PHP_SAPI == 'cli-server') {
 }
 
 require __DIR__ . '/../vendor/autoload.php';
-require '../src/db.php';
-require '../src/csv.php';
+require __DIR__ . '/../src/db.php';
+require __DIR__ . '/../src/csv.php';
 
 session_start();
 if(!isset($_SESSION["account"]))
