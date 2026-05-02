@@ -44,12 +44,14 @@ Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests 
 * Integrierter Login mit Nutzername + Passwort
 * Kategorisierung von einzelnen Buchungen
 * Intelligente Kategorieerkennung nach Eingabe von Buchungen
+* Auto-Kategorie-Erkennung beim CSV-Import mit Schlüsselwörtern
 * Speichern von Bemerkungen und beliebigen Dokumenten (PDF, JPG, ...) an Buchungen
 * Import-Konfigurator für CSV-Import von Bankdaten
 * Statistik-Auswertung für gesamten Zeitraum + Jahr
-* Export pro Monat
+* Export pro Monat (Excel Format)
 * 1-Klick Backup des gesamten Datenbestands
 * Responsive-Design (Desktop + Mobile optimiert)
+* Dark Mode mit Speicherung der Benutzereinstellung
 
 # Installation
 Das System muss mittels 
@@ -112,10 +114,21 @@ Der Login ist (Passwort verschlüsselt) in der Datei `src/authentication.json` g
 
 # Frameworks
 Das Projekt nutzt u.a. folgende Frameworks oder Toolkits
-- composer
-- slim
-- twig
-- materialize.css
-- material icons
-- jQuery
-- Google Charts
+
+## Frontend
+- Angular 21+ (Single Page Application)
+- Angular Material (UI components & Material Design)
+- SCSS (stylesheets with dark mode support)
+- RxJS (reactive programming)
+
+## Backend
+- PHP 8.4
+- Slim Framework 3.x (REST API)
+- SQLite (database)
+- PhpOffice PhpSpreadsheet (Excel export)
+- Psalm (static analysis & type checking)
+
+## Development
+- Composer (PHP dependency management)
+- npm (JavaScript dependency management)
+- Docker & Docker Compose (containerization)
