@@ -49,7 +49,7 @@ body {
 }
 
 main {
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 80px);
   padding: 1rem;
 }
 
@@ -92,7 +92,7 @@ a {
 @media (max-width: bp.$breakpoint-md) {
   main {
     padding: 0.75rem;
-    min-height: calc(100vh - 56px);
+    min-height: calc(100vh - 72px);
   }
 
   .container {
