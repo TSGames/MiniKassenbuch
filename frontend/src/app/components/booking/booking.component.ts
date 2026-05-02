@@ -51,13 +51,16 @@ export class BookingComponent implements OnInit {
   selectedCategory: number | null = null;
   documents: any[] = [];
   error: string | null = null;
-  activeAccount = signal<any>(null);
   currency = '€';
   readonly = false;
   previousId: number | null = null;
   nextId: number | null = null;
   isLoading = true;
   uploadedFiles: File[] = [];
+
+  get activeAccount() {
+    return this.accountService.activeAccount;
+  }
 
   readonly colors = [
     { value: 'red', label: 'Rot', hex: '#FF6B6B' },
