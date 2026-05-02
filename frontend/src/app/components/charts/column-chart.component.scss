@@ -1,0 +1,87 @@
+.chart-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+  padding: 1rem 0;
+}
+
+.chart-container {
+  width: 100%;
+  min-width: 600px;
+  display: flex;
+  justify-content: center;
+}
+
+.chart-svg {
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+
+  .chart-title {
+    font-size: 14px;
+    font-weight: 600;
+    fill: #1976d2;
+  }
+
+  .axis {
+    stroke: #333;
+    stroke-width: 2;
+  }
+
+  .axis-label {
+    font-size: 12px;
+    fill: #666;
+  }
+
+  .grid-line {
+    stroke: #e0e0e0;
+    stroke-width: 1;
+    stroke-dasharray: 5,5;
+  }
+
+  .bar {
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+      filter: brightness(1.1);
+    }
+  }
+
+  .bar-label {
+    font-size: 11px;
+    font-weight: 600;
+    fill: white;
+    pointer-events: none;
+  }
+
+  .legend-label {
+    font-size: 12px;
+    fill: #333;
+  }
+}
+
+@media (max-width: 768px) {
+  .chart-container {
+    min-width: 100%;
+  }
+
+  .chart-svg {
+    .chart-title {
+      font-size: 12px;
+    }
+
+    .axis-label {
+      font-size: 10px;
+    }
+
+    .bar-label {
+      font-size: 9px;
+    }
+
+    .legend-label {
+      font-size: 10px;
+    }
+  }
+}

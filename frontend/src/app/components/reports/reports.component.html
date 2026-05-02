@@ -13,7 +13,12 @@
         <mat-card-title>Jahresübersicht Ein-/Ausgaben</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div #yearlyChart class="chart-container"></div>
+        <app-column-chart
+          [data]="yearlyChartData"
+          [series]="['Einnahmen', 'Ausgaben']"
+          [colors]="['#4caf50', '#f44336']"
+          [height]="350"
+        ></app-column-chart>
       </mat-card-content>
     </mat-card>
 
@@ -109,7 +114,12 @@
         <mat-card-title>Monatsübersicht {{currentYear}}</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div #monthlyChart class="chart-container"></div>
+        <app-column-chart
+          [data]="monthlyChartData"
+          [series]="['Einnahmen', 'Ausgaben']"
+          [colors]="['#4caf50', '#f44336']"
+          [height]="350"
+        ></app-column-chart>
       </mat-card-content>
     </mat-card>
 

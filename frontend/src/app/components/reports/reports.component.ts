@@ -1,14 +1,13 @@
-import { Component, OnInit, ViewChild, ElementRef, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { ReportService } from '../../services/report.service';
 import { SettingsService } from '../../services/settings.service';
 import { DecimalPipe, CommonModule, KeyValuePipe } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
+import { ColumnChartComponent } from '../charts/column-chart.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-declare var google: any;
 
 @Component({
   selector: 'app-reports',
@@ -19,6 +18,7 @@ declare var google: any;
     KeyValuePipe,
     CommonModule,
     HeaderComponent,
+    ColumnChartComponent,
     MatCardModule,
     MatTableModule,
     MatIconModule,
@@ -46,6 +46,9 @@ export class ReportsComponent implements OnInit {
   displayedTopColumns: string[] = ['label', 'amount', 'percentage'];
   displayedCategoryColumns: string[] = ['category', 'amount', 'percentage'];
 
+  yearlyChartData: { [key: string]: [number, number] } = {};
+  monthlyChartData: { [key: string]: [number, number] } = {};
+
   constructor(
     private reportService: ReportService,
     private settingsService: SettingsService
@@ -53,7 +56,7 @@ export class ReportsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadSettings();
-    this.loadChartsLibrary();
+    this.loadReports();
   }
 
   private loadSettings(): void {
@@ -62,21 +65,6 @@ export class ReportsComponent implements OnInit {
         this.currency = settings.currency || '€';
       }
     });
-  }
-
-  private loadChartsLibrary(): void {
-    if (typeof google === 'undefined') {
-      const script = document.createElement('script');
-      script.src = 'https://www.gstatic.com/charts/loader.js';
-      script.async = true;
-      script.onload = () => {
-        google.charts.load('current', { packages: ['corechart', 'table'] });
-        google.charts.setOnLoadCallback(() => this.loadReports());
-      };
-      document.head.appendChild(script);
-    } else {
-      this.loadReports();
-    }
   }
 
   loadReports(): void {
@@ -92,11 +80,8 @@ export class ReportsComponent implements OnInit {
         this.yearStats = data.yearStats;
         this.isLoading.set(false);
 
-        // Draw charts after data is loaded
-        setTimeout(() => {
-          this.drawYearlyChart();
-          this.drawMonthlyChart();
-        }, 0);
+        // Process chart data
+        this.processChartData();
       },
       error: () => {
         this.isLoading.set(false);
@@ -104,76 +89,25 @@ export class ReportsComponent implements OnInit {
     });
   }
 
-  private drawYearlyChart(): void {
-    if (!this.yearlyChartRef || !this.yearsStats.length) return;
-
-    const dataArray: any[] = [['Jahr', 'Einnahmen', 'Ausgaben']];
-
+  private processChartData(): void {
+    // Process yearly data for chart
+    this.yearlyChartData = {};
     Object.entries(this.yearsStats).forEach(([year, data]: [string, any]) => {
-      dataArray.push([
-        year,
+      this.yearlyChartData[year] = [
         data[0] ? data[0] / 100 : 0,
         data[1] ? data[1] / 100 : 0
-      ]);
+      ];
     });
 
-    const data = google.visualization.arrayToDataTable(dataArray);
-
-    const options = {
-      title: 'Jahresübersicht Ein-/Ausgaben',
-      curveType: 'function',
-      legend: { position: 'bottom' },
-      hAxis: {
-        title: 'Jahr'
-      },
-      vAxis: {
-        title: `Betrag (${this.currency})`
-      },
-      pointSize: 7,
-      series: {
-        0: { color: '#4caf50' },
-        1: { color: '#f44336' }
-      }
-    };
-
-    const chart = new google.visualization.ColumnChart(this.yearlyChartRef.nativeElement);
-    chart.draw(data, options);
-  }
-
-  private drawMonthlyChart(): void {
-    if (!this.monthlyChartRef || !this.monthsStats.length) return;
-
-    const dataArray: any[] = [['Monat', 'Einnahmen', 'Ausgaben']];
-
-    this.monthsStats.forEach((month: any) => {
-      dataArray.push([
-        month.label,
+    // Process monthly data for chart
+    this.monthlyChartData = {};
+    this.monthsStats.forEach((month: any, index: number) => {
+      const monthLabel = month.label || `Monat ${index + 1}`;
+      this.monthlyChartData[monthLabel] = [
         month[0] ? month[0] / 100 : 0,
         month[1] ? month[1] / 100 : 0
-      ]);
+      ];
     });
-
-    const data = google.visualization.arrayToDataTable(dataArray);
-
-    const options = {
-      title: 'Monatsübersicht Ein-/Ausgaben',
-      curveType: 'function',
-      legend: { position: 'bottom' },
-      hAxis: {
-        title: 'Monat'
-      },
-      vAxis: {
-        title: `Betrag (${this.currency})`
-      },
-      pointSize: 7,
-      series: {
-        0: { color: '#4caf50' },
-        1: { color: '#f44336' }
-      }
-    };
-
-    const chart = new google.visualization.ColumnChart(this.monthlyChartRef.nativeElement);
-    chart.draw(data, options);
   }
 
   formatCurrency(amount: number): string {

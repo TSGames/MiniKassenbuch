@@ -1,8 +1,6 @@
 @use '@angular/material' as mat;
 @use 'theme-colors' as colors;
 
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-
 html {
   @include mat.theme((
     color: colors.$primary-palette,
