@@ -10,6 +10,7 @@ on:
       - 'release/**'
       - 'hotfix/**'
       - 'bugfix/**'
+      - 'claude/**'
     tags:
       - 'v*'
   workflow_dispatch:
