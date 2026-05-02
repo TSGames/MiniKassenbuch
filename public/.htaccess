@@ -3,18 +3,19 @@ Allow from all
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
-  RewriteRule ^(.*) - [E=BASE:%1]
-
-  # Serve static files and directories from browser/ directly
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
+  # Serve files that exist directly (e.g. logo.png in root)
+  RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
-  # API routes go to PHP index.php
-  RewriteCond %{REQUEST_URI} ^/api
+  # API and document routes go to PHP index.php
+  RewriteCond %{REQUEST_URI} ^/api [OR]
+  RewriteCond %{REQUEST_URI} ^/document
   RewriteRule ^ index.php [QSA,L]
 
-  # Everything else goes to the Angular app
+  # Check if the file exists inside browser/ subdirectory
+  RewriteCond %{DOCUMENT_ROOT}/browser%{REQUEST_URI} -f
+  RewriteRule ^(.*)$ browser/$1 [L]
+
+  # Everything else serves the Angular app
   RewriteRule ^ browser/index.html [QSA,L]
 </IfModule>

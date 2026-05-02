@@ -33,9 +33,29 @@ $app->add(function ($request, $response, $next) {
         return $next($request, $response);
     }
 
-    if (isset($_SESSION["user"])) {
+    // Check if this is a static file request (JS, CSS, images, etc.)
+    $path = trim($request->getUri()->getPath(), '/');
+    $staticExtensions = ['js', 'css', 'png', 'jpg', 'jpeg', 'gif', 'ico', 'svg', 'woff', 'woff2', 'ttf', 'eot', 'json'];
+    $pathExt = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+    if (in_array($pathExt, $staticExtensions)) {
+        // Let static files be served by the web server
         return $next($request, $response);
     }
+
+    if (isset($_SESSION["user"])) {
+        // User is authenticated, serve the Angular frontend
+        $indexPath = __DIR__ . '/../public/browser/index.html';
+        if (file_exists($indexPath)) {
+            $html = file_get_contents($indexPath);
+            if ($html !== false) {
+                $response->getBody()->write($html);
+                return $response->withHeader('Content-Type', 'text/html');
+            }
+        }
+        return $response->withStatus(500)->withJson(['error' => 'Frontend not found']);
+    }
+
+    // User is not authenticated
     $firstTime = !file_exists(__DIR__ . '/../data/authentication.json');
     $post = $request->getParsedBody();
     $valid = false;
@@ -72,9 +92,16 @@ $app->add(function ($request, $response, $next) {
             return $response->withRedirect($request->getUri()->getBaseUrl());
         }
     }
+
+    // Serve login page
     $indexPath = __DIR__ . '/../public/browser/index.html';
-    $html = file_get_contents($indexPath);
-    $response->getBody()->write($html);
-    return $response->withHeader('Content-Type', 'text/html');
+    if (file_exists($indexPath)) {
+        $html = file_get_contents($indexPath);
+        if ($html !== false) {
+            $response->getBody()->write($html);
+            return $response->withHeader('Content-Type', 'text/html');
+        }
+    }
+    return $response->withStatus(500)->withJson(['error' => 'Frontend not found']);
 
 });

@@ -415,6 +415,7 @@ $app->post('/api/logout', function ($request, $response, $args) {
     session_start();
     unset($_SESSION['user']);
     unset($_SESSION['readonly']);
-    
+
     return $response->withJson(['success' => true]);
 });
+
