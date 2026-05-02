@@ -56,7 +56,9 @@
 
         <mat-form-field class="full-width">
           <mat-label>Trennzeichen</mat-label>
-          <mat-input [(ngModel)]="csvSeparator"
+          <mat-input
+            [value]="csvSeparator()"
+            (change)="csvSeparator.set($event.target.value)"
             name="separator"
             placeholder="z.B. ',', ';', TAB">
           </mat-input>
@@ -66,8 +68,8 @@
           <label class="auto-detect-label">
             <input
               type="checkbox"
-              [(ngModel)]="autoDetectCategory"
-              name="autoDetectCategory"
+              [checked]="autoDetectCategory()"
+              (change)="autoDetectCategory.set($event.target.checked)"
               class="auto-detect-checkbox"
             >
             <span>Kategorien automatisch erkennen</span>
