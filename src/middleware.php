@@ -72,8 +72,9 @@ $app->add(function ($request, $response, $next) {
             return $response->withRedirect($request->getUri()->getBaseUrl());
         }
     }
-    return $this->view->render($response, 'login.html', [
-        'firstTime' => $firstTime,
-        'valid' => $valid,
-    ]);
+    $indexPath = __DIR__ . '/../public/browser/index.html';
+    $html = file_get_contents($indexPath);
+    $response->getBody()->write($html);
+    return $response->withHeader('Content-Type', 'text/html');
+
 });
