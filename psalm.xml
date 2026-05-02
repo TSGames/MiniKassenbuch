@@ -16,14 +16,6 @@
             </errorLevel>
         </UndefinedGlobalVariable>
 
-        <!-- Slim framework uses closures with $this context -->
-        <InvalidScope>
-            <errorLevel type="suppress">
-                <file name="src/api_routes.php" />
-                <file name="src/middleware.php" />
-            </errorLevel>
-        </InvalidScope>
-
         <!-- Slim route handlers use unused parameters -->
         <UnusedClosureParam>
             <errorLevel type="suppress">
