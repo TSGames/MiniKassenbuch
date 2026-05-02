@@ -8,10 +8,5 @@
     },
     "require-dev": {
         "vimeo/psalm": "^6.16"
-    },
-    "config": {
-        "audit": {
-            "block-insecure": false
-        }
     }
 }
