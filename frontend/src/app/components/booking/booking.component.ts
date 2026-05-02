@@ -247,20 +247,24 @@ export class BookingComponent implements OnInit {
       this.bookingService.updateBooking(this.id, bookingData).subscribe({
         next: () => {
           this.error = null;
+          this.isLoading = false;
           this.router.navigate(['/']);
         },
         error: () => {
           this.error = 'Fehler beim Speichern der Buchung';
+          this.isLoading = false;
         }
       });
     } else {
       this.bookingService.createBooking(bookingData).subscribe({
         next: (response) => {
           this.error = null;
+          this.isLoading = false;
           this.router.navigate(['/edit', response.id]);
         },
         error: () => {
           this.error = 'Fehler beim Erstellen der Buchung';
+          this.isLoading = false;
         }
       });
     }
