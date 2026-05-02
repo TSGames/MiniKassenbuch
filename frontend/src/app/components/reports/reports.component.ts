@@ -1,6 +1,7 @@
-import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectorRef, effect } from '@angular/core';
 import { ReportService } from '../../services/report.service';
 import { SettingsService } from '../../services/settings.service';
+import { FilterService } from '../../services/filter.service';
 import { DecimalPipe, CommonModule, KeyValuePipe } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { ColumnChartComponent } from '../charts/column-chart.component';
@@ -50,12 +51,18 @@ export class ReportsComponent implements OnInit {
   constructor(
     private reportService: ReportService,
     private settingsService: SettingsService,
+    private filterService: FilterService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+    effect(() => {
+      this.filterService.filterYear();
+      this.filterService.filterMonth();
+      this.loadReports();
+    });
+  }
 
   ngOnInit(): void {
     this.loadSettings();
-    this.loadReports();
   }
 
   private loadSettings(): void {

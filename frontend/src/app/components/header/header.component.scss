@@ -8,7 +8,7 @@
   display: flex;
   justify-content: start;
   padding: 0 1rem;
-  height: 72px;
+  height: 82px;
   background-color: #2196f3;
   align-items: center;
   flex-wrap: wrap;
@@ -56,7 +56,6 @@
   align-items: center;
   margin-left: 3.5rem;
   flex: 1;
-  min-width: 0;
 
   @media (max-width: bp.$breakpoint-md) {
     margin-left: 2rem;
@@ -92,7 +91,7 @@
 }
 
 .nav-label {
-  @media (max-width: bp.$breakpoint-md) {
+  @media (max-width: bp.$breakpoint-xlg) {
     display: none;
   }
 }
@@ -134,17 +133,10 @@
 }
 
 .current-year-block {
-  margin-left: 1rem;
   display: flex;
   align-items: center;
-
-  @media (max-width: bp.$breakpoint-lg) {
-    margin-left: 0.5rem;
-  }
-
-  @media (max-width: bp.$breakpoint-md) {
-    margin-left: 0.25rem;
-  }
+  flex-shrink: 0;
+  margin-right: 1rem;
 
   @media (max-width: bp.$breakpoint-xs) {
     display: none;

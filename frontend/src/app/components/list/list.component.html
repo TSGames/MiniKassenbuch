@@ -2,34 +2,24 @@
   <div class="container">
     <!-- Filter Section -->
     <mat-card class="filter-card">
-      <mat-card-header>
-        <mat-card-title>Ansicht filtern</mat-card-title>
-      </mat-card-header>
       <mat-card-content>
         <div class="filter-controls">
           <mat-form-field>
             <mat-label>Jahr</mat-label>
-            <mat-select [(ngModel)]="filterYear" (change)="setFilter()" name="filterYear">
-              <mat-option *ngFor="let year of yearRange" [value]="year">
-                {{year}}
-              </mat-option>
+            <mat-select [ngModel]="filterService.filterYear()" (selectionChange)="onFilterChange($event.value, filterService.filterMonth())">
+              <mat-option *ngFor="let year of filterService.yearRange()" [value]="year">{{year}}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>Monat</mat-label>
-            <mat-select [(ngModel)]="filterMonth" (change)="setFilter()" name="filterMonth">
+            <mat-select [ngModel]="filterService.filterMonth()" (selectionChange)="onFilterChange(filterService.filterYear(), $event.value)">
               <mat-option [value]="0">Gesamtes Jahr</mat-option>
-              <mat-option *ngFor="let month of [0,1,2,3,4,5,6,7,8,9,10,11]" [value]="month">
-                {{getMonthLabel(month)}}
+              <mat-option *ngFor="let m of [1,2,3,4,5,6,7,8,9,10,11,12]; let i = index" [value]="m">
+                {{filterService.monthLabels[i]}}
               </mat-option>
             </mat-select>
           </mat-form-field>
-
-          <button mat-raised-button color="primary" routerLink="/add">
-            <mat-icon>add_circle</mat-icon>
-            Neue Buchung
-          </button>
         </div>
       </mat-card-content>
     </mat-card>
@@ -110,7 +100,7 @@
     <div class="export-section">
       <button mat-stroked-button color="primary" (click)="exportData()">
         <mat-icon>download</mat-icon>
-        {{filterYear}} exportieren
+        {{filterService.filterYear()}} exportieren
       </button>
     </div>
   </div>

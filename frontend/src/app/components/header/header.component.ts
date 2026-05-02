@@ -10,6 +10,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AccountService } from '../../services/account.service';
 import { ThemeService } from '../../services/theme.service';
+import { FilterService } from '../../services/filter.service';
 
 @Component({
   selector: 'app-header',
@@ -19,7 +20,6 @@ import { ThemeService } from '../../services/theme.service';
   standalone: true
 })
 export class HeaderComponent implements OnInit {
-  currentYear = new Date().getFullYear();
   readonly activeAccount: WritableSignal<any>;
   readonly = false;
   accounts: any[] = [];
@@ -28,12 +28,15 @@ export class HeaderComponent implements OnInit {
     private router: Router,
     private accountService: AccountService,
     public themeService: ThemeService,
+    public filterService: FilterService,
     private snackBar: MatSnackBar
   ) {
     this.activeAccount = this.accountService.activeAccount;
   }
 
   ngOnInit(): void {
+    this.filterService.load();
+
     this.accountService.getAccounts().subscribe(accounts => {
       this.accounts = accounts;
       if (!this.activeAccount()) {
@@ -54,10 +57,7 @@ export class HeaderComponent implements OnInit {
 
   selectAccount(id: number): void {
     const account = this.accounts.find(acc => acc.id === id);
-    if (!account) {
-      return;
-    }
-
+    if (!account) return;
     this.accountService.setActiveAccount(id).subscribe(() => {
       window.location.reload();
     });

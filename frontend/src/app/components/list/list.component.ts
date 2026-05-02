@@ -1,11 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { AccountService } from '../../services/account.service';
 import { SettingsService } from '../../services/settings.service';
+import { FilterService } from '../../services/filter.service';
 import { DatePipe, DecimalPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { HeaderComponent } from '../header/header.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-list',
@@ -38,10 +39,6 @@ import { HeaderComponent } from '../header/header.component';
 })
 export class ListComponent implements OnInit {
   bookings: any[] = [];
-  filterYear = new Date().getFullYear();
-  filterMonth = 0;
-  yearRange: number[] = [];
-  monthLabels: string[] = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
   currency = '€';
   readonly = false;
   isLoading = true;
@@ -50,19 +47,20 @@ export class ListComponent implements OnInit {
     private bookingService: BookingService,
     private accountService: AccountService,
     private settingsService: SettingsService,
+    public filterService: FilterService,
     private cdr: ChangeDetectorRef,
     private router: Router
-  ) { }
-
-  ngOnInit(): void {
-    this.generateYearRange();
-    this.loadSettings();
-    this.loadBookings();
+  ) {
+    effect(() => {
+      // React to filter changes from the header
+      this.filterService.filterYear();
+      this.filterService.filterMonth();
+      this.loadBookings();
+    });
   }
 
-  generateYearRange(): void {
-    const currentYear = new Date().getFullYear();
-    this.yearRange = Array.from({length: 41}, (_, i) => currentYear - 20 + i);
+  ngOnInit(): void {
+    this.loadSettings();
   }
 
   loadSettings(): void {
@@ -89,18 +87,6 @@ export class ListComponent implements OnInit {
     });
   }
 
-  setFilter(): void {
-    this.bookingService.setFilter(this.filterYear, this.filterMonth).subscribe({
-      next: () => {
-        this.loadBookings();
-      }
-    });
-  }
-
-  getMonthLabel(monthIndex: number): string {
-    return this.monthLabels[monthIndex] || 'Gesamtes Jahr';
-  }
-
   deleteBooking(id: number): void {
     if (confirm('Buchung wirklich löschen?')) {
       this.bookingService.deleteBooking(id).subscribe({
@@ -109,6 +95,11 @@ export class ListComponent implements OnInit {
         }
       });
     }
+  }
+
+  onFilterChange(year: number, month: number): void {
+    this.filterService.filterYear.set(year);
+    this.filterService.filterMonth.set(month);
   }
 
   formatCurrency(amount: number): string {

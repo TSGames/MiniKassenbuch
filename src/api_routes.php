@@ -134,8 +134,8 @@ $app->put('/api/settings', function ($request, $response, $args) {
 
 // Get reports data
 $app->get('/api/reports', function ($request, $response, $args) {
+    session_start();
     $db = new DB();
-    
     // Get year stats
     $yearStats = $db->getYearStats(null, 0, $_SESSION["filter"]["year"]);
     $years = $db->getYearStats();
@@ -413,10 +413,23 @@ $app->post('/api/login', function ($request, $response, $args) {
     }
 });
 
+// Get current filter settings
+$app->get('/api/filter', function ($request, $response, $args) {
+    session_start();
+    if (!isset($_SESSION['filter'])) {
+        $_SESSION['filter'] = ['year' => intval(date('Y')), 'month' => 0];
+    }
+    return $response->withJson($_SESSION['filter']);
+})->add($authMiddleware);
+
 // Update filter settings
 $app->post('/api/filter', function ($request, $response, $args) {
     session_start();
     $post = $request->getParsedBody();
+
+    if (!isset($_SESSION['filter'])) {
+        $_SESSION['filter'] = ['year' => date('Y'), 'month' => 0];
+    }
 
     if (isset($post['year'])) {
         $_SESSION['filter']['year'] = intval($post['year']);

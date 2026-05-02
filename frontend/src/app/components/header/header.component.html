@@ -4,7 +4,6 @@
       <img src="/logo.png" alt="Mini Kassenbuch Logo" />
     </a>
   </div>
-
   <nav class="nav-actions" aria-label="Primary">
     <a mat-button [class.active]="isActive('/')" (click)="navigateTo('/')" [class.mobile-hide-label]="!isActive('/')">
       <mat-icon>list</mat-icon>
@@ -32,10 +31,6 @@
     </a>
   </nav>
 
-  <div class="current-year-block" aria-label="Current year">
-    <span class="current-year">{{currentYear}}</span>
-  </div>
-
   <button mat-icon-button
     (click)="toggleTheme()"
     [matTooltip]="themeService.darkMode() ? 'Hellmodus' : 'Dunkelmodus'"
@@ -44,6 +39,9 @@
     <mat-icon style="color: white; font-size: 24px; width: 24px; height: 24px;">{{ themeService.darkMode() ? 'brightness_7' : 'brightness_4' }}</mat-icon>
   </button>
 
+  <div class="current-year-block" aria-label="Current year">
+    <span class="current-year">{{filterService.filterYear()}}</span>
+  </div>
   <mat-form-field class="account-select">
     <mat-label>Konto</mat-label>
     <mat-select [value]="activeAccount()?.id" (selectionChange)="selectAccount($event.value)">
