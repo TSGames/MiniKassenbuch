@@ -90,7 +90,11 @@ export class ListComponent implements OnInit {
   }
 
   setFilter(): void {
-    this.loadBookings();
+    this.bookingService.setFilter(this.filterYear, this.filterMonth).subscribe({
+      next: () => {
+        this.loadBookings();
+      }
+    });
   }
 
   getMonthLabel(monthIndex: number): string {

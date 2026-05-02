@@ -413,6 +413,21 @@ $app->post('/api/login', function ($request, $response, $args) {
     }
 });
 
+// Update filter settings
+$app->post('/api/filter', function ($request, $response, $args) {
+    session_start();
+    $post = $request->getParsedBody();
+
+    if (isset($post['year'])) {
+        $_SESSION['filter']['year'] = intval($post['year']);
+    }
+    if (isset($post['month'])) {
+        $_SESSION['filter']['month'] = intval($post['month']);
+    }
+
+    return $response->withJson(['success' => true]);
+})->add($authMiddleware);
+
 // Logout endpoint
 $app->post('/api/logout', function ($request, $response, $args) {
     session_start();

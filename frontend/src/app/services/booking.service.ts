@@ -33,4 +33,8 @@ export class BookingService {
   uploadDocuments(id: number, formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/${id}/documents`, formData);
   }
+
+  setFilter(year: number, month: number): Observable<any> {
+    return this.http.post<any>('/api/filter', { year, month });
+  }
 }
