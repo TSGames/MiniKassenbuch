@@ -620,10 +620,11 @@ class DB{
 			else
 				$saldo-=$d["amount"];
 			$number++;
-			if(@date("Y",$d["date"])!=@$oldDate){
+			$currentYear = is_numeric($d["date"]) ? date("Y", $d["date"]) : substr($d["date"], 0, 4);
+			if($currentYear != @$oldDate){
 				$number=1;
 			}
-			$oldDate=@date("Y",$d["date"]);
+			$oldDate = $currentYear;
 			if($filter){
 				if(@date("Y",$d["date"])!=@$_SESSION["filter"]["year"])
 					continue;
