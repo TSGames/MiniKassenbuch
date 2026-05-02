@@ -1,7 +1,20 @@
 apiVersion: v2
 
 name: mini-kassenbuch
-description: A Helm chart for Kubernetes
+description: A simple PHP and Angular application for managing accounting (German law compliant)
 type: application
 version: 0.1.0
 appVersion: 0.1.2
+
+home: https://github.com/TSGames/MiniKassenbuch
+sources:
+  - https://github.com/TSGames/MiniKassenbuch
+maintainers:
+  - name: TSGames
+    url: https://github.com/TSGames
+keywords:
+  - accounting
+  - kassenbuch
+  - finance
+  - bookkeeping
+icon: https://github.com/TSGames/MiniKassenbuch/raw/main/frontend/src/assets/logo.png

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<psalm errorLevel="3">
+    <projectFiles>
+        <directory name="src" />
+        <ignoreFiles>
+            <directory name="vendor" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <!-- The $app variable is passed to api_routes.php from index.php -->
+        <UndefinedGlobalVariable>
+            <errorLevel type="suppress">
+                <file name="src/api_routes.php" />
+                <file name="src/middleware.php" />
+            </errorLevel>
+        </UndefinedGlobalVariable>
+
+        <!-- Slim route handlers use unused parameters -->
+        <UnusedClosureParam>
+            <errorLevel type="suppress">
+                <file name="src/api_routes.php" />
+            </errorLevel>
+        </UnusedClosureParam>
+
+
+        <!-- addCategory return value is intentionally unused in callers -->
+        <PossiblyUnusedReturnValue>
+            <errorLevel type="suppress">
+                <file name="src/db.php" />
+            </errorLevel>
+        </PossiblyUnusedReturnValue>
+
+    </issueHandlers>
+</psalm>

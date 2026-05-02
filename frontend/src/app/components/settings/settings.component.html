@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="info-panel">
+    <h5>Export/Backup</h5>
+    <button mat-stroked-button color="primary" [routerLink]="['/backup']">
+      <mat-icon>cloud_download</mat-icon>
+      Backup herunterladen
+    </button>
+  </div>
+
+  <mat-card class="stats-card">
+    <mat-card-title>System-Statistiken</mat-card-title>
+    <mat-card-content>
+      <div>Gesamtzahl Buchungen: {{stats?.bookings}}</div>
+      <div>Gesamtzahl Dokumente: {{stats?.documents}}</div>
+      <div>Gesamtgröße Dokumente: {{(stats?.documentsSize/1024/1024) | number:'1.2-2'}} MB</div>
+      <div>Gesamtgröße Datenbank: {{(stats?.databaseSize/1024/1024) | number:'1.2-2'}} MB</div>
+    </mat-card-content>
+  </mat-card>
+
+  <form (ngSubmit)="onSubmit()" #settingsForm="ngForm" class="settings-form">
+    <h4>Voreinstellungen</h4>
+    <mat-form-field class="full-width">
+      <mat-label>Währungsformat</mat-label>
+      <input matInput type="text" name="currency" [(ngModel)]="currency">
+    </mat-form-field>
+
+    <h4>Lese-Zugang</h4>
+    <mat-slide-toggle name="readOnlyEnabled" [(ngModel)]="readOnlyEnabled" (change)="toggleReadOnlyUser()">
+      Lesezugang aktivieren
+    </mat-slide-toggle>
+    <div id="readonly-user" *ngIf="readOnlyEnabled">
+      <mat-form-field class="full-width">
+        <mat-label>Nutzername</mat-label>
+        <input matInput type="text" name="readOnlyUsername" [(ngModel)]="readOnlyUsername">
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <mat-label>Passwort</mat-label>
+        <input matInput type="password" name="readOnlyPassword" [(ngModel)]="readOnlyPassword" autocomplete="off">
+      </mat-form-field>
+    </div>
+    <button mat-raised-button color="accent" type="submit">Speichern</button>
+  </form>
+</div>

@@ -1,0 +1,131 @@
+@use '@angular/material' as mat;
+@use '_theme-colors' as colors;
+@use '_breakpoints' as bp;
+@use 'dark-mode';
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/MaterialIcons-Regular.eot'); /* For IE6-8 */
+  src: local('Material Icons'),
+       local('MaterialIcons-Regular'),
+       url('/fonts/MaterialIcons-Regular.woff2') format('woff2'),
+       url('/fonts/MaterialIcons-Regular.woff') format('woff'),
+       url('/fonts/MaterialIcons-Regular.ttf') format('truetype');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+}
+
+html, .light-mode {
+  @include mat.theme((
+    color: colors.$primary-palette,
+    typography: Arial,
+    density: 0,
+  ));
+  --mat-sys-primary: #2196f3;
+}
+
+.dark-mode {
+  --mat-sys-primary: #2196f3;
+}
+
+body {
+  margin: 0;
+  font-family: 'Roboto', 'Segoe UI', sans-serif;
+  background-color: #f5f7fb;
+  color: #1f1f1f;
+}
+
+main {
+  min-height: calc(100vh - 80px);
+  padding: 1rem;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.mat-app-background {
+  background-color: #f5f7fb;
+}
+
+.info,
+.error {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.info {
+  background-color: #ffffff;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid rgba(198, 40, 40, 0.3);
+}
+
+:root {
+  --app-primary: #2196f3;
+}
+
+a {
+  color: inherit;
+}
+
+/* Mobile responsiveness improvements */
+@media (max-width: bp.$breakpoint-md) {
+  main {
+    padding: 0.75rem;
+    min-height: calc(100vh - 72px);
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+@media (max-width: bp.$breakpoint-xs) {
+  main {
+    padding: 0.5rem;
+  }
+
+  mat-toolbar {
+    padding: 0 0.25rem !important;
+  }
+
+  button[mat-button],
+  button[mat-raised-button],
+  button[mat-flat-button] {
+    font-size: 0.875rem;
+  }
+
+  mat-card {
+    margin: 0.5rem 0;
+  }
+}

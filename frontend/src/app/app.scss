@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+main {
+  min-height: calc(100vh - 4rem);
+  width: 100%;
+  padding: 2rem 2.5rem 3rem;
+  box-sizing: border-box;
+}
+
+main .container {
+  max-width: 960px;
+  margin: 0 auto;
+  min-height: 100%;
+}

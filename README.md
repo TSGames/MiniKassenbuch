@@ -11,26 +11,97 @@ Eine simple PHP &amp; Javascript Applikation zum führen einfacher Kassenbücher
 # Build Status
 [![PHP Composer](https://github.com/TSGames/MiniKassenbuch/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/TSGames/MiniKassenbuch/actions/workflows/php.yml)
 
-# Docker
-Direkt loslegen:
-```bash
-git clone https://github.com/TSGames/MiniKassenbuch
-docker-compose up -d
-```
+# Installation
 
-anschließend [http://localhost:8080/](http://localhost:8080/) aurufen.
-(Alternativ kann auch der Inhalt der `docker-compose.yml` kopiert werden)
-## Entwickeln mit Docker
+## Docker Compose (Empfohlen für Entwicklung & Single-Server Deployment)
+
+### Schnellstart
 ```bash
 git clone https://github.com/TSGames/MiniKassenbuch
 cd MiniKassenbuch
-composer install
+docker-compose up -d
+```
+
+Die Anwendung ist dann unter [http://localhost:8080/](http://localhost:8080/) erreichbar.
+
+### Production Deployment mit Docker Compose
+Für den produktiven Betrieb erstellen Sie eine `docker-compose.yml` basierend auf dem Vorlage und konfigurieren Sie:
+
+```bash
+cp docker-compose.yml docker-compose.production.yml
+# Bearbeiten Sie docker-compose.production.yml mit Ihren Einstellungen
+docker-compose -f docker-compose.production.yml up -d
+```
+
+### Entwicklung mit Docker Compose
+```bash
 docker-compose -f docker-compose.dev.yml up
 ```
 
-# Releases
-Direkt loslegen & installieren: Auf der Release-Page gibt es fertige Binaries zum kopieren auf einen PHP-Server:
-https://github.com/TSGames/MiniKassenbuch/releases
+Dies ermöglicht Live-Reload für Frontend (ng serve) und Backend Entwicklung.
+
+## Kubernetes mit Helm
+
+### Installation aus GHCR Registry
+
+1. **Helm Registry Login**:
+```bash
+helm registry login ghcr.io
+```
+
+2. **Chart installieren**:
+```bash
+helm install mini-kassenbuch oci://ghcr.io/tsgames/minikassenbuch --version <VERSION>
+```
+
+3. **Mit benutzerdefinierten Werten**:
+```bash
+helm install mini-kassenbuch oci://ghcr.io/tsgames/minikassenbuch \
+  --version <VERSION> \
+  --values meine-werte.yaml
+```
+
+### Update
+```bash
+helm upgrade mini-kassenbuch oci://ghcr.io/tsgames/minikassenbuch --version <VERSION>
+```
+
+### Helm Konfiguration
+Das Chart unterstützt folgende Konfigurationswerte:
+
+```yaml
+image:
+  repository: ghcr.io/tsgames/minikassenbuch
+  tag: latest
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - host: minikassenbuch.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+
+# Persistenz ist erforderlich und kann nicht deaktiviert werden
+persistence:
+  size: 10Gi
+  storageClassName: standard
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+```
+
+**Wichtig:** 
+- Persistenz ist erforderlich! Das Chart verwendet ein StatefulSet mit obligatorischer Persistierung für die Datenbankdatei und Dokumentspeicherung.
+- Die Replica-Anzahl ist auf 1 festgelegt und kann nicht erhöht werden, da die Anwendung SQLite als Datenbank verwendet. SQLite unterstützt keine horizontale Skalierung mit mehreren Instanzen.
+
+Weitere Konfigurationsoptionen finden Sie in der Datei `helm/values.yaml`.
 
 # Ziel
 Ziel soll es sein, eine offene, kostenfreie Plattform für die Verwaltung von Kassenbeständen oder Konten durchzuführen. Einfache Statistiken sollen bei der Auswertung helfen.
@@ -44,64 +115,14 @@ Aktuell ist das System für kleinere Datenbestände ausgelegt. Performancetests 
 * Integrierter Login mit Nutzername + Passwort
 * Kategorisierung von einzelnen Buchungen
 * Intelligente Kategorieerkennung nach Eingabe von Buchungen
+* Auto-Kategorie-Erkennung beim CSV-Import mit Schlüsselwörtern
 * Speichern von Bemerkungen und beliebigen Dokumenten (PDF, JPG, ...) an Buchungen
 * Import-Konfigurator für CSV-Import von Bankdaten
 * Statistik-Auswertung für gesamten Zeitraum + Jahr
-* Export pro Monat
+* Export pro Monat (Excel Format)
 * 1-Klick Backup des gesamten Datenbestands
 * Responsive-Design (Desktop + Mobile optimiert)
-
-# Installation
-Das System muss mittels 
-```sh
-./update-composer.sh
-php composer.phar install
-```
-konfiguriert werden.
-
-Alternativ können Binaries ([hier](https://github.com/TSGames/MiniKassenbuch/actions) bezogen werden. Ein PHP 7.x Webserver mit Unterstützung für SQLite wird benötigt.
-
-## Konfiguration unter Debian oder Ubuntu mit Apache
-
-### Pakete installieren
-```sh
-apt install libapache2-mod-php php-sqlite3
-```
-
-### Webserver konfigurieren
-
-Falls der Webserver nur diesen einen
-[Virtual Host](https://httpd.apache.org/docs/2.4/de/vhosts/name-based.html)
-zur Verfügung stellen soll, können die folgenden Zeilen in
-`/etc/apache2/sites-enabled/000-default.conf` **anstelle** der bestehenden
-`DocumentRoot`-Zeile eingetragen werden. (Wer mehrere Virtual Hosts nutzt,
-sollte wissen, wie diese Zeilen in die bestehende Konfiguration zu integrieren
-sind.)
-```apache
-	DocumentRoot /pfad/zum/MiniKassenbuch/public
-	<Directory /pfad/zum/MiniKassenbuch/public/>
-		Options Indexes FollowSymLinks
-		AllowOverride All
-	</Directory>
-```
-Natürlich muss `/pfad/zum/MiniKassenbuch` durch den Installationspfad auf
-dem System ersetzt werden.
-
-Dem Webserver muss Schreibzugriff auf das Verzeichnis gegeben werden, damit
-die Datenbank (`storage.sqlite`) und die Dokumente (`documents/*`) angelegt
-werden können:
-```sh
-chmod g+w /pfad/zum/MiniKassenbuch
-chgrp www-data /pfad/zum/MiniKassenbuch
-```
-
-## Erster Login
-Nach dem ersten Hochladen der Webanwendung und Aufruf der Seite muss ein Login-Screen inkl. einer Hinweis-Meldung, dass es sich um den ersten Login handelt, erscheinen. Sollte dieser Hinweis nicht erscheinen, auf jeden Fall die Zugangsdaten zurücksetzen (s. unten)!
-Die nun erfolgende Eingabe wird für spätere Zugriffe als Login verwendet.
-
-## Login zurücksetzen
-Der Login ist (Passwort verschlüsselt) in der Datei `src/authentication.json` gespeichert. Diese kann auf dem Server gelöscht werden, der anschließend erfolgende Login wird wieder für zukünftige Zugriffe verwendet
-
+* Dark Mode mit Speicherung der Benutzereinstellung
 
 # Screenshots
 ![](http://torsten-simon.de/pub/kassenbuch/list.JPG)
@@ -112,10 +133,21 @@ Der Login ist (Passwort verschlüsselt) in der Datei `src/authentication.json` g
 
 # Frameworks
 Das Projekt nutzt u.a. folgende Frameworks oder Toolkits
-- composer
-- slim
-- twig
-- materialize.css
-- material icons
-- jQuery
-- Google Charts
+
+## Frontend
+- Angular 21+ (Single Page Application)
+- Angular Material (UI components & Material Design)
+- SCSS (stylesheets with dark mode support)
+- RxJS (reactive programming)
+
+## Backend
+- PHP 8.4
+- Slim Framework 3.x (REST API)
+- SQLite (database)
+- PhpOffice PhpSpreadsheet (Excel export)
+- Psalm (static analysis & type checking)
+
+## Development
+- Composer (PHP dependency management)
+- npm (JavaScript dependency management)
+- Docker & Docker Compose (containerization)

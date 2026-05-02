@@ -1,0 +1,24 @@
+.container {
+  margin-bottom: 1.5rem;
+}
+
+.info-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stats-card {
+  margin-bottom: 1.5rem;
+}
+
+.settings-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}

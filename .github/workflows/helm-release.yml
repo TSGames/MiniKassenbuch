@@ -1,0 +1,133 @@
+name: Helm Chart Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+    paths:
+      - 'helm/**'
+      - 'Chart.yaml'
+      - '.github/workflows/helm-release.yml'
+  workflow_dispatch:
+    inputs:
+      registry:
+        description: 'Helm registry to push to'
+        required: true
+        default: 'ghcr.io'
+        type: choice
+        options:
+          - 'ghcr.io'
+          - 'docker.io'
+
+jobs:
+  helm-build-push:
+    name: Build and Push Helm Chart
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Determine registry and auth
+        id: registry-config
+        run: |
+          REGISTRY=${{ github.event.inputs.registry || 'ghcr.io' }}
+          echo "registry=${REGISTRY}" >> $GITHUB_OUTPUT
+
+          if [[ "$REGISTRY" == "ghcr.io" ]]; then
+            echo "registry_url=ghcr.io/${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+            echo "username=_json_key" >> $GITHUB_OUTPUT
+            echo "password_secret=GITHUB_TOKEN" >> $GITHUB_OUTPUT
+          else
+            echo "registry_url=docker.io/${{ github.repository_owner }}" >> $GITHUB_OUTPUT
+            echo "username=DOCKERHUB_USERNAME" >> $GITHUB_OUTPUT
+            echo "password_secret=DOCKERHUB_TOKEN" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get chart version
+        id: chart-version
+        run: |
+          VERSION=$(grep '^version:' helm/Chart.yaml | awk '{print $2}')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Chart version: ${VERSION}"
+
+      - name: Login to GHCR
+        if: steps.registry-config.outputs.registry == 'ghcr.io'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to Docker Hub
+        if: steps.registry-config.outputs.registry == 'docker.io'
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Package Helm chart
+        run: |
+          helm package helm/ -d ./helm-releases
+          ls -la ./helm-releases/
+
+      - name: Push Helm chart
+        run: |
+          REGISTRY_URL=${{ steps.registry-config.outputs.registry_url }}
+          VERSION=${{ steps.chart-version.outputs.version }}
+          CHART_FILE="helm-releases/mini-kassenbuch-${VERSION}.tgz"
+
+          if [ ! -f "$CHART_FILE" ]; then
+            echo "❌ Chart file not found: $CHART_FILE"
+            ls -la ./helm-releases/
+            exit 1
+          fi
+
+          # Using Helm registry push (requires Helm 3.8+)
+          helm registry login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ${{ steps.registry-config.outputs.registry }}
+          helm push "$CHART_FILE" "oci://$REGISTRY_URL"
+
+          echo "✅ Helm chart pushed to $REGISTRY_URL/mini-kassenbuch:${VERSION}"
+
+      - name: Create Release Notes
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION=${{ steps.chart-version.outputs.version }}
+          REGISTRY_URL=${{ steps.registry-config.outputs.registry_url }}
+
+          cat > /tmp/release-notes.md << EOF
+          # Helm Chart Release ${VERSION}
+
+          **Docker Registry:**
+          - \`oci://${REGISTRY_URL}/mini-kassenbuch:${VERSION}\`
+
+          **Installation:**
+          \`\`\`bash
+          helm registry login ${{ steps.registry-config.outputs.registry }}
+          helm pull oci://${REGISTRY_URL}/mini-kassenbuch --version ${VERSION}
+          helm install mini-kassenbuch ./mini-kassenbuch-${VERSION}.tgz
+          \`\`\`
+
+          **Release:** ${TAG}
+          EOF
+
+          cat /tmp/release-notes.md
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: /tmp/release-notes.md
+          files: helm-releases/mini-kassenbuch-*.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

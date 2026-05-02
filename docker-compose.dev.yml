@@ -9,8 +9,6 @@ services:
         - data:/var/www/html/data
         - ./src/:/var/www/html/src
         - ./public/:/var/www/html/public
-        - ./templates/:/var/www/html/templates
-        - ./vendor/:/var/www/html/vendor
 
 volumes:
   data:

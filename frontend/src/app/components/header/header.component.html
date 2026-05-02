@@ -1,0 +1,59 @@
+<mat-toolbar color="primary" class="app-toolbar">
+  <div class="logo-group" role="presentation">
+    <a mat-icon-button routerLink="/" class="logo-link" aria-label="Home">
+      <img src="/logo.png" alt="Mini Kassenbuch Logo" />
+    </a>
+  </div>
+  <nav class="nav-actions" aria-label="Primary">
+    <a mat-button [class.active]="isActive('/')" (click)="navigateTo('/')" [class.mobile-hide-label]="!isActive('/')">
+      <mat-icon>list</mat-icon>
+      <span class="nav-label">Liste</span>
+    </a>
+    <a *ngIf="!readonly" mat-button [class.active]="isActive('/add')" (click)="navigateTo('/add')" [class.mobile-hide-label]="!isActive('/add')">
+      <mat-icon>add_circle_outline</mat-icon>
+      <span class="nav-label">Buchung</span>
+    </a>
+    <a mat-button [class.active]="isActive('/reports')" (click)="navigateTo('/reports')" [class.mobile-hide-label]="!isActive('/reports')">
+      <mat-icon>timeline</mat-icon>
+      <span class="nav-label">Berichte</span>
+    </a>
+    <a mat-button [class.active]="isActive('/categories')" (click)="navigateTo('/categories')" [class.mobile-hide-label]="!isActive('/categories')">
+      <mat-icon>view_comfy</mat-icon>
+      <span class="nav-label">Kategorien</span>
+    </a>
+    <a mat-button (click)="navigateTo('/import')" [class.mobile-hide-label]="!isActive('/import')">
+      <mat-icon>cloud_upload</mat-icon>
+      <span class="nav-label">Importieren</span>
+    </a>
+    <a *ngIf="!readonly" mat-button [class.active]="isActive('/settings')" (click)="navigateTo('/settings')" [class.mobile-hide-label]="!isActive('/settings')">
+      <mat-icon>settings</mat-icon>
+      <span class="nav-label">Konfiguration</span>
+    </a>
+  </nav>
+
+  <button mat-icon-button
+    (click)="toggleTheme()"
+    [matTooltip]="themeService.darkMode() ? 'Hellmodus' : 'Dunkelmodus'"
+    aria-label="Toggle dark mode"
+    style="color: white;">
+    <mat-icon style="color: white; font-size: 24px; width: 24px; height: 24px;">{{ themeService.darkMode() ? 'brightness_7' : 'brightness_4' }}</mat-icon>
+  </button>
+
+  <div class="current-year-block" aria-label="Current year">
+    <span class="current-year">{{filterService.filterYear()}}</span>
+  </div>
+  <mat-form-field class="account-select">
+    <mat-label>Konto</mat-label>
+    <mat-select [value]="activeAccount()?.id" (selectionChange)="selectAccount($event.value)">
+      <mat-option *ngFor="let account of accounts" [value]="account.id">
+        {{account.label}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-toolbar>
+
+<div class="info-panel" *ngIf="readonly">
+  <div class="info">
+    Der aktuelle Zugang hat keine Schreibrechte. Jegliche Speicher- oder Bearbeitungsoperationen werden nicht ausgeführt.
+  </div>
+</div>

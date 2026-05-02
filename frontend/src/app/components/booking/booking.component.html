@@ -1,0 +1,210 @@
+<div class="booking-page">
+  <mat-progress-spinner
+    *ngIf="isLoading"
+    mode="indeterminate"
+    diameter="50"
+    class="loading-spinner">
+  </mat-progress-spinner>
+
+  <div *ngIf="!isLoading" class="container">
+    <mat-card *ngIf="error" class="error-card" role="alert">
+      <mat-card-content>
+        <mat-icon class="error-icon">error</mat-icon>
+        <span>{{error}}</span>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="booking-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{id ? 'Buchung bearbeiten' : 'Neue Buchung erstellen'}}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form (ngSubmit)="onSubmit()" #bookingForm="ngForm" class="booking-form">
+          <!-- Account Info -->
+          <div class="form-section">
+            <mat-form-field class="full-width">
+              <mat-label>Konto</mat-label>
+              <input matInput [value]="activeAccount()?.label" readonly disabled>
+            </mat-form-field>
+          </div>
+
+          <!-- Description -->
+          <div class="form-section">
+            <mat-form-field class="full-width">
+              <mat-label>Beschreibung (optional)</mat-label>
+              <input matInput
+                name="label"
+                [(ngModel)]="label"
+                (blur)="guessCategory(label)"
+                placeholder="z.B. Supermarkt, Miete, Gehalt">
+            </mat-form-field>
+          </div>
+
+          <!-- Category Selection -->
+          <div class="form-section">
+            <label class="section-label">Kategorie *</label>
+            <mat-radio-group name="category" [(ngModel)]="selectedCategory" (change)="loadCategory($event)" class="category-radio-group">
+              <mat-radio-button [value]="null" class="radio-option">-- Keine --</mat-radio-button>
+              <mat-radio-button *ngFor="let category of categories" [value]="category.id" class="radio-option">
+                {{category.label}}
+              </mat-radio-button>
+            </mat-radio-group>
+            <a [routerLink]="['/categories']" class="manage-categories">
+              Kategorien verwalten
+            </a>
+          </div>
+
+          <!-- Date -->
+          <div class="form-section">
+            <mat-form-field class="full-width">
+              <mat-label>Datum *</mat-label>
+              <input matInput type="date" name="date" [(ngModel)]="date" required>
+            </mat-form-field>
+          </div>
+
+          <!-- Amount and Type -->
+          <div class="form-section">
+            <div class="amount-type-group">
+              <mat-form-field class="amount-field">
+                <mat-label>Betrag *</mat-label>
+                <input matInput
+                  type="number"
+                  step="0.01"
+                  name="amount"
+                  [(ngModel)]="amount"
+                  required>
+                <span matSuffix class="currency">{{currency}}</span>
+              </mat-form-field>
+
+              <mat-button-toggle-group
+                name="type"
+                [(ngModel)]="type"
+                class="type-toggle"
+                aria-label="Typ">
+                <mat-button-toggle value="0" class="income-toggle">
+                  <mat-icon>arrow_upward</mat-icon>
+                  Einnahme
+                </mat-button-toggle>
+                <mat-button-toggle value="1" class="expense-toggle">
+                  <mat-icon>arrow_downward</mat-icon>
+                  Ausgabe
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-section">
+            <mat-form-field class="full-width">
+              <mat-label>Bemerkungen (optional)</mat-label>
+              <textarea matInput
+                name="notes"
+                [(ngModel)]="notes"
+                rows="3"
+                placeholder="Zusätzliche Informationen">
+              </textarea>
+            </mat-form-field>
+          </div>
+
+          <!-- Color Marker -->
+          <div class="form-section">
+            <label class="section-label">Farbmarkierung (optional)</label>
+            <div class="color-picker">
+              <button type="button"
+                mat-icon-button
+                [class.color-selected]="color === null"
+                (click)="color = null"
+                matTooltip="Keine Farbe"
+                class="color-button no-color">
+                <mat-icon>clear</mat-icon>
+              </button>
+              <button type="button"
+                *ngFor="let c of colors"
+                mat-icon-button
+                [class.color-selected]="color === c.value"
+                (click)="color = c.value"
+                [matTooltip]="c.label"
+                class="color-button"
+                [style.background-color]="c.hex">
+              </button>
+            </div>
+          </div>
+
+          <!-- Documents Section -->
+          <div class="form-section documents-section" *ngIf="id">
+            <label class="section-label">Dokumente</label>
+
+            <div *ngIf="documents.length > 0" class="document-list">
+              <div *ngFor="let document of documents" class="document-item">
+                <mat-icon>description</mat-icon>
+                <a [href]="getDocumentUrl(document.id)" target="_blank" class="document-link">
+                  {{document.filename}}
+                </a>
+                <button mat-icon-button
+                  type="button"
+                  color="warn"
+                  (click)="deleteDocument(document.id)"
+                  matTooltip="Löschen">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+            <p *ngIf="documents.length === 0" class="no-documents">Keine Dokumente anhängt.</p>
+          </div>
+
+          <!-- File Upload -->
+          <div class="form-section">
+            <label class="section-label">Belege anhängen (optional)</label>
+            <div class="file-input-wrapper">
+              <input type="file"
+                name="documents"
+                multiple
+                #fileInput
+                (change)="onFileChange($event)"
+                accept="image/*,.pdf"
+                class="file-input">
+              <button mat-stroked-button type="button" (click)="fileInput.click()">
+                <mat-icon>attach_file</mat-icon>
+                Dateien auswählen
+              </button>
+              <span *ngIf="uploadedFiles.length > 0" class="file-list">
+                {{uploadedFiles.length}} Datei(en): {{getUploadedFileNames()}}
+              </span>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button mat-stroked-button type="button" routerLink="/">
+              <mat-icon>close</mat-icon>
+              Abbrechen
+            </button>
+            <button mat-raised-button color="accent" type="submit">
+              <mat-icon>save</mat-icon>
+              Speichern
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation-buttons" *ngIf="id">
+      <button mat-fab
+        *ngIf="previousId"
+        [routerLink]="['/edit', previousId]"
+        matTooltip="Vorherige Buchung">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+      <button mat-fab
+        *ngIf="nextId"
+        [routerLink]="['/edit', nextId]"
+        matTooltip="Nächste Buchung">
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

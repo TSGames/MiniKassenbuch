@@ -1,0 +1,97 @@
+/* Edit Category component styles */
+.container {
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-hint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.edit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.group {
+  margin: 20px 0;
+}
+
+@media (min-width: 768px) {
+  .edit-row {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .edit-row .mat-form-field,
+  .edit-row .flex-input {
+    flex: 1;
+  }
+}
+
+.type-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.section-label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.type-toggle {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.type-toggle .mat-button-toggle {
+  flex: 1;
+  min-width: 120px;
+  white-space: nowrap;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.currency-suffix {
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.flex-input {
+  display: flex;
+  align-items: center;
+}
+
+.flex-input > input {
+  flex-grow: 1;
+  margin-right: 10px !important;
+}

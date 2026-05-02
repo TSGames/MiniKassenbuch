@@ -1,0 +1,36 @@
+.container-center {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 16px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.login-logo {
+  padding: 12px;
+  background-color: #2196f3;
+  display: flex;
+  justify-content: center;
+}
+
+.login-logo img {
+  height: 80px;
+  width: auto;
+}

@@ -7,3 +7,6 @@ helm/values.yaml
 exports/
 documents/*
 backups/*
+frontend/.angular
+frontend/node_modules
+frontend/dist

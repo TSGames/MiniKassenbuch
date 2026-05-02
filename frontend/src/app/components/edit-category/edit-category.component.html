@@ -1,0 +1,70 @@
+<div class="edit-category-page">
+  <div class="container">
+    <mat-card class="edit-form-card">
+      <mat-card-header>
+        <mat-card-title>Kategorie bearbeiten</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form (ngSubmit)="onSubmit()" #categoryForm="ngForm" class="edit-form">
+          <mat-form-field class="full-width">
+            <mat-label>Bezeichnung</mat-label>
+            <input matInput
+              type="text"
+              name="label"
+              [ngModel]="label()"
+              (ngModelChange)="label.set($event)"
+              required>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Standard-Betrag (Optional)</mat-label>
+            <input matInput
+              type="number"
+              step="0.01"
+              name="amount"
+              [ngModel]="amount()"
+              (ngModelChange)="amount.set($event)">
+            <span matSuffix class="currency-suffix">{{currency()}}</span>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Suchbegriffe (Optional)</mat-label>
+            <textarea matInput
+              rows="3"
+              name="keywords"
+              [ngModel]="keywords()"
+              (ngModelChange)="keywords.set($event)"
+              placeholder="Komma-getrennte Suchbegriffe für automatische Kategorisierung&#10;z.B.: Netflix, Streaming, Abo&#10;&#10;Diese Begriffe werden verwendet, um Buchungen automatisch dieser Kategorie zuzuordnen."></textarea>
+            <mat-hint>Komma-getrennte Suchbegriffe. Diese werden bei der automatischen Kategorisierung berücksichtigt.</mat-hint>
+          </mat-form-field>
+
+          <div class="type-section">
+            <label class="section-label">Typ</label>
+            <mat-button-toggle-group class="type-toggle" name="type" [(ngModel)]="typeValue" aria-label="Typ">
+              <mat-button-toggle [value]="0">
+                <mat-icon>arrow_upward</mat-icon>
+                Einnahme
+              </mat-button-toggle>
+              <mat-button-toggle [value]="1">
+                <mat-icon>arrow_downward</mat-icon>
+                Ausgabe
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="goBack()">
+              <mat-icon>close</mat-icon>
+              Abbrechen
+            </button>
+            <button mat-raised-button color="accent" type="submit">
+              <mat-icon>save</mat-icon>
+              Speichern
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
