@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-booking',
@@ -37,7 +38,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MatSelectModule,
     MatRadioModule,
     MatProgressSpinnerModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSnackBarModule
   ],
   standalone: true
 })
@@ -80,7 +82,8 @@ export class BookingComponent implements OnInit {
     private categoryService: CategoryService,
     private accountService: AccountService,
     private settingsService: SettingsService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -110,12 +113,13 @@ export class BookingComponent implements OnInit {
           this.type = String(data.type || 0);
           this.notes = data.notes || '';
           this.color = data.color || null;
-          this.selectedCategory = data.category || null;
+          this.selectedCategory = data.category ? parseInt(data.category) : null;
           this.documents = data.documents || [];
           this.previousId = data.previousId || null;
           this.nextId = data.nextId || null;
           this.isLoading = false;
           this.cdr.markForCheck();
+          console.log('Booking loaded, category:', this.selectedCategory);
         },
         error: (err) => {
           console.error('Error loading booking:', err);
@@ -211,8 +215,7 @@ export class BookingComponent implements OnInit {
   }
 
   getDocumentUrl(documentId: number): string {
-    // This would return the actual document URL
-    return `document/${documentId}`;
+    return `/api/documents/${documentId}`;
   }
 
   deleteDocument(documentId: number): void {
@@ -235,9 +238,15 @@ export class BookingComponent implements OnInit {
   }
 
   onSubmit(): void {
+    console.log('onSubmit called');
     if (!this.validateForm()) {
+      console.log('Form validation failed');
       return;
     }
+
+    console.log('Form validation passed, saving booking');
+    this.isLoading = true;
+    this.cdr.markForCheck();
 
     const bookingData = {
       label: this.label,
@@ -253,29 +262,25 @@ export class BookingComponent implements OnInit {
     if (this.id) {
       this.bookingService.updateBooking(this.id, bookingData).subscribe({
         next: () => {
-          this.error = null;
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.router.navigate(['/']);
+          this.handleBookingSaved(this.id!);
         },
-        error: () => {
-          this.error = 'Fehler beim Speichern der Buchung';
+        error: (err) => {
+          console.error('Error updating booking:', err);
           this.isLoading = false;
           this.cdr.markForCheck();
+          this.snackBar.open('Fehler beim Speichern der Buchung', 'Schließen', { duration: 4000 });
         }
       });
     } else {
       this.bookingService.createBooking(bookingData).subscribe({
         next: (response) => {
-          this.error = null;
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.router.navigate(['/edit', response.id]);
+          this.handleBookingSaved(response.id);
         },
-        error: () => {
-          this.error = 'Fehler beim Erstellen der Buchung';
+        error: (err) => {
+          console.error('Error creating booking:', err);
           this.isLoading = false;
           this.cdr.markForCheck();
+          this.snackBar.open('Fehler beim Erstellen der Buchung', 'Schließen', { duration: 4000 });
         }
       });
     }
@@ -285,17 +290,58 @@ export class BookingComponent implements OnInit {
     this.error = null;
 
     if (!this.date) {
-      this.error = 'Bitte Datum angeben';
+      const msg = 'Bitte Datum angeben';
+      this.snackBar.open(msg, 'Schließen', { duration: 4000 });
       return false;
     }
     if (this.amount === 0 || this.amount === null) {
-      this.error = 'Bitte Betrag angeben';
+      const msg = 'Bitte Betrag angeben';
+      this.snackBar.open(msg, 'Schließen', { duration: 4000 });
       return false;
     }
     if (!this.selectedCategory) {
-      this.error = 'Bitte eine Kategorie festlegen';
+      const msg = 'Bitte eine Kategorie festlegen';
+      this.snackBar.open(msg, 'Schließen', { duration: 4000 });
       return false;
     }
     return true;
+  }
+
+  private handleBookingSaved(bookingId: number): void {
+    if (this.uploadedFiles.length === 0) {
+      // No files to upload, just finish
+      this.finishBookingSave();
+    } else {
+      // Upload files
+      this.uploadFiles(bookingId);
+    }
+  }
+
+  private uploadFiles(bookingId: number): void {
+    const formData = new FormData();
+    for (const file of this.uploadedFiles) {
+      formData.append('documents', file, file.name);
+    }
+
+    this.bookingService.uploadDocuments(bookingId, formData).subscribe({
+      next: () => {
+        console.log('Files uploaded successfully');
+        this.snackBar.open('Dateien hochgeladen', 'OK', { duration: 3000 });
+        this.finishBookingSave();
+      },
+      error: (err) => {
+        console.error('Error uploading documents:', err);
+        // Still navigate even if upload fails
+        this.snackBar.open('Buchung gespeichert, aber Fehler beim Hochladen der Dateien', 'OK', { duration: 4000 });
+        this.finishBookingSave();
+      }
+    });
+  }
+
+  private finishBookingSave(): void {
+    this.error = null;
+    this.isLoading = false;
+    this.cdr.markForCheck();
+    this.router.navigate(['/']);
   }
 }

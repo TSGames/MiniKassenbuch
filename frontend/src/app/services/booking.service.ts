@@ -29,4 +29,8 @@ export class BookingService {
   deleteBooking(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  uploadDocuments(id: number, formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/${id}/documents`, formData);
+  }
 }

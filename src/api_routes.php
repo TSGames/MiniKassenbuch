@@ -228,11 +228,53 @@ $app->post('/api/bookings/{id}/documents', function ($request, $response, $args)
     return $response->withJson(['success' => true]);
 })->add($authMiddleware);
 
+// Get document
+$app->get('/api/documents/{id}', function ($request, $response, $args) {
+    $db = new DB();
+    $docId = intval($args['id']);
+
+    if ($docId <= 0) {
+        return $response->withStatus(400)->withJson(['error' => 'Invalid document ID']);
+    }
+
+    $document = $db->getDocument($docId);
+    if ($document) {
+        $filePath = DB::$DOCUMENTS . $document['id'];
+
+        // Validate file path is within documents directory
+        $realPath = realpath($filePath);
+        $docsDir = realpath(DB::$DOCUMENTS);
+        if ($realPath === false || strpos($realPath, $docsDir) !== 0) {
+            return $response->withStatus(403)->withJson(['error' => 'Access denied']);
+        }
+
+        if (file_exists($filePath)) {
+            $ext = strtolower(pathinfo($document['filename'], PATHINFO_EXTENSION));
+            $contentType = 'application/octet-stream';
+
+            // Determine content type for preview
+            if ($ext === 'pdf') {
+                $contentType = 'application/pdf';
+            } elseif (in_array($ext, ['jpg', 'jpeg'])) {
+                $contentType = 'image/jpeg';
+            } elseif ($ext === 'png') {
+                $contentType = 'image/png';
+            } elseif ($ext === 'gif') {
+                $contentType = 'image/gif';
+            }
+
+            $response = $response->withHeader('Content-Type', $contentType);
+            return $response->write(file_get_contents($filePath));
+        }
+    }
+    return $response->withStatus(404)->withJson(['error' => 'Document not found']);
+})->add($authMiddleware);
+
 // Delete document
 $app->delete('/api/documents/{id}', function ($request, $response, $args) {
     $db = new DB();
     $db->deleteDocument($args['id']);
-    
+
     return $response->withJson(['success' => true]);
 })->add($authMiddleware);
 
@@ -257,12 +299,28 @@ $app->post('/api/import/start', function ($request, $response, $args) {
 // Export data
 $app->get('/api/export', function ($request, $response, $args) {
     $db = new DB();
+    $year = isset($_SESSION["filter"]["year"]) ? $_SESSION["filter"]["year"] : date("Y");
+
+    // Validate year format to prevent injection
+    if (!preg_match('/^\d{4}$/', $year)) {
+        $year = date("Y");
+    }
+
     $exportFile = $db->export();
-    
+
+    if (!file_exists($exportFile)) {
+        return $response->withStatus(500)->withJson(['error' => 'Export failed']);
+    }
+
     $response = $response->withHeader('Content-Type', 'application/zip')
-                       ->withHeader('Content-Disposition', 'attachment; filename=export-' . $_SESSION["filter"]["year"] . '.zip');
-    
-    return $response->write(file_get_contents($exportFile));
+                       ->withHeader('Content-Disposition', 'attachment; filename=export-' . $year . '.zip');
+
+    $content = file_get_contents($exportFile);
+    if ($content === false) {
+        return $response->withStatus(500)->withJson(['error' => 'Failed to read export file']);
+    }
+
+    return $response->write($content);
 })->add($authMiddleware);
 
 // Backup data

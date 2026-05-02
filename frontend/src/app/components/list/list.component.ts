@@ -50,7 +50,8 @@ export class ListComponent implements OnInit {
     private bookingService: BookingService,
     private accountService: AccountService,
     private settingsService: SettingsService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -111,5 +112,13 @@ export class ListComponent implements OnInit {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(amount / 100);
+  }
+
+  exportData(): void {
+    window.location.href = '/api/export';
+  }
+
+  editBooking(id: number): void {
+    this.router.navigate(['/edit', id]);
   }
 }

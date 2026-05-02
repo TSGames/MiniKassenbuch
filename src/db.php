@@ -283,7 +283,7 @@ class DB{
 		$html .= '</tr></thead><tbody>';
 
 		foreach($bookings as $booking) {
-			$date = date("Y-m-d", $booking['date']);
+			$date = is_numeric($booking['date']) ? date("Y-m-d", $booking['date']) : substr($booking['date'], 0, 10);
 			$number = $booking['number'];
 			$label = htmlspecialchars($booking['label']);
 			$category = htmlspecialchars($booking['category'] ?? '');
@@ -319,12 +319,12 @@ class DB{
 				if(in_array($fileExt, ['jpg', 'jpeg', 'png', 'gif'])) {
 					$mpdf->AddPage();
 					$mpdf->WriteHTML(
-						'<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 15px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
-						'<strong style="color: #1976d2;">📎 Booking #' . $bookingNum . '</strong> - ' . $docFilename .
+						'<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 5px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
+						'<strong style="color: #1976d2;">Buchung #' . $bookingNum . '</strong> - ' . $docFilename .
 						'</div>'
 					);
 					if(file_exists($docPath)) {
-						$mpdf->Image($docPath, 10, 50, 190);
+						$mpdf->Image($docPath, 10, 45, 140, 120);
 					}
 				} elseif($fileExt === 'pdf') {
 					try {
@@ -334,7 +334,7 @@ class DB{
 							if($i == 1) {
 								$mpdf->WriteHTML(
 									'<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 15px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
-									'<strong style="color: #1976d2;">📎 Booking #' . $bookingNum . '</strong> - ' . $docFilename .
+									'<strong style="color: #1976d2;">Buchung #' . $bookingNum . '</strong> - ' . $docFilename .
 									'</div>'
 								);
 								$mpdf->SetMargins(10, 15, 10);
@@ -527,9 +527,10 @@ class DB{
 		return count($stmt->fetchAll()) > 0;
 	}
 	public function getBooking($id){
-		$stmt = $this->db->prepare('SELECT *,
+		$stmt = $this->db->prepare('SELECT b.*,
 		(SELECT id FROM BOOKING WHERE date < b.date AND account=b.account ORDER BY date DESC) as previousId,
-		(SELECT id FROM BOOKING WHERE date > b.date AND account=b.account ORDER BY date ASC) as nextId
+		(SELECT id FROM BOOKING WHERE date > b.date AND account=b.account ORDER BY date ASC) as nextId,
+		(SELECT category FROM BOOKING_CATEGORY WHERE booking=b.id) as category
 			 FROM BOOKING b WHERE id = :id');
 		$stmt->execute([':id'=>$id]);
 		$booking=$stmt->fetchAll()[0];
