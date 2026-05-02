@@ -16,7 +16,11 @@ WORKDIR /app
 COPY frontend/package*.json ./
 RUN npm ci
 
-COPY frontend/ ./
+COPY frontend/src ./src
+COPY frontend/angular.json ./
+COPY frontend/tsconfig*.json ./
+COPY frontend/proxy.conf.json ./
+COPY frontend/public ./public
 RUN npm run build
 
 # build the final release container

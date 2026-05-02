@@ -226,6 +226,12 @@
   button[mat-stroked-button] {
     &:not([color]) {
       color: #ffffff;
+      background-color: #007bcc;
+    }
+
+    &[color="primary"] {
+      background-color: #007bcc;
+      color: #ffffff;
     }
   }
 
