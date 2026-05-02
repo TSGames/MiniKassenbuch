@@ -1,5 +1,6 @@
 @use '@angular/material' as mat;
 @use 'theme-colors' as colors;
+@use '_breakpoints' as bp;
 
 @font-face {
   font-family: 'Material Icons';
@@ -87,7 +88,7 @@ a {
 }
 
 /* Mobile responsiveness improvements */
-@media (max-width: 768px) {
+@media (max-width: bp.$breakpoint-md) {
   main {
     padding: 0.75rem;
     min-height: calc(100vh - 56px);
@@ -103,7 +104,7 @@ a {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: bp.$breakpoint-xs) {
   main {
     padding: 0.5rem;
   }

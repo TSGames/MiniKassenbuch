@@ -1,3 +1,5 @@
+@use '../../../breakpoints' as bp;
+
 .booking-page {
   min-height: 100vh;
   display: flex;
@@ -11,11 +13,11 @@
   margin: 0 auto;
   width: 100%;
 
-  @media (max-width: 768px) {
+  @media (max-width: bp.$breakpoint-md) {
     padding: 1rem;
   }
 
-  @media (max-width: 480px) {
+  @media (max-width: bp.$breakpoint-xs) {
     padding: 0.75rem;
   }
 }
@@ -102,7 +104,7 @@
   gap: 1rem;
   align-items: flex-start;
 
-  @media (max-width: 600px) {
+  @media (max-width: bp.$breakpoint-sm) {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
@@ -223,7 +225,7 @@
     }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: bp.$breakpoint-md) {
     flex-direction: column-reverse;
     gap: 0.75rem;
 
@@ -243,7 +245,7 @@
   gap: 1rem;
   z-index: 100;
 
-  @media (max-width: 768px) {
+  @media (max-width: bp.$breakpoint-md) {
     bottom: 1rem;
     right: 1rem;
 
@@ -254,7 +256,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
+@media (max-width: bp.$breakpoint-sm) {
   .container {
     padding: 1rem;
   }

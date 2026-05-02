@@ -1,0 +1,26 @@
+// Responsive breakpoints
+$breakpoint-lg: 1024px;    // Large tablets and desktops
+$breakpoint-md: 768px;     // Tablets and small desktops
+$breakpoint-sm: 600px;     // Small tablets and large phones
+$breakpoint-xs: 480px;     // Small phones
+
+// Media query mixins for easier usage
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'lg' {
+    @media (max-width: $breakpoint-lg) {
+      @content;
+    }
+  } @else if $breakpoint == 'md' {
+    @media (max-width: $breakpoint-md) {
+      @content;
+    }
+  } @else if $breakpoint == 'sm' {
+    @media (max-width: $breakpoint-sm) {
+      @content;
+    }
+  } @else if $breakpoint == 'xs' {
+    @media (max-width: $breakpoint-xs) {
+      @content;
+    }
+  }
+}
