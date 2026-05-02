@@ -2,11 +2,16 @@ name: Docker Build & Push
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - master
+      - main
+      - develop
+      - 'feature/**'
+      - 'release/**'
+      - 'hotfix/**'
+      - 'bugfix/**'
     tags:
       - 'v*'
-  pull_request:
-    branches: [ main, develop ]
   workflow_dispatch:
 
 jobs:
@@ -55,10 +60,10 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Docker image scan (Trivy)
-        if: always()
+        if: github.event_name != 'pull_request'
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          image-ref: ghcr.io/${{ github.repository }}:${{ steps.meta.outputs.version }}
           format: 'sarif'
           output: 'trivy-results.sarif'
         continue-on-error: true
