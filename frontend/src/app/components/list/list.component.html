@@ -1,57 +1,116 @@
-<div class="container">
-  <div class="filter row">
-    <h2>Ansicht filtern</h2>
-    <div class="input-field col s12 m6">
-      <select id="year" (change)="setFilter()">
-        <option *ngFor="let i of yearRange" [value]="i" [selected]="i === filterYear">{{i}}</option>
-      </select>
-      <label>Jahr</label>
-    </div>
-    <div class="input-field col s12 m6">
-      <select id="month" (change)="setFilter()">
-        <option value="0" [selected]="0 === filterMonth">Gesamtes Jahr</option>
-        <option *ngFor="let i of months" [value]="i" [selected]="i === filterMonth">{{i < 10 ? '0' + i : i}}</option>
-      </select>
-      <label>Monat</label>
-    </div>
-  </div>
-  <div class="booking-table">
-    <mat-card *ngFor="let booking of bookings" class="booking-card">
-      <div class="booking-header">
-        <div>
-          <div class="booking-title">{{booking.label}}</div>
-          <div class="booking-meta">
-            <span>{{booking.date | date:'dd.MM.yyyy'}}</span>
-            <span class="category-badge" *ngIf="booking.category">{{booking.category}}</span>
-            <span class="category-badge warning" *ngIf="!booking.category">Ohne Zuordnung</span>
+<div class="list-page">
+  <app-header></app-header>
+
+  <div class="container">
+    <!-- Filter Section -->
+    <mat-card class="filter-card">
+      <mat-card-header>
+        <mat-card-title>Ansicht filtern</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="filter-controls">
+          <mat-form-field>
+            <mat-label>Jahr</mat-label>
+            <mat-select [(ngModel)]="filterYear" (change)="setFilter()" name="filterYear">
+              <mat-option *ngFor="let year of yearRange" [value]="year">
+                {{year}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Monat</mat-label>
+            <mat-select [(ngModel)]="filterMonth" (change)="setFilter()" name="filterMonth">
+              <mat-option [value]="0">Gesamtes Jahr</mat-option>
+              <mat-option *ngFor="let month of [0,1,2,3,4,5,6,7,8,9,10,11]" [value]="month">
+                {{getMonthLabel(month)}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" routerLink="/add">
+            <mat-icon>add_circle</mat-icon>
+            Neue Buchung
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Bookings List -->
+    <div class="bookings-section">
+      <div *ngIf="isLoading" class="loading-message">
+        <mat-icon class="spinner">refresh</mat-icon>
+        Buchungen werden geladen...
+      </div>
+
+      <div *ngIf="!isLoading && bookings.length === 0" class="empty-message">
+        <mat-icon>inbox</mat-icon>
+        <p>Keine Buchungen vorhanden</p>
+        <button mat-raised-button color="primary" routerLink="/add">
+          Erste Buchung erstellen
+        </button>
+      </div>
+
+      <mat-card *ngFor="let booking of bookings" class="booking-card">
+        <div class="booking-content">
+          <div class="booking-left">
+            <div class="booking-title">{{booking.label || 'Ohne Bezeichnung'}}</div>
+            <div class="booking-meta">
+              <span class="date">{{booking.date}}</span>
+              <mat-divider [vertical]="true" class="meta-divider"></mat-divider>
+              <span class="number">#{{booking.number}}</span>
+              <mat-divider [vertical]="true" class="meta-divider"></mat-divider>
+              <span class="category-badge" [ngClass]="{'has-category': booking.category, 'no-category': !booking.category}">
+                <mat-icon *ngIf="booking.category">label</mat-icon>
+                {{booking.category || 'Ohne Kategorie'}}
+              </span>
+            </div>
+          </div>
+
+          <div class="booking-right">
+            <div class="amount-section">
+              <div class="amount" [ngClass]="{'income': booking.type === 0, 'expense': booking.type === 1}">
+                <span class="type-icon" [title]="booking.type === 0 ? 'Einnahme' : 'Ausgabe'">
+                  <mat-icon>{{booking.type === 0 ? 'arrow_upward' : 'arrow_downward'}}</mat-icon>
+                </span>
+                <span class="amount-value">{{formatCurrency(booking.amount)}} {{currency}}</span>
+              </div>
+              <div class="saldo" [ngClass]="{'positive': booking.saldo >= 0, 'negative': booking.saldo < 0}">
+                Saldo: {{formatCurrency(booking.saldo)}} {{currency}}
+              </div>
+            </div>
+
+            <div class="booking-actions">
+              <button mat-icon-button
+                color="primary"
+                [routerLink]="['/edit', booking.id]"
+                matTooltip="Bearbeiten">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button
+                color="warn"
+                (click)="deleteBooking(booking.id)"
+                [disabled]="readonly"
+                matTooltip="Löschen">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="booking-actions">
-          <button mat-icon-button color="primary" [routerLink]="['/edit', booking.id]">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" [routerLink]="['/delete', booking.id]" [disabled]="readonly">
-            <mat-icon>delete</mat-icon>
-          </button>
+
+        <div class="booking-documents" *ngIf="booking.documents && booking.documents > 0">
+          <mat-icon>attach_file</mat-icon>
+          <span>{{booking.documents}} Dokument(e)</span>
         </div>
-      </div>
-      <div class="booking-row">
-        <div>Betrag</div>
-        <strong [class.positive]="booking.type === 0" [class.negative]="booking.type === 1">
-          {{(booking.amount/100) | number:'1.2-2'}} {{currency}}
-        </strong>
-      </div>
-      <div class="booking-row">
-        <div>Saldo</div>
-        <strong [class.positive]="booking.saldo >= 0" [class.negative]="booking.saldo < 0">
-          {{(booking.saldo/100) | number:'1.2-2'}} {{currency}}
-        </strong>
-      </div>
-    </mat-card>
-  </div>
-  <div class="export-row">
-    <button mat-stroked-button color="primary" routerLink="/export">
-      {{filterYear}} exportieren als CSV
-    </button>
+      </mat-card>
+    </div>
+
+    <!-- Export Section -->
+    <div class="export-section">
+      <button mat-stroked-button color="primary" routerLink="/export">
+        <mat-icon>download</mat-icon>
+        {{filterYear}} exportieren
+      </button>
+    </div>
   </div>
 </div>
