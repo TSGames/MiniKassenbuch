@@ -46,6 +46,7 @@ export class BookingComponent implements OnInit {
   amount = 0;
   type = '0';
   notes = '';
+  color: string | null = null;
   categories: any[] = [];
   selectedCategory: number | null = null;
   documents: any[] = [];
@@ -57,6 +58,15 @@ export class BookingComponent implements OnInit {
   nextId: number | null = null;
   isLoading = true;
   uploadedFiles: File[] = [];
+
+  readonly colors = [
+    { value: 'red', label: 'Rot', hex: '#FF6B6B' },
+    { value: 'blue', label: 'Blau', hex: '#4ECDC4' },
+    { value: 'green', label: 'Grün', hex: '#95E1D3' },
+    { value: 'yellow', label: 'Gelb', hex: '#FFE66D' },
+    { value: 'purple', label: 'Lila', hex: '#A8E6CF' },
+    { value: 'orange', label: 'Orange', hex: '#FF8B94' }
+  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -93,6 +103,7 @@ export class BookingComponent implements OnInit {
           this.amount = data.amount || 0;
           this.type = String(data.type || 0);
           this.notes = data.notes || '';
+          this.color = data.color || null;
           this.selectedCategory = data.category || null;
           this.documents = data.documents || [];
           this.previousId = data.previousId || null;
@@ -222,6 +233,7 @@ export class BookingComponent implements OnInit {
       amount: this.amount,
       type: parseInt(this.type),
       notes: this.notes,
+      color: this.color,
       category: this.selectedCategory,
       account: this.activeAccount()?.id
     };

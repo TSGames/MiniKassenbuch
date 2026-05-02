@@ -26,6 +26,9 @@ class DB{
 		try {
 			$this->db->exec("ALTER TABLE CATEGORY ADD COLUMN keywords TEXT default NULL");
 		} catch(Exception $ignored) {}
+		try {
+			$this->db->exec("ALTER TABLE BOOKING ADD COLUMN color TEXT default NULL");
+		} catch(Exception $ignored) {}
 
 		if (!$db_already_existed) {
 			$this->db->exec("INSERT INTO ACCOUNT VALUES (1,'Kasse',NULL)");
@@ -391,27 +394,24 @@ class DB{
 		$data["id"]=$id;
 		$data["label"]=$post["label"];
 		$data["date"]=$post["date"];
-		$data["amount"]=$post["amount"]*100;		
+		$data["amount"]=$post["amount"]*100;
 		$data["type"]=$post["type"];
 		$data["notes"]=$post["notes"];
 		$data["source"]=$post["source"];
+		$data["color"]=@$post["color"] ?: null;
 		$data["account"]=$_SESSION["account"];
 		$category=@$post["category"];
-		$stmt = $this->db->prepare('INSERT INTO BOOKING VALUES (:id,:account,:label,:date,:amount,:type,:notes,:source)');
+		$stmt = $this->db->prepare('INSERT INTO BOOKING (id,account,label,date,amount,type,notes,source,color) VALUES (:id,:account,:label,:date,:amount,:type,:notes,:source,:color)');
 		$stmt->execute($data);
 		if(!$id)
 			$id=$this->db->lastInsertId();
 		$stmt = $this->db->prepare('DELETE FROM BOOKING_CATEGORY WHERE booking = :booking');
 		$stmt->execute([':booking'=>$id]);
-		
+
 		if($category){
 			$stmt = $this->db->prepare('INSERT INTO BOOKING_CATEGORY VALUES (:booking,:category)');
 			$stmt->execute([':booking'=>$id,':category'=>$category]);
 		}
-		/*foreach($categories as $cat){
-			$stmt = $this->db->prepare('INSERT INTO BOOKING_CATEGORY VALUES (:booking,:category)');
-			$stmt->execute([':booking'=>$id,':category'=>$cat]);
-		}*/
 		return $id;
 	}
 	public function addCategory($label): string{

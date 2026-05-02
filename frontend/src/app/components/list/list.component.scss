@@ -116,6 +116,7 @@
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
+  border-left: 4px solid transparent;
 
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -123,6 +124,30 @@
 
   mat-card-content {
     padding: 1rem 1.5rem;
+  }
+
+  &.color-red {
+    border-left-color: #FF6B6B;
+  }
+
+  &.color-blue {
+    border-left-color: #4ECDC4;
+  }
+
+  &.color-green {
+    border-left-color: #95E1D3;
+  }
+
+  &.color-yellow {
+    border-left-color: #FFE66D;
+  }
+
+  &.color-purple {
+    border-left-color: #A8E6CF;
+  }
+
+  &.color-orange {
+    border-left-color: #FF8B94;
   }
 }
 
@@ -142,6 +167,44 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.booking-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.color-marker {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ccc;
+
+  &.color-red {
+    background-color: #FF6B6B;
+  }
+
+  &.color-blue {
+    background-color: #4ECDC4;
+  }
+
+  &.color-green {
+    background-color: #95E1D3;
+  }
+
+  &.color-yellow {
+    background-color: #FFE66D;
+  }
+
+  &.color-purple {
+    background-color: #A8E6CF;
+  }
+
+  &.color-orange {
+    background-color: #FF8B94;
+  }
 }
 
 .booking-title {

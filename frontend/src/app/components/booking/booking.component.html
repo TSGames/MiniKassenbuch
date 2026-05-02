@@ -114,6 +114,30 @@
             </mat-form-field>
           </div>
 
+          <!-- Color Marker -->
+          <div class="form-section">
+            <label class="section-label">Farbmarkierung (optional)</label>
+            <div class="color-picker">
+              <button type="button"
+                mat-icon-button
+                [class.color-selected]="color === null"
+                (click)="color = null"
+                matTooltip="Keine Farbe"
+                class="color-button no-color">
+                <mat-icon>clear</mat-icon>
+              </button>
+              <button type="button"
+                *ngFor="let c of colors"
+                mat-icon-button
+                [class.color-selected]="color === c.value"
+                (click)="color = c.value"
+                [matTooltip]="c.label"
+                class="color-button"
+                [style.background-color]="c.hex">
+              </button>
+            </div>
+          </div>
+
           <!-- Documents Section -->
           <div class="form-section documents-section" *ngIf="id">
             <label class="section-label">Dokumente</label>

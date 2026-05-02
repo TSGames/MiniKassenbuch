@@ -51,10 +51,13 @@
         </button>
       </div>
 
-      <mat-card *ngFor="let booking of bookings" class="booking-card">
+      <mat-card *ngFor="let booking of bookings" class="booking-card" [ngClass]="'color-' + booking.color">
         <div class="booking-content">
           <div class="booking-left">
-            <div class="booking-title">{{booking.label || 'Ohne Bezeichnung'}}</div>
+            <div class="booking-title-row">
+              <div *ngIf="booking.color" class="color-marker" [ngClass]="'color-' + booking.color"></div>
+              <div class="booking-title">{{booking.label || 'Ohne Bezeichnung'}}</div>
+            </div>
             <div class="booking-meta">
               <span class="date">{{booking.date}}</span>
               <mat-divider [vertical]="true" class="meta-divider"></mat-divider>
