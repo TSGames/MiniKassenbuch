@@ -25,6 +25,8 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0;
+  flex-shrink: 0;
+  margin-right: 1rem;
 }
 
 .logo-link img {
