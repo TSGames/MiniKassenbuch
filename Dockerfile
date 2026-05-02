@@ -1,5 +1,5 @@
 # build composer dependencies
-FROM php:8.1-cli as composer-builder
+FROM php:8.4-cli-bookworm as composer-builder
 
 RUN apt-get update && apt-get install -y git zip
 RUN curl -sS https://getcomposer.org/installer | php -- \
@@ -20,7 +20,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # build the final release container
-FROM php:8.1-apache-bullseye
+FROM php:8.4-apache-bookworm
 
 RUN a2enmod rewrite
 RUN apt-get update && apt-get install -y libzip-dev zip zlib1g zlib1g-dev libpng-dev
