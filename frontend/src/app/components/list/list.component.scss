@@ -151,6 +151,60 @@
   }
 }
 
+.dark-mode {
+  .booking-card {
+    &.color-red {
+      border-left-color: #FF5252;
+    }
+
+    &.color-blue {
+      border-left-color: #26C6DA;
+    }
+
+    &.color-green {
+      border-left-color: #66BB6A;
+    }
+
+    &.color-yellow {
+      border-left-color: #FDD835;
+    }
+
+    &.color-purple {
+      border-left-color: #AB47BC;
+    }
+
+    &.color-orange {
+      border-left-color: #FF7043;
+    }
+  }
+
+  .color-marker {
+    &.color-red {
+      background-color: #FF5252;
+    }
+
+    &.color-blue {
+      background-color: #26C6DA;
+    }
+
+    &.color-green {
+      background-color: #66BB6A;
+    }
+
+    &.color-yellow {
+      background-color: #FDD835;
+    }
+
+    &.color-purple {
+      background-color: #AB47BC;
+    }
+
+    &.color-orange {
+      background-color: #FF7043;
+    }
+  }
+}
+
 .booking-content {
   display: grid;
   grid-template-columns: 1fr auto;
