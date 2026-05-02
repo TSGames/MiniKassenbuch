@@ -53,4 +53,7 @@ COPY --from=frontend-builder /app/dist/mini-kassenbuch/browser ./public/browser
 COPY --from=frontend-builder /app/dist/mini-kassenbuch/*.json ./public/
 
 # Create data directory and set permissions
-RUN mkdir -p data && chown www-data:www-data -R .
+RUN mkdir -p data/documents && \
+    chmod 755 data && \
+    chmod 755 data/documents && \
+    chown -R www-data:www-data data

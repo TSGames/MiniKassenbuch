@@ -6,7 +6,11 @@ class DB{
 	private \PDO $db;
 
 	public function __construct(){
-		@mkdir(self::$DOCUMENTS);
+		$dataDir = dirname(self::$FILE);
+		if (!is_dir($dataDir)) {
+			mkdir($dataDir, 0755, true);
+		}
+		@mkdir(self::$DOCUMENTS, 0755, true);
 		$db_already_existed = file_exists(self::$FILE);
 		$this->db = new PDO('sqlite:'.self::$FILE);
 		$this->db->exec("CREATE TABLE IF NOT EXISTS BOOKING (id INTEGER PRIMARY KEY AUTOINCREMENT,account INT, label TEXT, date NUMERIC,amount INT,type INT,notes TEXT)");
