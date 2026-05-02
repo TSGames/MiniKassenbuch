@@ -32,7 +32,7 @@ export class FilterService {
 
   yearRange(): number[] {
     const current = new Date().getFullYear();
-    return Array.from({ length: 41 }, (_, i) => current - 20 + i);
+    return Array.from({ length: 13 }, (_, i) => current - 10 + i);
   }
 
   monthLabels = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli',

@@ -102,9 +102,10 @@ $app->post('/api/categories', function ($request, $response, $args) {
 $app->put('/api/categories/{id}', function ($request, $response, $args) {
     $post = $request->getParsedBody();
     $db = new DB();
-    
-    $db->editCategory($post["id"], $post["label"], $post["amount"] * ($post["type"] == 0 ? 1 : -1));
-    
+
+    $keywords = isset($post["keywords"]) ? $post["keywords"] : null;
+    $db->editCategory($post["id"], $post["label"], $post["amount"] * ($post["type"] == 0 ? 1 : -1), $keywords);
+
     return $response->withJson(['success' => true]);
 })->add($authMiddleware);
 

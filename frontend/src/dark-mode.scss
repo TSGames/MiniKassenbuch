@@ -2,6 +2,10 @@
 @use '_theme-colors' as colors;
 
 .dark-mode {
+  --mat-form-field-filled-container-color: #2c2c2c;
+  --mat-sys-surface-variant: #2c2c2c;
+  --mat-button-protected-container-color: #2c2c2c;
+  --mat-sys-primary: #2196f3;
   // Material theme for dark mode
   @include mat.theme((
     color: map-merge(colors.$primary-palette, (
@@ -212,18 +216,72 @@
   }
 
   mat-select {
-    color: #ffffff;
+    color: #ffffff !important;
   }
 
   mat-option {
-    color: #ffffff;
+    color: #ffffff !important;
+    background-color: #2c2c2c !important;
+
+    &:hover {
+      background-color: #3c3c3c !important;
+    }
+
+    &.mat-selected {
+      background-color: #2196f3 !important;
+      color: #ffffff !important;
+    }
   }
 
-  .mat-mdc-menu-panel {
-    background-color: #2c2c2c;
+  ::ng-deep {
+    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+      background-color: #2c2c2c !important;
+    }
 
-    button, a {
-      color: #ffffff;
+    .mat-mdc-select-panel {
+      background-color: #2c2c2c !important;
+
+      .mdc-list {
+        background-color: #2c2c2c !important;
+      }
+
+      .mat-mdc-option {
+        color: #ffffff !important;
+        background-color: #2c2c2c !important;
+
+        &:hover {
+          background-color: #3c3c3c !important;
+        }
+
+        &.mat-selected {
+          background-color: #2196f3 !important;
+          color: #ffffff !important;
+        }
+      }
+
+      .mdc-list-item {
+        color: #ffffff !important;
+      }
+    }
+
+    .mat-mdc-menu-panel {
+      background-color: #2c2c2c !important;
+
+      .mat-mdc-menu-content {
+        background-color: #2c2c2c !important;
+      }
+
+      .mat-mdc-option {
+        color: #ffffff !important;
+      }
+    }
+
+    .mat-mdc-select-trigger {
+      color: #ffffff !important;
+    }
+
+    .mat-mdc-select-arrow {
+      color: rgba(255, 255, 255, 0.7) !important;
     }
   }
 
@@ -359,5 +417,176 @@
   .info-panel {
     background-color: #1e1e1e;
     border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  // Categories component dark mode
+  .category-card {
+    background-color: #1e1e1e !important;
+    color: #ffffff;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .category-title {
+    color: #ffffff !important;
+  }
+
+  .category-type {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .stat-label {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .stat-value {
+    color: #ffffff !important;
+
+    &.income {
+      color: #66bb6a !important;
+    }
+
+    &.expense {
+      color: #ef5350 !important;
+    }
+  }
+
+  .category-stats {
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .add-category-card {
+    background-color: #1e1e1e !important;
+    color: #ffffff;
+
+    mat-card-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    mat-card-title {
+      color: var(--mat-sys-primary, #2196f3) !important;
+    }
+  }
+
+  .page-header {
+    h1 {
+      color: var(--mat-sys-primary, #2196f3) !important;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+  }
+
+  .section-title {
+    color: var(--mat-sys-primary, #2196f3) !important;
+  }
+
+  .loading-state,
+  .empty-state {
+    color: rgba(255, 255, 255, 0.6) !important;
+
+    p.empty-text {
+      color: rgba(255, 255, 255, 0.4) !important;
+    }
+  }
+
+  .category-icon {
+    &.income {
+      background-color: rgba(76, 175, 80, 0.2) !important;
+      color: #66bb6a !important;
+    }
+
+    &.expense {
+      background-color: rgba(244, 67, 54, 0.2) !important;
+      color: #ef5350 !important;
+    }
+  }
+
+  .error-card {
+    background-color: #5a1f1f !important;
+    border-left-color: #ff5252 !important;
+
+    mat-card-content {
+      color: #ff8a80 !important;
+    }
+
+    .error-icon {
+      color: #ff5252 !important;
+    }
+  }
+
+  // Booking component dark mode
+  .booking-card {
+    background-color: #1e1e1e !important;
+    color: #ffffff;
+
+    mat-card-header {
+      border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    mat-card-title {
+      color: var(--mat-sys-primary, #2196f3) !important;
+    }
+
+    mat-card-content {
+      color: #ffffff;
+    }
+  }
+
+  .section-label {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .manage-categories {
+    color: var(--mat-sys-primary, #2196f3) !important;
+  }
+
+  .documents-section {
+    border-top-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .document-item {
+    background-color: #2c2c2c !important;
+    border-left-color: var(--mat-sys-primary, #2196f3) !important;
+    color: #ffffff;
+
+    mat-icon {
+      color: var(--mat-sys-primary, #2196f3) !important;
+    }
+
+    .document-link {
+      color: var(--mat-sys-primary, #2196f3) !important;
+
+      &:hover {
+        color: var(--mat-sys-primary, #2196f3) !important;
+      }
+    }
+  }
+
+  .no-documents {
+    color: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .file-list {
+    background-color: #2c2c2c !important;
+    color: #ffffff !important;
+  }
+
+  .form-actions {
+    border-top-color: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .color-button.no-color {
+    background-color: #2c2c2c !important;
+    color: #ccc !important;
+    border-color: #444 !important;
+
+    &.color-selected {
+      border-color: #64b5f6 !important;
+      background-color: #1a3a52 !important;
+    }
   }
 }

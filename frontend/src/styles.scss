@@ -39,6 +39,11 @@ html, .light-mode {
     typography: Arial,
     density: 0,
   ));
+  --mat-sys-primary: #2196f3;
+}
+
+.dark-mode {
+  --mat-sys-primary: #2196f3;
 }
 
 body {

@@ -477,9 +477,9 @@ class DB{
 		}
 		return $result;
 	}
-	public function editCategory($id,$label,$amount): void{
-		$stmt = $this->db->prepare('UPDATE CATEGORY SET label = :label, amount = :amount WHERE id = :id');
-		$stmt->execute([":id"=>$id,":label"=>$label, ":amount"=>$amount*100]);
+	public function editCategory($id,$label,$amount,$keywords=null): void{
+		$stmt = $this->db->prepare('UPDATE CATEGORY SET label = :label, amount = :amount, keywords = :keywords WHERE id = :id');
+		$stmt->execute([":id"=>$id,":label"=>$label, ":amount"=>$amount*100, ":keywords"=>$keywords]);
 	}
 	public function deleteCategory($id): void{
 		$stmt = $this->db->prepare('DELETE FROM CATEGORY WHERE id = :id');

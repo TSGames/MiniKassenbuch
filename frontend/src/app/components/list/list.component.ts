@@ -98,8 +98,7 @@ export class ListComponent implements OnInit {
   }
 
   onFilterChange(year: number, month: number): void {
-    this.filterService.filterYear.set(year);
-    this.filterService.filterMonth.set(month);
+    this.filterService.setFilter(year, month);
   }
 
   formatCurrency(amount: number): string {
