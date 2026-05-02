@@ -179,20 +179,20 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 
-button[mat-icon-button] {
-  color: #ffffff;
-
-  mat-icon {
-    color: #ffffff !important;
-  }
+.theme-toggle {
+  color: #ffffff !important;
 
   ::ng-deep {
-    .mat-mdc-button-base {
+    .mat-icon {
       color: #ffffff !important;
     }
 
-    .mdc-button__label {
+    .mdc-icon-button {
       color: #ffffff !important;
+    }
+
+    svg {
+      fill: #ffffff !important;
     }
   }
 }

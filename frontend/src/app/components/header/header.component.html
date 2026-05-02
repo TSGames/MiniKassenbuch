@@ -39,8 +39,9 @@
   <button mat-icon-button
     (click)="themeService.toggleTheme()"
     [matTooltip]="themeService.darkMode() ? 'Hellmodus' : 'Dunkelmodus'"
-    aria-label="Toggle dark mode">
-    <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    aria-label="Toggle dark mode"
+    style="color: white;">
+    <mat-icon style="color: white; font-size: 24px; width: 24px; height: 24px;">{{ themeService.darkMode() ? 'brightness_7' : 'brightness_4' }}</mat-icon>
   </button>
 
   <mat-form-field class="account-select">
