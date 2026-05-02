@@ -50,6 +50,7 @@ class CSV{
 			return null;
 		}
 
+		/** @var array<string, mixed>|null */
 		$matched = null;
 		$splitted = explode(' ', $label);
 
@@ -64,26 +65,28 @@ class CSV{
 					}
 				}
 			}
-			if($matched) break;
+			if($matched !== null) break;
 		}
 
 		// Fall back to label matching (original algorithm)
-		if(!$matched) {
+		if($matched === null) {
 			foreach($this->categories as $category) {
 				foreach($splitted as $word) {
 					if(strlen($word) > 3) {
-						$search = substr($word, 0, (int)round(strlen($word) * 0.8));
+						$wordLen = strlen($word);
+						$searchLen = (int)round((float)$wordLen * 0.8);
+						$search = substr($word, 0, $searchLen);
 						if(stripos($category['label'], $search) !== false) {
 							$matched = $category;
 							break;
 						}
 					}
 				}
-				if($matched) break;
+				if($matched !== null) break;
 			}
 		}
 
-		return $matched ? $matched['id'] : null;
+		return $matched !== null ? $matched['id'] : null;
 	}
 	/**
 	 * @return (mixed|scalar)[]
