@@ -13,62 +13,61 @@ Eine simple PHP &amp; Javascript Applikation zum führen einfacher Kassenbücher
 
 # Installation
 
-## Docker Compose (Recommended for local development & single-server deployment)
+## Docker Compose (Empfohlen für Entwicklung & Single-Server Deployment)
 
-### Quick Start
+### Schnellstart
 ```bash
 git clone https://github.com/TSGames/MiniKassenbuch
 cd MiniKassenbuch
 docker-compose up -d
 ```
 
-Access the application at [http://localhost:8080/](http://localhost:8080/)
+Die Anwendung ist dann unter [http://localhost:8080/](http://localhost:8080/) erreichbar.
 
-### Production Deployment with Docker Compose
-For production use, create a `docker-compose.yml` based on the provided template and configure:
+### Production Deployment mit Docker Compose
+Für den produktiven Betrieb erstellen Sie eine `docker-compose.yml` basierend auf dem Vorlage und konfigurieren Sie:
 
 ```bash
 cp docker-compose.yml docker-compose.production.yml
-# Edit docker-compose.production.yml with your settings
+# Bearbeiten Sie docker-compose.production.yml mit Ihren Einstellungen
 docker-compose -f docker-compose.production.yml up -d
 ```
 
-### Development with Docker Compose
+### Entwicklung mit Docker Compose
 ```bash
 docker-compose -f docker-compose.dev.yml up
 ```
 
-This uses live-reload for both frontend (ng serve) and backend development.
+Dies ermöglicht Live-Reload für Frontend (ng serve) und Backend Entwicklung.
 
-## Kubernetes with Helm
+## Kubernetes mit Helm
 
-### Installation from GHCR Registry
+### Installation aus GHCR Registry
 
-1. **Add the Helm repository** (optional, for future releases):
+1. **Helm Registry Login**:
 ```bash
 helm registry login ghcr.io
-helm pull oci://ghcr.io/tsgames/minikassenbuch --version <VERSION>
 ```
 
-2. **Install the chart**:
+2. **Chart installieren**:
 ```bash
 helm install mini-kassenbuch oci://ghcr.io/tsgames/minikassenbuch --version <VERSION>
 ```
 
-3. **With custom values**:
+3. **Mit benutzerdefinierten Werten**:
 ```bash
 helm install mini-kassenbuch oci://ghcr.io/tsgames/minikassenbuch \
   --version <VERSION> \
-  --values my-values.yaml
+  --values meine-werte.yaml
 ```
 
-### Upgrade
+### Update
 ```bash
 helm upgrade mini-kassenbuch oci://ghcr.io/tsgames/minikassenbuch --version <VERSION>
 ```
 
-### Helm Configuration
-The chart supports the following key values:
+### Helm Konfiguration
+Das Chart unterstützt folgende Konfigurationswerte:
 
 ```yaml
 replicaCount: 1
@@ -100,7 +99,7 @@ resources:
     cpu: "500m"
 ```
 
-See `helm/values.yaml` for all available configuration options.
+Weitere Konfigurationsoptionen finden Sie in der Datei `helm/values.yaml`.
 
 # Ziel
 Ziel soll es sein, eine offene, kostenfreie Plattform für die Verwaltung von Kassenbeständen oder Konten durchzuführen. Einfache Statistiken sollen bei der Auswertung helfen.
