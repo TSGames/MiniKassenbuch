@@ -214,6 +214,10 @@ export class ImportComponent implements OnInit {
     this.error.set(null);
   }
 
+  goToPreview(): void {
+    this.currentStep.set(ImportStep.Preview);
+  }
+
   getRowStatus(row: any): string {
     if (row._invalid) return 'invalid';
     if (row._duplicate) return 'duplicate';

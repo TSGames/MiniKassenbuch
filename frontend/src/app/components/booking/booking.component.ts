@@ -140,7 +140,7 @@ export class BookingComponent implements OnInit {
   loadCategory(category: any): void {
     if (category.amount && this.amount === 0) {
       this.amount = Math.abs(category.amount);
-      this.type = category.amount >= 0 ? 0 : 1;
+      this.type = category.amount >= 0 ? '0' : '1';
     }
   }
 

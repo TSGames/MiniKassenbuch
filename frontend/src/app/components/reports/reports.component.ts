@@ -27,8 +27,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   standalone: true
 })
 export class ReportsComponent implements OnInit {
-  @ViewChild('yearlyChart') yearlyChartRef!: ElementRef;
-  @ViewChild('monthlyChart') monthlyChartRef!: ElementRef;
 
   currentYear = new Date().getFullYear();
   currency = '€';

@@ -14,7 +14,7 @@
     <mat-progress-bar *ngIf="isLoading()" mode="indeterminate"></mat-progress-bar>
 
     <!-- Step 1: File Selection -->
-    <mat-card class="step-card" *ngIf="currentStep === ImportStep.FileSelect">
+    <mat-card class="step-card" *ngIf="currentStep() === ImportStep.FileSelect">
       <mat-card-header>
         <mat-card-title>
           <mat-icon>upload_file</mat-icon>
@@ -42,7 +42,7 @@
     </mat-card>
 
     <!-- Step 2: Configuration -->
-    <mat-card class="step-card" *ngIf="currentStep === ImportStep.Config">
+    <mat-card class="step-card" *ngIf="currentStep() === ImportStep.Config">
       <mat-card-header>
         <mat-card-title>
           <mat-icon>settings</mat-icon>
@@ -76,7 +76,7 @@
     </mat-card>
 
     <!-- Step 3: Preview -->
-    <mat-card class="step-card" *ngIf="currentStep === ImportStep.Preview">
+    <mat-card class="step-card" *ngIf="currentStep() === ImportStep.Preview">
       <mat-card-header>
         <mat-card-title>
           <mat-icon>visibility</mat-icon>
@@ -158,7 +158,7 @@
     </mat-card>
 
     <!-- Step 4: Confirmation -->
-    <mat-card class="step-card" *ngIf="currentStep === ImportStep.Confirm">
+    <mat-card class="step-card" *ngIf="currentStep() === ImportStep.Confirm">
       <mat-card-header>
         <mat-card-title>
           <mat-icon>check_circle</mat-icon>
@@ -188,7 +188,7 @@
         </div>
 
         <div class="button-group">
-          <button mat-stroked-button (click)="currentStep = ImportStep.Preview">
+          <button mat-stroked-button (click)="goToPreview()">
             <mat-icon>arrow_back</mat-icon>
             Zurück
           </button>
