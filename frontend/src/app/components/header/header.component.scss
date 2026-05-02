@@ -180,7 +180,19 @@ input::-webkit-inner-spin-button {
 }
 
 button[mat-icon-button] {
+  color: #ffffff;
+
   mat-icon {
-    color: #ffffff;
+    color: #ffffff !important;
+  }
+
+  ::ng-deep {
+    .mat-mdc-button-base {
+      color: #ffffff !important;
+    }
+
+    .mdc-button__label {
+      color: #ffffff !important;
+    }
   }
 }
