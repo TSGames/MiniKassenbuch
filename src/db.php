@@ -313,25 +313,34 @@ class DB{
 			foreach($docs as $doc) {
 				$docPath = self::$DOCUMENTS . $doc['id'];
 				$fileExt = strtolower(pathinfo($doc['filename'], PATHINFO_EXTENSION));
+				$bookingNum = $booking['number'];
+				$docFilename = htmlspecialchars($doc['filename']);
 
 				if(in_array($fileExt, ['jpg', 'jpeg', 'png', 'gif'])) {
 					$mpdf->AddPage();
-					$mpdf->SetFontSize(9);
-					$mpdf->WriteHTML('<p style="color: #666; margin-bottom: 10px;">Booking #' . $booking['number'] . ' - ' . htmlspecialchars($doc['filename']) . '</p>');
+					$mpdf->WriteHTML(
+						'<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 15px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
+						'<strong style="color: #1976d2;">📎 Booking #' . $bookingNum . '</strong> - ' . $docFilename .
+						'</div>'
+					);
 					if(file_exists($docPath)) {
-						$mpdf->Image($docPath, 10, 30, 190);
+						$mpdf->Image($docPath, 10, 50, 190);
 					}
 				} elseif($fileExt === 'pdf') {
 					try {
 						$pageCount = $mpdf->setSourceFile($docPath);
 						for($i = 1; $i <= $pageCount; $i++) {
 							$mpdf->AddPage();
+							if($i == 1) {
+								$mpdf->WriteHTML(
+									'<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 15px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
+									'<strong style="color: #1976d2;">📎 Booking #' . $bookingNum . '</strong> - ' . $docFilename .
+									'</div>'
+								);
+								$mpdf->SetMargins(10, 15, 10);
+							}
 							$tpl = $mpdf->importPage($i);
 							$mpdf->useTemplate($tpl);
-							if($i == 1) {
-								$mpdf->SetFontSize(9);
-								$mpdf->WriteHTML('<div style="position: absolute; top: 10px; left: 10px; background: white; padding: 5px; color: #666; font-size: 9pt;">Booking #' . $booking['number'] . '</div>');
-							}
 						}
 					} catch(Exception $e) {
 					}
