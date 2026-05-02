@@ -1,46 +1,67 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mini-kassenbuch
+  name: {{ include "mini-kassenbuch.fullname" . }}
+  labels:
+    {{- include "mini-kassenbuch.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ include "mini-kassenbuch.fullname" . }}-headless
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: mini-kassenbuch
-  replicas: 1
-  serviceName: mini-kassenbuch-service
+      {{- include "mini-kassenbuch.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app: mini-kassenbuch
+        {{- include "mini-kassenbuch.selectorLabels" . | nindent 8 }}
     spec:
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
-      - name: mini-kassenbuch
-        image: tsgames/mini-kassenbuch:latest
+      - name: {{ .Chart.Name }}
+        {{- with .Values.securityContext }}
+        securityContext:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
-        - containerPort: 80
+        - name: http
+          containerPort: 80
+          protocol: TCP
         volumeMounts:
-          - mountPath: "/var/www/html/data"
-            name: data-storage
+          - name: data
+            mountPath: {{ .Values.persistence.mountPath }}
+        {{- with .Values.resources }}
         resources:
-          limits:
-            cpu: {{.Values.limitCPU | default "500m" }}
-            memory: {{.Values.limitMemory | default "512Mi" }}
-          requests:
-            cpu: {{.Values.requestCPU | default "50m" }}
-            memory: {{.Values.requestMemory | default "128Mi" }}
-      volumes:
-      - name: data-storage
-        persistentVolumeClaim:
-          claimName: data-storage-claim
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
   volumeClaimTemplates:
   - metadata:
-      name: data-storage
+      name: data
     spec:
       accessModes:
-        - ReadWriteOnce
+        - {{ .Values.persistence.accessMode }}
+      {{- if .Values.persistence.storageClassName }}
+      storageClassName: {{ .Values.persistence.storageClassName }}
+      {{- end }}
       resources:
         requests:
-          storage: {{.Values.storageCapacity | default "16Gi" }}
+          storage: {{ .Values.persistence.size }}
 
 ---
 

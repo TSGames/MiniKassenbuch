@@ -85,8 +85,8 @@ ingress:
         - path: /
           pathType: Prefix
 
+# Persistenz ist erforderlich und kann nicht deaktiviert werden
 persistence:
-  enabled: true
   size: 10Gi
   storageClassName: standard
 
@@ -98,6 +98,8 @@ resources:
     memory: "512Mi"
     cpu: "500m"
 ```
+
+**Wichtig:** Persistenz ist erforderlich! Das Chart verwendet ein StatefulSet mit obligatorischer Persistierung für die Datenbankdatei und Dokumentspeicherung.
 
 Weitere Konfigurationsoptionen finden Sie in der Datei `helm/values.yaml`.
 
