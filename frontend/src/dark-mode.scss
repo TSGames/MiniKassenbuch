@@ -1,0 +1,236 @@
+@use '@angular/material' as mat;
+@use '_theme-colors' as colors;
+
+.dark-mode {
+  // Material theme for dark mode
+  @include mat.theme((
+    color: map-merge(colors.$primary-palette, (
+      50: #e3f2fd,
+      100: #bbdefb,
+      200: #90caf9,
+      300: #64b5f6,
+      400: #42a5f5,
+      500: #2196f3,
+      600: #1e88e5,
+      700: #1976d2,
+      800: #1565c0,
+      900: #0d47a1,
+      A100: #82b1ff,
+      A200: #448aff,
+      A400: #2979f3,
+      A700: #2962ff,
+      contrast: (
+        50: rgba(0, 0, 0, 0.87),
+        100: rgba(0, 0, 0, 0.87),
+        200: rgba(0, 0, 0, 0.87),
+        300: rgba(0, 0, 0, 0.87),
+        400: rgba(0, 0, 0, 0.87),
+        500: rgba(255, 255, 255, 1),
+        600: rgba(255, 255, 255, 1),
+        700: rgba(255, 255, 255, 1),
+        800: rgba(255, 255, 255, 1),
+        900: rgba(255, 255, 255, 1),
+        A100: rgba(0, 0, 0, 0.87),
+        A200: rgba(255, 255, 255, 1),
+        A400: rgba(255, 255, 255, 1),
+        A700: rgba(255, 255, 255, 1),
+      )
+    )),
+    typography: Arial,
+    density: 0,
+  ));
+
+  background-color: #121212;
+  color: #ffffff;
+
+  body {
+    background-color: #121212;
+    color: #ffffff;
+  }
+
+  .mat-app-background {
+    background-color: #121212;
+  }
+
+  main {
+    background-color: #121212;
+  }
+
+  mat-card {
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+
+  mat-toolbar {
+    background-color: #1f1f1f;
+    color: #ffffff;
+
+    mat-form-field {
+      color: #ffffff;
+    }
+  }
+
+  mat-form-field {
+    .mat-form-field-label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .mat-input-element {
+      color: #ffffff;
+    }
+
+    .mat-form-field-ripple {
+      background-color: #2196f3;
+    }
+  }
+
+  .mat-mdc-text-field-wrapper {
+    .mat-mdc-input-element {
+      caret-color: #2196f3;
+    }
+  }
+
+  mat-select {
+    color: #ffffff;
+  }
+
+  mat-option {
+    color: #ffffff;
+  }
+
+  .mat-mdc-menu-panel {
+    background-color: #2c2c2c;
+
+    button, a {
+      color: #ffffff;
+    }
+  }
+
+  .info {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .error {
+    background-color: #5a1f1f;
+    color: #ff8a80;
+    border: 1px solid rgba(255, 128, 128, 0.3);
+  }
+
+  .error-card {
+    background-color: #5a1f1f;
+    border-left-color: #ff5252;
+
+    mat-card-content {
+      color: #ff8a80;
+    }
+
+    .error-icon {
+      color: #ff5252;
+    }
+  }
+
+  mat-table {
+    background-color: #1e1e1e;
+    color: #ffffff;
+
+    th {
+      background-color: #2c2c2c;
+      color: #ffffff;
+    }
+
+    td {
+      border-bottom-color: rgba(255, 255, 255, 0.1);
+    }
+
+    tr:hover {
+      background-color: #2c2c2c;
+    }
+  }
+
+  mat-button-toggle-group {
+    background-color: #2c2c2c;
+  }
+
+  mat-button-toggle {
+    color: #ffffff;
+
+    &.mat-button-toggle-checked {
+      background-color: #2196f3;
+      color: #ffffff;
+    }
+  }
+
+  .summary-box {
+    background-color: #2c2c2c;
+    border-color: rgba(255, 255, 255, 0.1);
+
+    .label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  .warning-box {
+    background-color: #3d2f1f;
+    border-left-color: #ffc107;
+    color: #ffb74d;
+
+    mat-icon {
+      color: #ffc107;
+    }
+  }
+
+  .confirmation-box {
+    background-color: #2c2c2c;
+    border-left-color: #2196f3;
+
+    .label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .value {
+      color: #ffffff;
+    }
+  }
+
+  .file-input-container {
+    background-color: #2c2c2c;
+    border-color: #2196f3;
+  }
+
+  .auto-detect-section {
+    background-color: #2c2c2c;
+    border-left-color: #2196f3;
+
+    .auto-detect-label span {
+      color: #ffffff;
+    }
+
+    .auto-detect-hint {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+
+  a {
+    color: #64b5f6;
+
+    &:visited {
+      color: #90caf9;
+    }
+  }
+
+  button[mat-button],
+  button[mat-raised-button],
+  button[mat-flat-button],
+  button[mat-stroked-button] {
+    &:not([color]) {
+      color: #ffffff;
+    }
+  }
+
+  .info-panel {
+    background-color: #1e1e1e;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}

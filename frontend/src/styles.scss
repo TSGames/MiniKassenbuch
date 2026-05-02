@@ -1,6 +1,7 @@
 @use '@angular/material' as mat;
-@use 'theme-colors' as colors;
+@use '_theme-colors' as colors;
 @use '_breakpoints' as bp;
+@use 'dark-mode';
 
 @font-face {
   font-family: 'Material Icons';
@@ -32,7 +33,7 @@
   font-feature-settings: 'liga';
 }
 
-html {
+html, .light-mode {
   @include mat.theme((
     color: colors.$primary-palette,
     typography: Arial,

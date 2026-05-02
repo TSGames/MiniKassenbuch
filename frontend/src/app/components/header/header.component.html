@@ -36,6 +36,13 @@
     <span class="current-year">{{currentYear}}</span>
   </div>
 
+  <button mat-icon-button
+    (click)="themeService.toggleTheme()"
+    [matTooltip]="themeService.darkMode() ? 'Hellmodus' : 'Dunkelmodus'"
+    aria-label="Toggle dark mode">
+    <mat-icon>{{ themeService.darkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+
   <mat-form-field class="account-select">
     <mat-label>Konto</mat-label>
     <mat-select [value]="activeAccount()?.id" (selectionChange)="selectAccount($event.value)">

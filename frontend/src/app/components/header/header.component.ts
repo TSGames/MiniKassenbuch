@@ -6,13 +6,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AccountService } from '../../services/account.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatToolbarModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatToolbarModule, MatButtonModule, MatIconModule, MatTooltipModule],
   standalone: true
 })
 export class HeaderComponent implements OnInit {
@@ -21,7 +23,11 @@ export class HeaderComponent implements OnInit {
   readonly = false;
   accounts: any[] = [];
 
-  constructor(private router: Router, private accountService: AccountService) {
+  constructor(
+    private router: Router,
+    private accountService: AccountService,
+    public themeService: ThemeService
+  ) {
     this.activeAccount = this.accountService.activeAccount;
   }
 
