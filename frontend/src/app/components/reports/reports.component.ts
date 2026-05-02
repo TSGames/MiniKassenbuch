@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
 import { ReportService } from '../../services/report.service';
 import { SettingsService } from '../../services/settings.service';
 import { DecimalPipe, CommonModule, KeyValuePipe } from '@angular/common';
@@ -49,7 +49,8 @@ export class ReportsComponent implements OnInit {
 
   constructor(
     private reportService: ReportService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -80,9 +81,11 @@ export class ReportsComponent implements OnInit {
 
         // Process chart data
         this.processChartData();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.isLoading.set(false);
+        this.cdr.markForCheck();
       }
     });
   }

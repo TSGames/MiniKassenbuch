@@ -98,7 +98,7 @@ export class CategoriesComponent implements OnInit {
     return new Intl.NumberFormat('de-DE', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    }).format(amount);
+    }).format(amount / 100);
   }
 
   getCategoryType(amount: number | null): string {

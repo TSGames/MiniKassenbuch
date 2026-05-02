@@ -391,7 +391,7 @@ class DB{
 			}
 		}
 		if($yearsBack==0)
-		    return @$result[$year-1];
+		    return @$result[$year-1] ?? [];
 		return $result;
 	}
 	/**
@@ -450,12 +450,13 @@ class DB{
 			strftime("%m",datetime(date,"unixepoch")) = :month
 			GROUP BY type');
 			$stmt->execute([":year"=>$_SESSION["filter"]["year"],":month"=>$month<10 ? "0".$month : $month]);
-			$result[$month]=["label"=>$labels[$month]];
+			$month_data=["label"=>$labels[$month]];
 			foreach($stmt->fetchAll() as $r){
-				$result[$month][$r["type"]]=$r["value"];
+				$month_data[$r["type"]]=$r["value"];
 			}
-			if(!@$result[$month][0]) $result[$month][0]=0;
-			if(!@$result[$month][1]) $result[$month][1]=0;
+			if(!@$month_data[0]) $month_data[0]=0;
+			if(!@$month_data[1]) $month_data[1]=0;
+			$result[]=$month_data;
 		}
 		return $result;
 	}
@@ -487,7 +488,7 @@ class DB{
 		$data = [];
 		$data["id"]=$id;
 		$data["label"]=$post["label"];
-		$data["date"]=$post["date"];
+		$data["date"]=strtotime($post["date"]);
 		$data["amount"]=$post["amount"]*100;
 		$data["type"]=$post["type"];
 		$data["notes"]=$post["notes"];
@@ -636,8 +637,9 @@ class DB{
 				}
 			}
 			$result[$i]=$d;
-			$result[$i]["number"]=$number;			
+			$result[$i]["number"]=$number;
 			$result[$i]["saldo"]=$saldo;
+			$result[$i]["date"] = is_numeric($d["date"]) ? date("d.m.y", $d["date"]) : substr($d["date"], 0, 10);
 			$i++;
 		}
 		return $result;

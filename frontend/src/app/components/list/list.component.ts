@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { AccountService } from '../../services/account.service';
@@ -49,7 +49,8 @@ export class ListComponent implements OnInit {
   constructor(
     private bookingService: BookingService,
     private accountService: AccountService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -77,10 +78,12 @@ export class ListComponent implements OnInit {
       next: (data) => {
         this.bookings = data || [];
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.bookings = [];
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }

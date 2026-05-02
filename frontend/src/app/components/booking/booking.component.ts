@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CategoryService } from '../../services/category.service';
@@ -79,7 +79,8 @@ export class BookingComponent implements OnInit {
     private bookingService: BookingService,
     private categoryService: CategoryService,
     private accountService: AccountService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -114,15 +115,18 @@ export class BookingComponent implements OnInit {
           this.previousId = data.previousId || null;
           this.nextId = data.nextId || null;
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error('Error loading booking:', err);
           this.error = 'Fehler beim Laden der Buchung';
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
     } else {
       this.isLoading = false;
+      this.cdr.markForCheck();
     }
   }
 
@@ -251,11 +255,13 @@ export class BookingComponent implements OnInit {
         next: () => {
           this.error = null;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.router.navigate(['/']);
         },
         error: () => {
           this.error = 'Fehler beim Speichern der Buchung';
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
     } else {
@@ -263,11 +269,13 @@ export class BookingComponent implements OnInit {
         next: (response) => {
           this.error = null;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.router.navigate(['/edit', response.id]);
         },
         error: () => {
           this.error = 'Fehler beim Erstellen der Buchung';
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
     }

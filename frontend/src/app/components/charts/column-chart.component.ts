@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ThemeService } from '../../services/theme.service';
 
 interface ChartData {
   label: string;
@@ -19,10 +20,12 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
   @Input() series = ['Serie 1', 'Serie 2'];
   @Input() colors = ['#4caf50', '#f44336'];
   @Input() height = 350;
+  @Input() currency = '';
 
   @ViewChild('chartContainer') chartContainer!: ElementRef;
 
   chartData: ChartData[] = [];
+  private themeService = inject(ThemeService);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data']) {
@@ -54,6 +57,13 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
     const chartWidth = width - padding * 2;
     const chartHeight = this.height - padding * 2;
 
+    // Determine colors based on dark mode
+    const isDarkMode = this.themeService.darkMode();
+    const bgColor = isDarkMode ? '#2c2c2c' : 'white';
+    const textColor = isDarkMode ? '#ffffff' : '#000000';
+    const gridColor = isDarkMode ? '#444' : '#e0e0e0';
+    const axisColor = isDarkMode ? '#999' : '#000';
+
     // Find max value for scaling
     const maxValue = Math.max(
       ...this.chartData.flatMap(d => d.series.map(s => s.value))
@@ -70,7 +80,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
     const bg = document.createElementNS(svgNS, 'rect');
     bg.setAttribute('width', width.toString());
     bg.setAttribute('height', this.height.toString());
-    bg.setAttribute('fill', 'white');
+    bg.setAttribute('fill', bgColor);
     svg.appendChild(bg);
 
     // Title
@@ -80,6 +90,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
       titleElement.setAttribute('y', '25');
       titleElement.setAttribute('text-anchor', 'middle');
       titleElement.setAttribute('class', 'chart-title');
+      titleElement.setAttribute('fill', textColor);
       titleElement.textContent = this.title;
       svg.appendChild(titleElement);
     }
@@ -93,6 +104,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
       line.setAttribute('y1', y.toString());
       line.setAttribute('x2', (width - padding).toString());
       line.setAttribute('y2', y.toString());
+      line.setAttribute('stroke', gridColor);
       line.setAttribute('class', 'grid-line');
       svg.appendChild(line);
 
@@ -102,6 +114,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
       label.setAttribute('x', (padding - 10).toString());
       label.setAttribute('y', (y + 5).toString());
       label.setAttribute('text-anchor', 'end');
+      label.setAttribute('fill', textColor);
       label.setAttribute('class', 'axis-label');
       label.textContent = this.formatValue(value);
       svg.appendChild(label);
@@ -113,6 +126,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
     xAxis.setAttribute('y1', (padding + chartHeight).toString());
     xAxis.setAttribute('x2', (width - padding).toString());
     xAxis.setAttribute('y2', (padding + chartHeight).toString());
+    xAxis.setAttribute('stroke', axisColor);
     xAxis.setAttribute('class', 'axis');
     svg.appendChild(xAxis);
 
@@ -121,6 +135,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
     yAxis.setAttribute('y1', padding.toString());
     yAxis.setAttribute('x2', padding.toString());
     yAxis.setAttribute('y2', (padding + chartHeight).toString());
+    yAxis.setAttribute('stroke', axisColor);
     yAxis.setAttribute('class', 'axis');
     svg.appendChild(yAxis);
 
@@ -152,6 +167,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
           text.setAttribute('x', (barX + barWidth / 2).toString());
           text.setAttribute('y', (barY + barHeight / 2 + 4).toString());
           text.setAttribute('text-anchor', 'middle');
+          text.setAttribute('fill', 'white');
           text.setAttribute('class', 'bar-label');
           text.textContent = this.formatValue(serie.value);
           svg.appendChild(text);
@@ -163,6 +179,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
       label.setAttribute('x', (x + (barWidth * this.series.length) / 2).toString());
       label.setAttribute('y', (padding + chartHeight + 20).toString());
       label.setAttribute('text-anchor', 'middle');
+      label.setAttribute('fill', textColor);
       label.setAttribute('class', 'axis-label');
       label.textContent = item.label;
       svg.appendChild(label);
@@ -184,6 +201,7 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
       const text = document.createElementNS(svgNS, 'text');
       text.setAttribute('x', (legendX + 18).toString());
       text.setAttribute('y', (legendY + 10).toString());
+      text.setAttribute('fill', textColor);
       text.setAttribute('class', 'legend-label');
       text.textContent = name;
       svg.appendChild(text);
@@ -197,11 +215,14 @@ export class ColumnChartComponent implements OnChanges, AfterViewInit {
   }
 
   private formatValue(value: number): string {
+    let formatted: string;
     if (value >= 1000000) {
-      return (value / 1000000).toFixed(1) + 'M';
+      formatted = (value / 1000000).toFixed(1) + 'M';
     } else if (value >= 1000) {
-      return (value / 1000).toFixed(1) + 'k';
+      formatted = (value / 1000).toFixed(1) + 'k';
+    } else {
+      formatted = value.toFixed(0);
     }
-    return value.toFixed(0);
+    return this.currency ? formatted + this.currency : formatted;
   }
 }
