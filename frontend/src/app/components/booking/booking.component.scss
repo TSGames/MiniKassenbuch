@@ -330,3 +330,18 @@
     }
   }
 }
+
+.category-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem 0;
+
+  @media (max-width: bp.$breakpoint-md) {
+    gap: 0.5rem;
+  }
+}
+
+.radio-option {
+  display: block;
+}

@@ -46,15 +46,12 @@
           <!-- Category Selection -->
           <div class="form-section">
             <label class="section-label">Kategorie *</label>
-            <mat-form-field class="full-width">
-              <mat-label>Kategorie wählen</mat-label>
-              <mat-select name="category" [(ngModel)]="selectedCategory" (change)="loadCategory($event)">
-                <mat-option>-- Keine --</mat-option>
-                <mat-option *ngFor="let category of categories" [value]="category.id">
-                  {{category.label}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <mat-radio-group name="category" [(ngModel)]="selectedCategory" (change)="loadCategory($event)" class="category-radio-group">
+              <mat-radio-button [value]="null" class="radio-option">-- Keine --</mat-radio-button>
+              <mat-radio-button *ngFor="let category of categories" [value]="category.id" class="radio-option">
+                {{category.label}}
+              </mat-radio-button>
+            </mat-radio-group>
             <a [routerLink]="['/categories']" class="manage-categories">
               Kategorien verwalten
             </a>
