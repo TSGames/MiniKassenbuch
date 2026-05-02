@@ -115,11 +115,14 @@ export class BookingComponent implements OnInit {
           this.nextId = data.nextId || null;
           this.isLoading = false;
         },
-        error: () => {
+        error: (err) => {
+          console.error('Error loading booking:', err);
           this.error = 'Fehler beim Laden der Buchung';
           this.isLoading = false;
         }
       });
+    } else {
+      this.isLoading = false;
     }
   }
 
