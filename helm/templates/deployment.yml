@@ -6,7 +6,7 @@ metadata:
     {{- include "mini-kassenbuch.labels" . | nindent 4 }}
 spec:
   serviceName: {{ include "mini-kassenbuch.fullname" . }}-headless
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
       {{- include "mini-kassenbuch.selectorLabels" . | nindent 6 }}

@@ -70,8 +70,6 @@ helm upgrade mini-kassenbuch oci://ghcr.io/tsgames/minikassenbuch --version <VER
 Das Chart unterstützt folgende Konfigurationswerte:
 
 ```yaml
-replicaCount: 1
-
 image:
   repository: ghcr.io/tsgames/minikassenbuch
   tag: latest
@@ -99,7 +97,9 @@ resources:
     cpu: "500m"
 ```
 
-**Wichtig:** Persistenz ist erforderlich! Das Chart verwendet ein StatefulSet mit obligatorischer Persistierung für die Datenbankdatei und Dokumentspeicherung.
+**Wichtig:** 
+- Persistenz ist erforderlich! Das Chart verwendet ein StatefulSet mit obligatorischer Persistierung für die Datenbankdatei und Dokumentspeicherung.
+- Die Replica-Anzahl ist auf 1 festgelegt, da die Anwendung SQLite als Datenbank verwendet. SQLite unterstützt keine Skalierung auf mehrere Replicas. Für höhere Verfügbarkeit verwenden Sie Docker Compose mit einem Load-Balancer.
 
 Weitere Konfigurationsoptionen finden Sie in der Datei `helm/values.yaml`.
 
