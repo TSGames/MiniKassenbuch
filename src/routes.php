@@ -41,8 +41,9 @@ $app->get('/reports', function ($request, $response, $args) {
 	foreach($db->getAccounts() as $a){
 	    // get stats for account, only current year
 	    $stats=$db->getYearStats($a["id"],0,$_SESSION["filter"]["year"]);
-	    if($stats && count($stats))
+	    if(count($stats) > 0) {
 	        $yearsAccount[]=["account"=>$a,"stats"=>$stats];
+	    }
 	}
 	$bookings = $db->getBookings(false);
 	$categoriesMissing = 0;
@@ -78,6 +79,7 @@ $app->get('/import-done', function ($request, $response, $args) {
 });
 $app->get('/add', function ($request, $response, $args) {
 	$db=new DB();
+	$data=[];
 	$data['categories']=$db->getCategories();
 	return $this->view->render($response, 'booking.html', $data);
 });
@@ -149,6 +151,7 @@ $app->post('/categories/add', function ($request, $response, $args) {
 	$db=new DB();
 	$cat=trim($post['category']);
 	if($cat){
+		/** @psalm-suppress PossiblyUnusedReturnValue */
 		$db->addCategory($cat);
 	}
 	return $response->withRedirect($request->getUri()->getBaseUrl()."/categories");

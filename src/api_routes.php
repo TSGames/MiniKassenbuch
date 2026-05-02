@@ -88,12 +88,13 @@ $app->get('/api/categories/{id}', function ($request, $response, $args) {
 $app->post('/api/categories', function ($request, $response, $args) {
     $post = $request->getParsedBody();
     $db = new DB();
-    
+
     $cat = trim($post['category']);
     if ($cat) {
+        /** @psalm-suppress PossiblyUnusedReturnValue */
         $db->addCategory($cat);
     }
-    
+
     return $response->withJson(['success' => true]);
 })->add($authMiddleware);
 
@@ -143,8 +144,9 @@ $app->get('/api/reports', function ($request, $response, $args) {
     foreach ($db->getAccounts() as $a) {
         // get stats for account, only current year
         $stats = $db->getYearStats($a["id"], 0, $_SESSION["filter"]["year"]);
-        if ($stats && count($stats))
+        if (count($stats) > 0) {
             $yearsAccount[] = ["account" => $a, "stats" => $stats];
+        }
     }
     
     $bookings = $db->getBookings(false);
@@ -302,14 +304,23 @@ $app->post('/api/login', function ($request, $response, $args) {
     
     if ($firstTime) {
         // First time setup - create user account
-        file_put_contents(__DIR__ . '/../data/authentication.json', json_encode([
+        $authData = json_encode([
             "user" => strtolower($post["user"]),
             "password" => password_hash($post["password"], PASSWORD_BCRYPT)
-        ]));
-        $valid = true;
+        ]);
+        if ($authData !== false) {
+            file_put_contents(__DIR__ . '/../data/authentication.json', $authData);
+            $valid = true;
+        } else {
+            return $response->withJson(['error' => 'Failed to encode authentication data'], 500);
+        }
     } else {
         // Check existing credentials
-        $data = json_decode(file_get_contents(__DIR__ . '/../data/authentication.json'));
+        $authContent = file_get_contents(__DIR__ . '/../data/authentication.json');
+        if ($authContent === false) {
+            return $response->withJson(['error' => 'Failed to read authentication data'], 500);
+        }
+        $data = json_decode($authContent);
         $valid = (strtolower($post['user']) === strtolower($data->user) && password_verify($post['password'], $data->password));
         
         if (!$valid) {

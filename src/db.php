@@ -77,11 +77,17 @@ class DB{
 		$stmt->execute();
 		$documents=$stmt->fetchAll()[0][0];
 		$documentsSize = 0;
-		foreach(@scandir(DB::$DOCUMENTS) as $doc){
-			if($doc == '.' ||$doc === '..') {
-				continue;
+		$docs = @scandir(DB::$DOCUMENTS);
+		if ($docs !== false) {
+			foreach($docs as $doc){
+				if($doc == '.' ||$doc === '..') {
+					continue;
+				}
+				$size = filesize(DB::$DOCUMENTS . DIRECTORY_SEPARATOR . $doc);
+				if ($size !== false) {
+					$documentsSize += $size;
+				}
 			}
-			$documentsSize += filesize(DB::$DOCUMENTS . DIRECTORY_SEPARATOR . $doc);
 		}
 	    return [
 			'bookings' => $bookings,
@@ -135,10 +141,13 @@ class DB{
 		$path='../backups/'.date('Y-m-d').'.zip';
 		$zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);		
 		$zip->addFile(self::$FILE,'storage.sqlite');
-		foreach(@scandir(self::$DOCUMENTS) as $file){
-			if($file=="." || $file=="..")
-				continue;
-			$zip->addFile(self::$DOCUMENTS.$file,"documents/".$file);
+		$files = @scandir(self::$DOCUMENTS);
+		if ($files !== false) {
+			foreach($files as $file){
+				if($file=="." || $file=="..")
+					continue;
+				$zip->addFile(self::$DOCUMENTS.$file,"documents/".$file);
+			}
 		}
 		foreach($this->getAccounts() as $account){
 			$csv=$this->getCSV($account['id'], false);
@@ -321,6 +330,7 @@ class DB{
 		return $result;
 	}
 	public function getMonthStats(){
+		$labels = [];
 		$labels[1]="Jan";
 		$labels[2]="Feb";
 		$labels[3]="März";
@@ -333,6 +343,7 @@ class DB{
 		$labels[10]="Okt";
 		$labels[11]="Nov";
 		$labels[12]="Dez";
+		$result = [];
 		for($month=1;$month<=12;$month++){
 			$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE
 			strftime("%Y",datetime(date,"unixepoch")) = :year AND
@@ -373,6 +384,7 @@ class DB{
 		if($id!=null){
 			$this->deleteBooking($id);
 		}
+		$data = [];
 		$data["id"]=$id;
 		$data["label"]=$post["label"];
 		$data["date"]=$post["date"];
@@ -495,6 +507,7 @@ class DB{
 		$data=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$i=0;
 		$result=[];
+		$oldDate = null;
 		foreach($data as $d){
 			if($d["type"]==0)
 				$saldo+=$d["amount"];

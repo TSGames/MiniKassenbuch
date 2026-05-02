@@ -36,9 +36,34 @@
             </errorLevel>
         </UnusedClosureParam>
 
-        <!-- Suppress unused issue handler suppressions -->
-        <UnusedIssueHandlerSuppression>
-            <errorLevel type="suppress" />
-        </UnusedIssueHandlerSuppression>
+        <!-- Slim's Container uses array access interface -->
+        <UndefinedInterfaceMethod>
+            <errorLevel type="suppress">
+                <file name="src/app.php" />
+            </errorLevel>
+        </UndefinedInterfaceMethod>
+
+        <!-- str_ireplace with string args always returns string -->
+        <PossiblyInvalidArgument>
+            <errorLevel type="suppress">
+                <file name="src/app.php" />
+                <file name="src/dependencies.php" />
+            </errorLevel>
+        </PossiblyInvalidArgument>
+
+        <!-- PhpRenderer exists in some versions of Slim, suppress for compat -->
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <file name="src/dependencies.php" />
+            </errorLevel>
+        </UndefinedClass>
+
+        <!-- addCategory return value is intentionally unused in callers -->
+        <PossiblyUnusedReturnValue>
+            <errorLevel type="suppress">
+                <file name="src/db.php" />
+            </errorLevel>
+        </PossiblyUnusedReturnValue>
+
     </issueHandlers>
 </psalm>

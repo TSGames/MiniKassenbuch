@@ -48,6 +48,7 @@ class CSV{
 	 * @psalm-return array{label: mixed, date: mixed, _date: string, amount: float|int<0, max>, _amount: string, type: 0|1, source: 1, notes: mixed, _invalid: bool, _duplicate: mixed,...}
 	 */
 	public function map($headers, $post): array {
+		$data = [];
 		$data["label"]=$this->getData('label', $headers, $post);
 		$data["date"]=$this->convertDate($this->getData('date', $headers, $post));
 		$data["_date"]=@date("d.m.Y",($data['date']));
@@ -64,17 +65,20 @@ class CSV{
 	/**
 	 * @return (mixed|null|string)[][]
 	 *
-	 * @psalm-return array{headers: list{null|string,...}, bookings: list<mixed>}
+	 * @psalm-return array{headers: list{0?: null|string, ...<string>}, bookings: list<array{label: mixed, date: mixed, _date: string, amount: float|int<0, max>, _amount: string, type: 0|1, source: 1, notes: mixed, _invalid: bool, _duplicate: mixed, ...}>}
 	 */
 	public function parse($csv, $import = false): array{
 		$rows=str_getcsv($csv,"\n");
-		$result=["headers" => 
-			str_getcsv($rows[0],$this->config->seperator),
+		$result=["headers" =>
+			isset($rows[0]) ? str_getcsv($rows[0],$this->config->seperator) : [],
 			"bookings" => []
 		];
 		$i = 0;
 		foreach($rows as $row){
 			if($i++ == 0) {
+				continue;
+			}
+			if ($row === null) {
 				continue;
 			}
 			$booking = $this->map($result["headers"], str_getcsv($row,$this->config->seperator));
