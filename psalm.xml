@@ -31,12 +31,5 @@
             </errorLevel>
         </PossiblyUnusedReturnValue>
 
-        <!-- getDocument is kept for potential future use in API -->
-        <PossiblyUnusedMethod>
-            <errorLevel type="suppress">
-                <file name="src/db.php" />
-            </errorLevel>
-        </PossiblyUnusedMethod>
-
     </issueHandlers>
 </psalm>

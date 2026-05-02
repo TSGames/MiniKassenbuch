@@ -391,7 +391,7 @@ class DB{
 			}
 		}
 		if($yearsBack==0)
-		    return @$result[$year-1] ?? [];
+		    return $result[$year-1] ?? [];
 		return $result;
 	}
 	/**
