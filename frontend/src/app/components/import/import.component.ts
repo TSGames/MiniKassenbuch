@@ -19,6 +19,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 interface ImportConfig {
   separator: string;
   mappings: { [key: string]: string };
+  autoDetectCategory?: boolean;
 }
 
 interface ImportResponse {
@@ -59,6 +60,7 @@ export class ImportComponent implements OnInit {
   currentStep = signal<ImportStep>(ImportStep.FileSelect);
   csvSeparator = signal(';');
   csvContent = signal<string | null>(null);
+  autoDetectCategory = signal(true);
   previewData = signal<any[]>([]);
   headers = signal<string[]>([]);
   mappings = signal<{ [key: string]: string }>({});
@@ -150,7 +152,8 @@ export class ImportComponent implements OnInit {
 
     const config: ImportConfig = {
       separator: this.csvSeparator(),
-      mappings: this.mappings()
+      mappings: this.mappings(),
+      autoDetectCategory: this.autoDetectCategory()
     };
 
     this.importService.previewImport(content, config).subscribe({
@@ -186,7 +189,8 @@ export class ImportComponent implements OnInit {
 
     const config: ImportConfig = {
       separator: this.csvSeparator(),
-      mappings: this.mappings()
+      mappings: this.mappings(),
+      autoDetectCategory: this.autoDetectCategory()
     };
 
     this.importService.startImport(content, config).subscribe({

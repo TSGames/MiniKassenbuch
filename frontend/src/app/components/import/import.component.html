@@ -62,6 +62,21 @@
           </mat-input>
         </mat-form-field>
 
+        <div class="auto-detect-section">
+          <label class="auto-detect-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="autoDetectCategory"
+              name="autoDetectCategory"
+              class="auto-detect-checkbox"
+            >
+            <span>Kategorien automatisch erkennen</span>
+          </label>
+          <p class="auto-detect-hint">
+            Nutzt definierte Kategorie-Schlüsselwörter und Namensmuster, um Kategorien automatisch zuzuweisen
+          </p>
+        </div>
+
         <div class="button-group">
           <button mat-stroked-button (click)="goBack()">
             <mat-icon>arrow_back</mat-icon>
