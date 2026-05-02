@@ -176,7 +176,7 @@ class DB{
 		$data = [];
 		$data[] = ["Datum","Laufende Nr.","Vorgang","Kategorie","Bemerkungen","Betrag","Saldo","Belege"];
 		foreach($bookings as $booking){
-			$date=date("Y-m-d",$booking['date']);
+			$date = is_numeric($booking['date']) ? date("Y-m-d", $booking['date']) : substr($booking['date'], 0, 10);
 			$number=$booking['number'];
 			$label=$booking['label'];
 			$category=$booking['category'];
@@ -230,7 +230,7 @@ class DB{
 		$sheet->getColumnDimension('H')->setWidth(20);
 		$i = 2;	
 		foreach($bookings as $booking){
-			$date=date("Y-m-d",$booking['date']);
+			$date = is_numeric($booking['date']) ? date("Y-m-d", $booking['date']) : substr($booking['date'], 0, 10);
 			$number=$booking['number'];
 			$label=$booking['label'];
 			$category=$booking['category'];
@@ -626,10 +626,14 @@ class DB{
 			}
 			$oldDate = $currentYear;
 			if($filter){
-				if(@date("Y",$d["date"])!=@$_SESSION["filter"]["year"])
+				$bookingYear = is_numeric($d["date"]) ? date("Y", $d["date"]) : substr($d["date"], 0, 4);
+				if(@$bookingYear != @$_SESSION["filter"]["year"])
 					continue;
-				if($_SESSION["filter"]["month"]!=0 && date("m",$d["date"])!=$_SESSION["filter"]["month"])
-					continue;
+				if($_SESSION["filter"]["month"]!=0){
+					$bookingMonth = is_numeric($d["date"]) ? date("m", $d["date"]) : substr($d["date"], 5, 2);
+					if($bookingMonth != @$_SESSION["filter"]["month"])
+						continue;
+				}
 			}
 			$result[$i]=$d;
 			$result[$i]["number"]=$number;			
