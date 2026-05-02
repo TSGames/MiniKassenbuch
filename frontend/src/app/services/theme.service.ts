@@ -22,7 +22,7 @@ export class ThemeService {
     if (stored) {
       return stored === 'dark';
     }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return true;
   }
 
   private applyTheme(isDark: boolean): void {
