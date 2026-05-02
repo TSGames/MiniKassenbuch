@@ -4,13 +4,13 @@
 $container = $app->getContainer();
 
 // view renderer
-$container['renderer'] = function ($c) {
+$container['renderer'] = function ($c): \Slim\Views\PhpRenderer {
     $settings = $c->get('settings')['renderer'];
     return new Slim\Views\PhpRenderer($settings['template_path']);
 };
 
 // Register component on container
-$container['view'] = function ($container) {
+$container['view'] = function ($container): \Slim\Views\Twig {
     $view = new \Slim\Views\Twig(__DIR__ . '/../templates', [
         //'cache' => 'cache'
     ]);

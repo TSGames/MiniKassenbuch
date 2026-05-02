@@ -3,6 +3,8 @@
 class DB{
 	public static $FILE=__DIR__."/../data/storage.sqlite";
 	public static $DOCUMENTS=__DIR__."/../data/documents/";
+	private \PDO $db;
+
 	public function __construct(){
 		@mkdir(self::$DOCUMENTS);
 		$db_already_existed = file_exists(self::$FILE);
@@ -46,7 +48,12 @@ class DB{
 		$this->db->commit();
 		
 	}
-	public function getSettings(){
+	/**
+	 * @return (mixed|string)[]
+	 *
+	 * @psalm-return array{currency: '€'|mixed,...}
+	 */
+	public function getSettings(): array{
 	    $stmt = $this->db->prepare('SELECT * FROM SETTINGS');
 	    $stmt->execute();	 
 	    $result=$stmt->fetchAll();
@@ -57,7 +64,12 @@ class DB{
 	    if(!isset($settings['currency'])) $settings['currency']="€";
 	    return $settings;
 	}
-	public function getStats(){
+	/**
+	 * @return (false|int|mixed)[]
+	 *
+	 * @psalm-return array{bookings: mixed, documents: mixed, documentsSize: int<min, max>, databaseSize: false|int}
+	 */
+	public function getStats(): array{
 	    $stmt = $this->db->prepare('SELECT COUNT(*) FROM BOOKING');
 		$stmt->execute();
 		$bookings=$stmt->fetchAll()[0][0];
@@ -79,7 +91,7 @@ class DB{
 		];
 	    
 	}
-	public function updateSettings($settings){
+	public function updateSettings($settings): void{
 	    foreach($settings as $name=>$value){
             $stmt = $this->db->prepare('INSERT OR REPLACE INTO SETTINGS VALUES (:name,:value)');
 			if($name == 'readOnlyPassword') {
@@ -91,7 +103,7 @@ class DB{
             $stmt->execute([':name'=>$name,':value'=>$value]);
 	    }
 	}
-	public function export(){
+	public function export(): string{
 		@mkdir("../exports");
 		$zip = new ZipArchive();
 		$path='../exports/'.date('Y-m-d').'.zip';
@@ -117,7 +129,7 @@ class DB{
 		$zip->close();
 		return $path;
 	}
-	public function backup(){
+	public function backup(): string{
 		@mkdir("../backups");
 		$zip = new ZipArchive();
 		$path='../backups/'.date('Y-m-d').'.zip';
@@ -137,7 +149,7 @@ class DB{
 		$zip->close();
 		return $path;
 	}
-	public function getCSV($account, $filter = false){
+	public function getCSV($account, $filter = false): string|null{
 		$bookings=$this->getBookingsForAccount($filter,$account);
 		if(count($bookings)==0)
 			return null;
@@ -162,15 +174,22 @@ class DB{
 				$date,$number,$label,$category,$notes,$amount,$saldo,$documents
 			];
 		}
-		$file = tmpfile();	
+		$file = tmpfile();
+		if ($file === false) {
+			return null;
+		}
 		foreach ($data as $fields) {
 			fputcsv($file, $fields);
 		}
-		$csv = file_get_contents(stream_get_meta_data($file)['uri']);
+		$meta = stream_get_meta_data($file);
+		$csv = file_get_contents($meta['uri']);
+		if ($csv === false) {
+			return null;
+		}
 		$csv = preg_replace('~\R~u', "\r\n", $csv);
 		return $csv;
 	}
-	public function getXLSX($account, $filter = false){
+	public function getXLSX($account, $filter = false): string|null{
 		$bookings=$this->getBookingsForAccount($filter,$account);
 		if(count($bookings)==0)
 			return null;
@@ -212,12 +231,22 @@ class DB{
 			$sheet->fromArray($data, NULL, 'A' . $i++);     	
 
 		}
-		$file = tmpfile();	
+		$file = tmpfile();
+		if ($file === false) {
+			return null;
+		}
 		$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 		$writer->save($file);
-		return file_get_contents(stream_get_meta_data($file)['uri']);
+		$meta = stream_get_meta_data($file);
+		$contents = file_get_contents($meta['uri']);
+		return $contents !== false ? $contents : null;
 	}
-	public function getYearStats($account=null,$yearsBack=10,$targetYear=NULL){
+	/**
+	 * @return (array|mixed)[]
+	 *
+	 * @psalm-return array<array|mixed>
+	 */
+	public function getYearStats($account=null,$yearsBack=10,$targetYear=NULL): array{
 	    if(!$targetYear) $targetYear=date("Y");
 	    $year=$targetYear-$yearsBack;
 		$result=[];
@@ -225,7 +254,6 @@ class DB{
 			//$stmt = $this->db->prepare('SELECT strftime("%Y",datetime(date,"unixepoch")) FROM BOOKING');
 			//$stmt->execute();
 			//print_r($stmt->fetchAll());
-			$stmt=null;
 			if($account){
 				$stmt = $this->db->prepare('SELECT type,SUM(amount) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) = :year AND account = :account GROUP BY type');
 				$stmt->execute([":year"=>$year,":account"=>$account]);
@@ -237,7 +265,6 @@ class DB{
 			$content=false;
 			foreach($stmt->fetchAll() as $r){
 				$result[$year][$r["type"]]=$r["value"];
-				$stmt=null;
 				if($account){
 				    $stmt = $this->db->prepare('SELECT SUM(case when type = 0 then amount else -amount end) as value FROM BOOKING WHERE strftime("%Y",datetime(date,"unixepoch")) < :year AND account = :account');
 				    $stmt->execute([":year"=>$year,":account"=>$account]);
@@ -258,7 +285,12 @@ class DB{
 		    return @$result[$year-1];
 		return $result;
 	}
-	public function getTopBookingsYear(){
+	/**
+	 * @return array[]
+	 *
+	 * @psalm-return array<int<0, 1>, array>
+	 */
+	public function getTopBookingsYear(): array{
 		$result=[];
 		for($type=0;$type<2;$type++){
 			$stmt = $this->db->prepare('SELECT label,amount as amount FROM BOOKING WHERE
@@ -270,7 +302,12 @@ class DB{
 		}
 		return $result;
 	}
-	public function getTopBookingsCategories(){
+	/**
+	 * @return array[]
+	 *
+	 * @psalm-return array<int<0, 1>, array>
+	 */
+	public function getTopBookingsCategories(): array{
 		$result=[];
 		for($type=0;$type<2;$type++){
 			$stmt = $this->db->prepare('SELECT c.label,SUM(b.amount) as amount FROM CATEGORY c LEFT JOIN BOOKING_CATEGORY ON (category=c.id) LEFT JOIN BOOKING b ON (booking=b.id) WHERE
@@ -311,23 +348,23 @@ class DB{
 		}
 		return $result;
 	}
-	public function editCategory($id,$label,$amount){
+	public function editCategory($id,$label,$amount): void{
 		$stmt = $this->db->prepare('UPDATE CATEGORY SET label = :label, amount = :amount WHERE id = :id');
 		$stmt->execute([":id"=>$id,":label"=>$label, ":amount"=>$amount*100]);
 	}
-	public function deleteCategory($id){
+	public function deleteCategory($id): void{
 		$stmt = $this->db->prepare('DELETE FROM CATEGORY WHERE id = :id');
 		$stmt->execute([":id"=>$id]);
 		$stmt = $this->db->prepare('DELETE FROM BOOKING_CATEGORY WHERE category = :id');
 		$stmt->execute([":id"=>$id]);		
 	}
-	public function deleteBooking($id){
+	public function deleteBooking($id): void{
 		$stmt = $this->db->prepare('DELETE FROM BOOKING WHERE id = :id');
 		$stmt->execute([":id"=>$id]);
 		$stmt = $this->db->prepare('DELETE FROM BOOKING_CATEGORY WHERE booking = :id');
 		$stmt->execute([":id"=>$id]);		
 	}
-	public function deleteDocument($id){
+	public function deleteDocument($id): void{
 		$stmt = $this->db->prepare('DELETE FROM DOCUMENT WHERE id = :id');
 		$stmt->execute([":id"=>$id]);
 		unlink(self::$DOCUMENTS.$id*1);
@@ -362,14 +399,14 @@ class DB{
 		}*/
 		return $id;
 	}
-	public function addCategory($label){
+	public function addCategory($label): string{
 		$data=[];
 		$data["label"]=$label;
 		$stmt = $this->db->prepare('INSERT INTO CATEGORY (id,label) VALUES (NULL,:label)');
 		$stmt->execute($data);
 		return $this->db->lastInsertId();
 	}
-	public function hasBooking($booking){
+	public function hasBooking($booking): bool{
 		$stmt = $this->db->prepare('SELECT * FROM BOOKING WHERE label = :label AND strftime("%Y%m%d",datetime(date,"unixepoch")) = :date AND amount = :amount AND type = :type');
 		$stmt->execute([
 			':label'=>$booking['label'],
@@ -401,12 +438,12 @@ class DB{
 		$stmt->execute([":id"=>$id]);
 		return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
 	}
-	public function getAccounts(){
+	public function getAccounts(): array{
 		$stmt = $this->db->prepare('SELECT * FROM ACCOUNT ORDER BY id');
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
-	public function addDocument($booking,$file){
+	public function addDocument($booking,$file): void{
 		$stmt = $this->db->prepare('INSERT INTO DOCUMENT VALUES (NULL,:booking,:name)');
 		$stmt->execute([":booking"=>$booking,":name"=>$file->getClientFilename()]);
 		$id=$this->db->lastInsertId();
@@ -417,12 +454,12 @@ class DB{
 		$stmt->execute([":id"=>$id]);
 		return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
 	}
-	public function getDocuments($booking){
+	public function getDocuments($booking): array{
 		$stmt = $this->db->prepare('SELECT * FROM DOCUMENT WHERE booking = :booking');
 		$stmt->execute([":booking"=>$booking]);
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
-	public function getCategories($booking=null){
+	public function getCategories($booking=null): array{
 		$stmt = $this->db->prepare('SELECT id,label,amount,(category>0) as active FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (booking = :booking AND category=id) ORDER BY upper(label)');
 		$stmt->execute([":booking"=>$booking]);
 
@@ -432,7 +469,7 @@ class DB{
 		}
 		return $categories;
 	}
-	public function getAllCategories(){
+	public function getAllCategories(): array{
 		$stmt = $this->db->prepare('SELECT c.id,c.label,c.amount as amount,COUNT(booking) as count FROM CATEGORY c LEFT JOIN BOOKING_CATEGORY ON (category=id) GROUP BY id ORDER BY upper(label)');
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -447,7 +484,10 @@ class DB{
 	public function getBookings($filter=true){
 		return $this->getBookingsForAccount($filter,$_SESSION["account"]);
 	}
-	public function getBookingsForAccount($filter=true,$account){
+	/**
+	 * @psalm-return array<int<0, max>, mixed>
+	 */
+	public function getBookingsForAccount($filter=true,$account): array{
 		$number=0;
 		$saldo=0;
 		$stmt = $this->db->prepare('SELECT B.*, (SELECT label FROM CATEGORY C WHERE C.id=(SELECT category FROM BOOKING_CATEGORY BC WHERE BC.booking=B.id)) as category, (SELECT COUNT(*) FROM DOCUMENT D WHERE B.id = D.booking) AS documents FROM BOOKING B WHERE account = :account ORDER BY date');

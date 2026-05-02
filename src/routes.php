@@ -5,7 +5,7 @@ use Slim\Http\Response;
 
 
 // Routes
-$db = new DB();
+new DB();
 
 $app->get('/', function ($request, $response, $args) {
 	$get=$request->getQueryParams();

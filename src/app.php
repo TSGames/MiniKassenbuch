@@ -13,7 +13,7 @@ $app = new \Slim\App($config);
 $container = $app->getContainer();
 
 // Register component on container
-$container['view'] = function ($container) {
+$container['view'] = function ($container): \Slim\Views\Twig {
     $view = new \Slim\Views\Twig('templates', [
         //'cache' => 'cache'
     ]);

@@ -8,19 +8,27 @@
     </projectFiles>
 
     <issueHandlers>
-        <UndefinedGlobalVariable>
+        <!-- Slim framework uses closures with $this context -->
+        <InvalidScope>
             <errorLevel type="suppress">
                 <file name="src/api_routes.php" />
                 <file name="src/routes.php" />
                 <file name="src/middleware.php" />
                 <file name="src/dependencies.php" />
             </errorLevel>
-        </UndefinedGlobalVariable>
-        <UndefinedClass>
+        </InvalidScope>
+
+        <!-- Slim route handlers use unused parameters -->
+        <UnusedClosureParam>
+            <errorLevel type="suppress">
+                <file name="src/api_routes.php" />
+                <file name="src/routes.php" />
+            </errorLevel>
+        </UnusedClosureParam>
+
+        <!-- Suppress unused issue handler suppressions -->
+        <UnusedIssueHandlerSuppression>
             <errorLevel type="suppress" />
-        </UndefinedClass>
-        <UndefinedFunction>
-            <errorLevel type="suppress" />
-        </UndefinedFunction>
+        </UnusedIssueHandlerSuppression>
     </issueHandlers>
 </psalm>

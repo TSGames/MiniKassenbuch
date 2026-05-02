@@ -1,6 +1,11 @@
 <?php
 
-function isApiRequest($request) {
+/**
+ * @return false|int
+ *
+ * @psalm-return 0|1|false
+ */
+function isApiRequest($request): int|false {
     $path = '/' . trim($request->getUri()->getPath(), '/');
     return preg_match('#^/api(/|$)#', $path);
 }
@@ -33,23 +38,31 @@ $app->add(function ($request, $response, $next) {
     }
     $firstTime = !file_exists(__DIR__ . '/../data/authentication.json');
     $post = $request->getParsedBody();
-    $valid = null;
+    $valid = false;
     $validReadOnly = false;
     if ($post && $post["user"] && $post["password"]) {
         if ($firstTime) {
-            file_put_contents(__DIR__ . '/../data/authentication.json', json_encode([
+            $authData = json_encode([
                 "user" => strtolower($post["user"]),
                 "password" => password_hash($post["password"], PASSWORD_BCRYPT)
-            ]));
-            $valid = true;
+            ]);
+            if ($authData !== false) {
+                file_put_contents(__DIR__ . '/../data/authentication.json', $authData);
+                $valid = true;
+            }
         } else {
-            $data = json_decode(file_get_contents(__DIR__ . '/../data/authentication.json'));
-            $valid = (strtolower($post['user']) === strtolower($data->user) && password_verify($post['password'], $data->password));
-            if (!$valid) {
-                $db = new DB();
-                $settings = $db->getSettings();
-                if ($settings['readOnlyEnabled']) {
-                    $validReadOnly = (strtolower($post['user']) === strtolower($settings['readOnlyUsername']) && password_verify($post['password'], $settings['readOnlyPassword']));
+            $authContent = file_get_contents(__DIR__ . '/../data/authentication.json');
+            if ($authContent !== false) {
+                $data = json_decode($authContent);
+                if ($data) {
+                    $valid = (strtolower($post['user']) === strtolower($data->user) && password_verify($post['password'], $data->password));
+                    if (!$valid) {
+                        $db = new DB();
+                        $settings = $db->getSettings();
+                        if ($settings['readOnlyEnabled']) {
+                            $validReadOnly = (strtolower($post['user']) === strtolower($settings['readOnlyUsername']) && password_verify($post['password'], $settings['readOnlyPassword']));
+                        }
+                    }
                 }
             }
         }

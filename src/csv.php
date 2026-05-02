@@ -1,7 +1,10 @@
 <?php
 
 class CSV{
-	
+	private mixed $config;
+	private DB $db;
+	private string $currency;
+
 	public function __construct($config){
 		$this->config=$config;
 		$this->db=new DB();
@@ -14,7 +17,7 @@ class CSV{
 		}
 		return @$post[$idx];
 	}
-	private function convertCurrencyValue($numeric) {
+	private function convertCurrencyValue($numeric): float|int {
 		if(strpos($numeric, '.') === false && strpos($numeric, ',') === false) {
 			return intval($numeric) / 100;
 		}
@@ -24,7 +27,7 @@ class CSV{
 		}
 		return doubleval(str_replace(',', '.', $numeric));
 	}
-	private function convertDate($date) {
+	private function convertDate($date): int|null {
 		$formats = [
 			"d.m.y",
 			"d.m.Y",
@@ -39,7 +42,12 @@ class CSV{
 		return null;
 	
 	}
-	public function map($headers, $post) {
+	/**
+	 * @return (mixed|scalar)[]
+	 *
+	 * @psalm-return array{label: mixed, date: mixed, _date: string, amount: float|int<0, max>, _amount: string, type: 0|1, source: 1, notes: mixed, _invalid: bool, _duplicate: mixed,...}
+	 */
+	public function map($headers, $post): array {
 		$data["label"]=$this->getData('label', $headers, $post);
 		$data["date"]=$this->convertDate($this->getData('date', $headers, $post));
 		$data["_date"]=@date("d.m.Y",($data['date']));
@@ -51,10 +59,14 @@ class CSV{
 		$data["notes"]=$this->getData('notes', $headers, $post);
 		$data["_invalid"]=!$data["date"] || count($post) != count($headers);
 		$data["_duplicate"]=$this->db->hasBooking($data);
-		$category=@$this->config->category;
 		return $data;
 	}
-	public function parse($csv, $import = false){
+	/**
+	 * @return (mixed|null|string)[][]
+	 *
+	 * @psalm-return array{headers: list{null|string,...}, bookings: list<mixed>}
+	 */
+	public function parse($csv, $import = false): array{
 		$rows=str_getcsv($csv,"\n");
 		$result=["headers" => 
 			str_getcsv($rows[0],$this->config->seperator),

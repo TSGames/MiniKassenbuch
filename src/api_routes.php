@@ -4,7 +4,7 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 // API Routes
-$db = new DB();
+new DB();
 
 // Authentication middleware for API endpoints
 $authMiddleware = function ($request, $response, $next) {
@@ -298,7 +298,6 @@ $app->post('/api/login', function ($request, $response, $args) {
     }
     
     $firstTime = !file_exists(__DIR__ . '/../data/authentication.json');
-    $valid = null;
     $validReadOnly = false;
     
     if ($firstTime) {
