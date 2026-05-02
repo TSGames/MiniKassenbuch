@@ -7,8 +7,10 @@
         "slim/slim": "^3.0",
         "slim/twig-view": "^2.3",
         "phpoffice/phpspreadsheet": "^1.28"
-    }
-    ,
+    },
+    "require-dev": {
+        "vimeo/psalm": "^6.16"
+    },
     "config": {
         "audit": {
             "block-insecure": false
