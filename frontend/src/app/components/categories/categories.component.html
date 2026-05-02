@@ -1,35 +1,98 @@
-<div class="container">
-  <h4>Kategorien verwalten</h4>
-  <div class="category-grid">
-    <mat-card *ngFor="let category of categories()" class="category-card">
-      <div class="category-title">{{category.label}}</div>
-      <div class="category-meta">
-        <span>{{category.amount === 0 ? '-' : category.amount > 0 ? 'Einnahme' : 'Ausgabe'}}</span>
-        <span>{{(category.amount/100) | number:'1.2-2'}} {{currency}}</span>
-        <span>{{category.count || 0}} Buchungen</span>
-      </div>
-      <div class="category-actions">
-        <button mat-icon-button color="primary" [routerLink]="['/edit-category', category.id]">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" [routerLink]="['/delete-category', category.id]" *ngIf="!readonly()">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
+<div class="categories-page">
+  <app-header></app-header>
+
+  <div class="container">
+    <!-- Error Message -->
+    <mat-card *ngIf="error()" class="error-card" role="alert">
+      <mat-card-content>
+        <mat-icon class="error-icon">error</mat-icon>
+        <span>{{error()}}</span>
+      </mat-card-content>
     </mat-card>
+
+    <!-- Header -->
+    <div class="page-header">
+      <h1>Kategorien verwalten</h1>
+      <p class="subtitle">Erstellen und verwalten Sie Kategorien für Ihre Buchungen</p>
+    </div>
+
+    <!-- Add New Category Form -->
+    <mat-card class="add-category-card">
+      <mat-card-header>
+        <mat-card-title>Neue Kategorie erstellen</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form (ngSubmit)="onAddCategory()" #categoryForm="ngForm" class="add-category-form">
+          <mat-form-field class="full-width">
+            <mat-label>Kategoriename</mat-label>
+            <input matInput
+              type="text"
+              name="category"
+              [ngModel]="newCategoryName()"
+              (ngModelChange)="newCategoryName.set($event)"
+              placeholder="z.B. Mitgliedsbeiträge, Supplies, etc."
+              required
+            >
+          </mat-form-field>
+          <button mat-raised-button color="accent" type="submit" [disabled]="readonly()">
+            <mat-icon>add_circle</mat-icon>
+            Kategorie anlegen
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Categories Grid -->
+    <div class="categories-section">
+      <h2 class="section-title">Kategorien ({{categories().length}})</h2>
+
+      <div *ngIf="isLoading()" class="loading-state">
+        <mat-icon class="spinner">refresh</mat-icon>
+        <p>Kategorien werden geladen...</p>
+      </div>
+
+      <div *ngIf="!isLoading() && categories().length === 0" class="empty-state">
+        <mat-icon>category</mat-icon>
+        <p>Noch keine Kategorien vorhanden</p>
+        <p class="empty-text">Erstellen Sie oben Ihre erste Kategorie</p>
+      </div>
+
+      <div *ngIf="!isLoading() && categories().length > 0" class="category-grid">
+        <mat-card *ngFor="let category of categories()" class="category-card" [ngClass]="getCategoryColor(category.amount)">
+          <div class="category-header">
+            <div class="category-icon">
+              <mat-icon>{{category.amount === 0 ? 'label' : category.amount > 0 ? 'arrow_upward' : 'arrow_downward'}}</mat-icon>
+            </div>
+            <div class="category-info">
+              <div class="category-title">{{category.label}}</div>
+              <div class="category-type">{{getCategoryType(category.amount)}}</div>
+            </div>
+          </div>
+
+          <div class="category-stats">
+            <div class="stat-item">
+              <span class="stat-label">Voreingestellter Betrag</span>
+              <span class="stat-value">{{formatCurrency(category.amount)}} {{currency}}</span>
+            </div>
+          </div>
+
+          <div class="category-actions">
+            <button mat-icon-button
+              color="primary"
+              [routerLink]="['/edit-category', category.id]"
+              matTooltip="Bearbeiten">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button
+              color="warn"
+              [routerLink]="['/delete-category', category.id]"
+              *ngIf="!readonly()"
+              matTooltip="Löschen">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-card>
+      </div>
+    </div>
   </div>
-  <form class="add-form" (ngSubmit)="onAddCategory()" #categoryForm="ngForm">
-    <mat-form-field class="full-width">
-      <mat-label>Neue Kategorie</mat-label>
-      <input matInput
-        type="text"
-        name="category"
-        [ngModel]="newCategoryName()"
-        (ngModelChange)="newCategoryName.set($event)"
-        placeholder="z.B. Mitgliedsbeiträge"
-        required
-      >
-    </mat-form-field>
-    <button mat-raised-button color="accent" type="submit" [disabled]="readonly()">Anlegen</button>
-  </form>
 </div>
