@@ -1,45 +1,237 @@
-/* Reports component styles */
-.report {
-  margin-bottom: 40px;
+.reports-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.chart {
-  margin: 30px;
-  height: 300px;
+.container {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-.info {
-  padding: 10px;
-  margin: 20px 0;
-  color: #000;
-  background-color: #fff;
-  box-shadow: 1px 1px 4px rgba(0,0,0,.5);
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  gap: 1rem;
+
+  p {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 1.1rem;
+  }
 }
 
-.error {
-  padding: 10px;
-  margin: 20px 0;
-  color: #000;
-  background-color: #fff;
-  box-shadow: 1px 1px 4px rgba(0,0,0,.5);
+// Report Cards
+.report-card {
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+
+  mat-card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+
+    mat-card-title {
+      font-size: 1.25rem;
+      margin: 0;
+      color: #1976d2;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      mat-icon {
+        font-size: 1.5rem;
+        width: 1.5rem;
+        height: 1.5rem;
+
+        &.income-icon {
+          color: #4caf50;
+        }
+
+        &.expense-icon {
+          color: #f44336;
+        }
+      }
+    }
+  }
+
+  mat-card-content {
+    padding: 1.5rem;
+  }
 }
 
-.error {
-  background-color: #800;
-  color: #fff;
-  font-weight: bold;
+// Charts
+.chart-container {
+  width: 100%;
+  min-height: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 900px) {
+    min-height: 300px;
+  }
 }
 
-.positive {
-  font-weight: bold;
-  color: #080;
+// Tables
+.table-wrapper {
+  overflow-x: auto;
 }
 
-.negative {
-  font-weight: bold;
-  color: #800;
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+
+  thead {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    color: #1976d2;
+  }
+
+  th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #1976d2;
+
+    &.amount-col {
+      text-align: right;
+    }
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+
+    &.year-col {
+      font-weight: 600;
+      color: #1976d2;
+    }
+
+    &.amount-col {
+      text-align: right;
+      font-weight: 500;
+
+      &.income {
+        color: #4caf50;
+      }
+
+      &.expense {
+        color: #f44336;
+      }
+    }
+  }
+
+  tbody tr {
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f9f9f9;
+    }
+
+    &.income-row {
+      border-left: 4px solid #4caf50;
+    }
+
+    &.expense-row {
+      border-left: 4px solid #f44336;
+    }
+  }
 }
 
-.page-break-before {
-  page-break-before: always;
+// Warning Box
+.warning-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  border-radius: 4px;
+  color: #856404;
+
+  mat-icon {
+    flex-shrink: 0;
+    color: #ffc107;
+  }
+
+  span {
+    flex: 1;
+  }
+}
+
+// Currency and Amount
+.income {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.expense {
+  color: #f44336;
+  font-weight: 600;
+}
+
+// Responsive Design
+@media print {
+  .reports-page {
+    app-header {
+      display: none;
+    }
+
+    .report-card {
+      page-break-inside: avoid;
+      box-shadow: none;
+      margin-bottom: 1rem;
+    }
+
+    .chart-container {
+      max-height: 300px;
+    }
+
+    .table-wrapper {
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .report-card {
+    mat-card-header {
+      padding: 1rem;
+    }
+
+    mat-card-content {
+      padding: 1rem;
+    }
+  }
+
+  .data-table {
+    font-size: 0.85rem;
+
+    th,
+    td {
+      padding: 0.5rem;
+    }
+  }
+
+  .chart-container {
+    min-height: 280px;
+  }
 }

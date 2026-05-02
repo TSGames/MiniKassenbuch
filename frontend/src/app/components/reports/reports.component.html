@@ -1,137 +1,244 @@
-<div class="container">
-  <div class="report">
-    <h2>Übersicht Ein-/Ausgaben je Jahr</h2>
-    <div id="yearly" class="chart"></div>
-    <table class="striped">
-      <thead>
-        <th>Jahr</th>
-        <th>Einnahmen</th>
-        <th>Ausgaben</th>
-        <th>Ergebnis</th>
-        <th>Start-Saldo</th>
-        <th>End-Saldo</th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let yearStats of yearsStats">
-          <td>{{yearStats.year}}</td>
-          <td>{{(yearStats[0]/100) | number:'1.2-2'}} {{currency}}</td>
-          <td>{{(yearStats[1]/100) | number:'1.2-2'}} {{currency}}</td>
-          <td [class.positive]="yearStats[0]-yearStats[1] >= 0" [class.negative]="yearStats[0]-yearStats[1] < 0">
-            {{((yearStats[0]-yearStats[1])/100) | number:'1.2-2'}} {{currency}}
-          </td>
-          <td>{{(yearStats["saldo"]/100) | number:'1.2-2'}} {{currency}}</td>
-          <td>{{((yearStats["saldo"]+(yearStats[0]-yearStats[1]))/100) | number:'1.2-2'}} {{currency}}</td>
-        </tr>
-      </tbody>
-    </table>
+<div class="reports-page">
+  <app-header></app-header>
+
+  <div *ngIf="isLoading()" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Berichte werden geladen...</p>
   </div>
-  
-  <div class="report">
-    <h2>Übersicht Ein-/Ausgaben je Konto&nbsp;{{currentYear}}</h2>
-    <table class="striped">
-      <thead>
-        <th>Konto</th>
-        <th>Einnahmen</th>
-        <th>Ausgaben</th>
-        <th>Ergebnis</th>
-        <th>Start-Saldo</th>
-        <th>End-Saldo</th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let accountStats of yearsAccountStats">
-          <td>{{accountStats.account.label}}</td>
-          <td>{{(accountStats.stats[0]/100) | number:'1.2-2'}} {{currency}}</td>
-          <td>{{(accountStats.stats[1]/100) | number:'1.2-2'}} {{currency}}</td>
-          <td [class.positive]="accountStats.stats[0]-accountStats.stats[1] >= 0" [class.negative]="accountStats.stats[0]-accountStats.stats[1] < 0">
-            {{((accountStats.stats[0]-accountStats.stats[1])/100) | number:'1.2-2'}} {{currency}}
-          </td>
-          <td>{{(accountStats.stats["saldo"]/100) | number:'1.2-2'}} {{currency}}</td>
-          <td>{{((accountStats.stats["saldo"]+(accountStats.stats[0]-accountStats.stats[1]))/100) | number:'1.2-2'}} {{currency}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="report" style="page-break-before: always">
-    <h2>Einnahmen / Ausgaben je Monat&nbsp;{{currentYear}}</h2>
-    <div id="monthly" class="chart"></div>
-  </div>
-  
-  <div class="report" *ngIf="tops[0]">
-    <h2>Top Einnahmen&nbsp;{{currentYear}}</h2>
-    <table class="striped">
-      <thead>
-        <th>Bezeichnung</th>
-        <th>Betrag</th>
-        <th>% von Gesamt</th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let top of tops[0]">
-          <td>{{top.label}}</td>
-          <td class="positive">{{(top.amount/100) | number:'1.2-2'}} {{currency}}</td>
-          <td class="positive">{{((top.amount/yearStats[0])*100) | number:'1.1'}} %</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="report" *ngIf="tops[1]">
-    <h2>Top Ausgaben&nbsp;{{currentYear}}</h2>
-    <table class="striped">
-      <thead>
-        <th>Bezeichnung</th>
-        <th>Betrag</th>
-        <th>% von Gesamt</th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let top of tops[1]">
-          <td>{{top.label}}</td>
-          <td class="negative">{{(top.amount/100) | number:'1.2-2'}} {{currency}}</td>
-          <td class="negative">{{((top.amount/yearStats[1])*100) | number:'1.1'}} %</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="report" *ngIf="categories[0]">
-    <h2>Alle Einnahmen&nbsp;{{currentYear}} nach Kategorie</h2>
-    <div *ngIf="categoriesMissing" class="error">
-      Es existieren {{categoriesMissing}} Buchungen ohne Kategoriezuordnung. Die folgenden Daten sind unvollständig bzw. ungültig.
-    </div>
-    <table class="striped">
-      <thead>
-        <th>Kategorie</th>
-        <th>Betrag</th>
-        <th>% von Gesamt</th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let category of categories[0]">
-          <td>{{category.label}}</td>
-          <td class="positive">{{(category.amount/100) | number:'1.2-2'}} {{currency}}</td>
-          <td class="positive">{{((category.amount/yearStats[0])*100) | number:'1.1'}} %</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="report" *ngIf="categories[1]">
-    <h2>Alle Ausgaben&nbsp;{{currentYear}} nach Kategorie</h2>
-    <div *ngIf="categoriesMissing" class="error">
-      Es existieren {{categoriesMissing}} Buchungen ohne Kategoriezuordnung. Die folgenden Daten sind unvollständig bzw. ungültig.
-    </div>
-    <table class="striped">
-      <thead>
-        <th>Kategorie</th>
-        <th>Betrag</th>
-        <th>% von Gesamt</th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let category of categories[1]">
-          <td>{{category.label}}</td>
-          <td class="negative">{{(category.amount/100) | number:'1.2-2'}} {{currency}}</td>
-          <td class="negative">{{((category.amount/yearStats[1])*100) | number:'1.1'}} %</td>
-        </tr>
-      </tbody>
-    </table>
+
+  <div *ngIf="!isLoading()" class="container">
+    <!-- Yearly Chart -->
+    <mat-card class="report-card">
+      <mat-card-header>
+        <mat-card-title>Jahresübersicht Ein-/Ausgaben</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div #yearlyChart class="chart-container"></div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Yearly Statistics Table -->
+    <mat-card class="report-card">
+      <mat-card-header>
+        <mat-card-title>Jahresstatistik</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Jahr</th>
+                <th class="amount-col">Einnahmen</th>
+                <th class="amount-col">Ausgaben</th>
+                <th class="amount-col">Ergebnis</th>
+                <th class="amount-col">Start-Saldo</th>
+                <th class="amount-col">End-Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let year of yearsStats | keyvalue">
+                <td class="year-col">{{year.key}}</td>
+                <td class="amount-col income">
+                  {{formatCurrency(year.value[0] / 100)}} {{currency}}
+                </td>
+                <td class="amount-col expense">
+                  {{formatCurrency(year.value[1] / 100)}} {{currency}}
+                </td>
+                <td class="amount-col" [ngClass]="year.value[0] - year.value[1] >= 0 ? 'income' : 'expense'">
+                  {{formatCurrency((year.value[0] - year.value[1]) / 100)}} {{currency}}
+                </td>
+                <td class="amount-col">
+                  {{formatCurrency(year.value.saldo / 100)}} {{currency}}
+                </td>
+                <td class="amount-col" [ngClass]="year.value.saldo + (year.value[0] - year.value[1]) >= 0 ? 'income' : 'expense'">
+                  {{formatCurrency((year.value.saldo + (year.value[0] - year.value[1])) / 100)}} {{currency}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Account Statistics -->
+    <mat-card class="report-card" *ngIf="yearsAccountStats.length > 0">
+      <mat-card-header>
+        <mat-card-title>Kontoübersicht {{currentYear}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Konto</th>
+                <th class="amount-col">Einnahmen</th>
+                <th class="amount-col">Ausgaben</th>
+                <th class="amount-col">Ergebnis</th>
+                <th class="amount-col">Start-Saldo</th>
+                <th class="amount-col">End-Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let accountStat of yearsAccountStats">
+                <td>{{accountStat.account.label}}</td>
+                <td class="amount-col income">
+                  {{formatCurrency(accountStat.stats[0] / 100)}} {{currency}}
+                </td>
+                <td class="amount-col expense">
+                  {{formatCurrency(accountStat.stats[1] / 100)}} {{currency}}
+                </td>
+                <td class="amount-col" [ngClass]="accountStat.stats[0] - accountStat.stats[1] >= 0 ? 'income' : 'expense'">
+                  {{formatCurrency((accountStat.stats[0] - accountStat.stats[1]) / 100)}} {{currency}}
+                </td>
+                <td class="amount-col">
+                  {{formatCurrency(accountStat.stats.saldo / 100)}} {{currency}}
+                </td>
+                <td class="amount-col" [ngClass]="accountStat.stats.saldo + (accountStat.stats[0] - accountStat.stats[1]) >= 0 ? 'income' : 'expense'">
+                  {{formatCurrency((accountStat.stats.saldo + (accountStat.stats[0] - accountStat.stats[1])) / 100)}} {{currency}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Monthly Chart -->
+    <mat-card class="report-card">
+      <mat-card-header>
+        <mat-card-title>Monatsübersicht {{currentYear}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div #monthlyChart class="chart-container"></div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Top Income -->
+    <mat-card class="report-card" *ngIf="tops[0] && tops[0].length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="income-icon">arrow_upward</mat-icon>
+          Top Einnahmen {{currentYear}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Bezeichnung</th>
+                <th class="amount-col">Betrag</th>
+                <th class="amount-col">% von Gesamt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let top of tops[0]" class="income-row">
+                <td>{{top.label}}</td>
+                <td class="amount-col income">{{formatCurrency(top.amount / 100)}} {{currency}}</td>
+                <td class="amount-col income">{{calculatePercentage(top.amount, yearStats[0]) | number:'1.1-1'}} %</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Top Expenses -->
+    <mat-card class="report-card" *ngIf="tops[1] && tops[1].length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="expense-icon">arrow_downward</mat-icon>
+          Top Ausgaben {{currentYear}}
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Bezeichnung</th>
+                <th class="amount-col">Betrag</th>
+                <th class="amount-col">% von Gesamt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let top of tops[1]" class="expense-row">
+                <td>{{top.label}}</td>
+                <td class="amount-col expense">{{formatCurrency(top.amount / 100)}} {{currency}}</td>
+                <td class="amount-col expense">{{calculatePercentage(top.amount, yearStats[1]) | number:'1.1-1'}} %</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Income by Category -->
+    <mat-card class="report-card" *ngIf="categories[0] && categories[0].length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="income-icon">label</mat-icon>
+          Alle Einnahmen {{currentYear}} nach Kategorie
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="categoriesMissing" class="warning-box">
+          <mat-icon>warning</mat-icon>
+          <span>Es existieren {{categoriesMissing}} Buchungen ohne Kategoriezuordnung</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Kategorie</th>
+                <th class="amount-col">Betrag</th>
+                <th class="amount-col">% von Gesamt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let category of categories[0]" class="income-row">
+                <td>{{category.label}}</td>
+                <td class="amount-col income">{{formatCurrency(category.amount / 100)}} {{currency}}</td>
+                <td class="amount-col income">{{calculatePercentage(category.amount, yearStats[0]) | number:'1.1-1'}} %</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Expenses by Category -->
+    <mat-card class="report-card" *ngIf="categories[1] && categories[1].length > 0">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon class="expense-icon">label</mat-icon>
+          Alle Ausgaben {{currentYear}} nach Kategorie
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="categoriesMissing" class="warning-box">
+          <mat-icon>warning</mat-icon>
+          <span>Es existieren {{categoriesMissing}} Buchungen ohne Kategoriezuordnung</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Kategorie</th>
+                <th class="amount-col">Betrag</th>
+                <th class="amount-col">% von Gesamt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let category of categories[1]" class="expense-row">
+                <td>{{category.label}}</td>
+                <td class="amount-col expense">{{formatCurrency(category.amount / 100)}} {{currency}}</td>
+                <td class="amount-col expense">{{calculatePercentage(category.amount, yearStats[1]) | number:'1.1-1'}} %</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
