@@ -1,38 +1,61 @@
-<div class="container">
-  <form (ngSubmit)="onSubmit()" #categoryForm="ngForm" class="edit-form">
-    <input type="hidden" name="id" [value]="id()">
-    <mat-form-field class="full-width">
-      <mat-label>Bezeichnung</mat-label>
-      <input matInput
-        type="text"
-        name="label"
-        [ngModel]="label()"
-        (ngModelChange)="label.set($event)"
-        required="true"
-      >
-    </mat-form-field>
-    
-    <mat-form-field class="full-width">
-      <mat-label>Standard-Betrag (Optional)</mat-label>
-      <div class="flex-input">
-        <input matInput
-          type="number"
-          name="amount"
-          [ngModel]="amount()"
-          (ngModelChange)="amount.set($event)"
-        >
-        <span class="currency-inline">{{currency}}</span>
-      </div>
-    </mat-form-field>
-    
-    <mat-button-toggle-group class="type-toggle" name="type" [(ngModel)]="typeValue" aria-label="Typ">
-      <mat-button-toggle [value]="0">Einnahme</mat-button-toggle>
-      <mat-button-toggle [value]="1">Ausgabe</mat-button-toggle>
-    </mat-button-toggle-group>
-    
-    <div class="form-actions">
-      <button mat-button (click)="goBack()" type="button">Abbrechen</button>
-      <button mat-raised-button color="accent" type="submit">Bearbeiten</button>
-    </div>
-  </form>
+<div class="edit-category-page">
+  <app-header></app-header>
+
+  <div class="container">
+    <mat-card class="edit-form-card">
+      <mat-card-header>
+        <mat-card-title>Kategorie bearbeiten</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form (ngSubmit)="onSubmit()" #categoryForm="ngForm" class="edit-form">
+          <mat-form-field class="full-width">
+            <mat-label>Bezeichnung</mat-label>
+            <input matInput
+              type="text"
+              name="label"
+              [ngModel]="label()"
+              (ngModelChange)="label.set($event)"
+              required>
+          </mat-form-field>
+
+          <mat-form-field class="full-width">
+            <mat-label>Standard-Betrag (Optional)</mat-label>
+            <input matInput
+              type="number"
+              step="0.01"
+              name="amount"
+              [ngModel]="amount()"
+              (ngModelChange)="amount.set($event)">
+            <span matSuffix class="currency-suffix">{{currency()}}</span>
+          </mat-form-field>
+
+          <div class="type-section">
+            <label class="section-label">Typ</label>
+            <mat-button-toggle-group class="type-toggle" name="type" [(ngModel)]="typeValue" aria-label="Typ">
+              <mat-button-toggle [value]="0">
+                <mat-icon>arrow_upward</mat-icon>
+                Einnahme
+              </mat-button-toggle>
+              <mat-button-toggle [value]="1">
+                <mat-icon>arrow_downward</mat-icon>
+                Ausgabe
+              </mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="goBack()">
+              <mat-icon>close</mat-icon>
+              Abbrechen
+            </button>
+            <button mat-raised-button color="accent" type="submit">
+              <mat-icon>save</mat-icon>
+              Speichern
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

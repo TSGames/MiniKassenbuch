@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ReportService } from '../../services/report.service';
+import { SettingsService } from '../../services/settings.service';
 import { DecimalPipe, CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 
@@ -21,10 +22,22 @@ export class ReportsComponent implements OnInit {
   categoriesMissing = 0;
   yearStats: any[] = [];
 
-  constructor(private reportService: ReportService) { }
+  constructor(
+    private reportService: ReportService,
+    private settingsService: SettingsService
+  ) { }
 
   ngOnInit(): void {
+    this.loadSettings();
     this.loadReports();
+  }
+
+  private loadSettings(): void {
+    this.settingsService.getSettings().subscribe({
+      next: (settings) => {
+        this.currency = settings.currency || '€';
+      }
+    });
   }
 
   loadReports(): void {
