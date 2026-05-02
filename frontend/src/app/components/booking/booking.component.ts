@@ -132,9 +132,82 @@ export class BookingComponent implements OnInit {
     this.date = today.toISOString().split('T')[0];
   }
 
-  guessCategory(event: any): void {
-    // This would implement the JavaScript logic from the original template
-    // For now, we'll leave it empty as it's complex to replicate
+  guessCategory(label: string): void {
+    if (!label || this.selectedCategory) {
+      return;
+    }
+
+    const match = this.findCategoryMatch(label);
+    if (match) {
+      this.selectedCategory = match.id;
+      this.loadCategory(match);
+    }
+  }
+
+  private findCategoryMatch(label: string): any | null {
+    const words = label.split(' ').filter(w => w.length > 0);
+    let bestMatch: { category: any; score: number } | null = null;
+
+    for (const category of this.categories) {
+      let categoryScore = 0;
+
+      for (const word of words) {
+        if (word.length <= 3) continue;
+
+        const searchTerm = word.substring(0, Math.round(word.length * 0.8)).toLowerCase();
+        const categoryLabel = category.label.toLowerCase();
+
+        // Exact word match (highest score)
+        if (categoryLabel.includes(word.toLowerCase())) {
+          categoryScore += 100;
+        }
+        // Prefix match (original algorithm)
+        else if (categoryLabel.includes(searchTerm)) {
+          categoryScore += 50;
+        }
+        // Levenshtein-like simple distance (handles typos)
+        else if (this.isSimilar(searchTerm, categoryLabel)) {
+          categoryScore += 25;
+        }
+      }
+
+      if (categoryScore > 0 && (!bestMatch || categoryScore > bestMatch.score)) {
+        bestMatch = { category, score: categoryScore };
+      }
+    }
+
+    return bestMatch?.category || null;
+  }
+
+  private isSimilar(word: string, categoryLabel: string): boolean {
+    const words = categoryLabel.split(' ');
+    return words.some(w => {
+      const distance = this.levenshteinDistance(word, w.toLowerCase());
+      return distance <= Math.ceil(word.length * 0.3);
+    });
+  }
+
+  private levenshteinDistance(a: string, b: string): number {
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+
+    const matrix: number[][] = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(0));
+
+    for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+    for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+
+    for (let j = 1; j <= b.length; j++) {
+      for (let i = 1; i <= a.length; i++) {
+        const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+        matrix[j][i] = Math.min(
+          matrix[j][i - 1] + 1,
+          matrix[j - 1][i] + 1,
+          matrix[j - 1][i - 1] + indicator
+        );
+      }
+    }
+
+    return matrix[b.length][a.length];
   }
 
   loadCategory(category: any): void {
