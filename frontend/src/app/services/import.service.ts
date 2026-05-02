@@ -2,19 +2,44 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+interface ImportConfig {
+  separator: string;
+  mappings: { [key: string]: string };
+}
+
+interface ImportRequest {
+  csv: string;
+  config: ImportConfig;
+}
+
+interface ImportBooking {
+  [key: string]: any;
+  _invalid?: boolean;
+  _duplicate?: boolean;
+}
+
+interface ImportResponse {
+  bookings: ImportBooking[];
+  headers?: string[];
+  imported?: number;
+  skipped?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ImportService {
-  private apiUrl = '/api/import';
+  private readonly apiUrl = '/api/import';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  previewImport(csv: string, config: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/preview`, { csv, config });
+  previewImport(csv: string, config: ImportConfig): Observable<ImportResponse> {
+    const payload: ImportRequest = { csv, config };
+    return this.http.post<ImportResponse>(`${this.apiUrl}/preview`, payload);
   }
 
-  startImport(csv: string, config: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/start`, { csv, config });
+  startImport(csv: string, config: ImportConfig): Observable<ImportResponse> {
+    const payload: ImportRequest = { csv, config };
+    return this.http.post<ImportResponse>(`${this.apiUrl}/start`, payload);
   }
 }

@@ -1,51 +1,208 @@
-<style>
-    #preview .invalid td:not(:first-child) {
-        text-decoration: line-through;
-        opacity: 0.5;
-    }
-    #mappings > div {
-        display:flex;
-        align-items: center;
-    }
-    #mappings > div > label {
-        flex-grow: 1
-    }
-    #mappings > div > .select-wrapper {
-        min-width: 35%;
-    }
-</style>
-<div class="container">
-  <form id="fileSelect">
-    <h5>Bitte wählen Sie eine CSV-Datei (Kommagetrennte Tabellenwerte) aus:</h5>
-    <div><input type="file" name="csv" accept=".csv" (change)="onFileSelected($event)"></div>
-  </form>
+<div class="import-page">
+  <app-header></app-header>
 
-  <form id="config" style="display:none">
-    <h5>Passen Sie die Einstellungen an:</h5>
-    <label>Seperator-Zeichen (z.B. ",", ";", " ")</label>
-    <input id="seperator" [(ngModel)]="csvSeparator">
+  <div class="container">
+    <!-- Error Alert -->
+    <mat-card *ngIf="error()" class="error-card">
+      <mat-card-content>
+        <mat-icon class="error-icon">error</mat-icon>
+        <span>{{error()}}</span>
+      </mat-card-content>
+    </mat-card>
 
-    <h6>Felder Mapping festlegen:</h6>
-    <div id="mappings">
-      <!-- Mappings will be populated by Angular -->
-    </div>
+    <!-- Loading Progress -->
+    <mat-progress-bar *ngIf="isLoading()" mode="indeterminate"></mat-progress-bar>
 
-    <button type="button" class="btn" (click)="updatePreview()">Vorschau aktualisieren</button>
-    <button type="button" class="btn" (click)="storeConfig()">Einstellungen Speichern</button>
+    <!-- Step 1: File Selection -->
+    <mat-card class="step-card" *ngIf="currentStep === ImportStep.FileSelect">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>upload_file</mat-icon>
+          CSV-Datei auswählen
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="step-description">
+          Wählen Sie eine CSV-Datei (Kommagetrennte Tabellenwerte) zum Importieren aus.
+        </p>
+        <div class="file-input-container">
+          <input
+            type="file"
+            #fileInput
+            accept=".csv"
+            (change)="onFileSelected($event)"
+            class="file-input"
+          >
+          <button mat-raised-button color="primary" (click)="fileInput.click()">
+            <mat-icon>folder_open</mat-icon>
+            Datei auswählen
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
-    <div class="preview">
-      <h5>Vorschau</h5>
-      <table id="preview">
-        <!-- Preview data will be populated by Angular -->
-      </table>
-      <div class="info">
-        Der Import erfolgt in den Account {{activeAccount()?.label}}
-      </div>
-      <hr>
-      <div>
-        <button type="button" class="btn" id="confirm" (click)="confirmImport()" [disabled]="readonly">Auswahl bestätigen</button>
-        <button type="button" class="btn" id="start" (click)="doImport()" style="display: none;">Import beginnen</button>
-      </div>
-    </div>
-  </form>
+    <!-- Step 2: Configuration -->
+    <mat-card class="step-card" *ngIf="currentStep === ImportStep.Config">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>settings</mat-icon>
+          Einstellungen anpassen
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="step-description">
+          Passen Sie die CSV-Einstellungen an und erstellen Sie eine Vorschau.
+        </p>
+
+        <mat-form-field class="full-width">
+          <mat-label>Trennzeichen</mat-label>
+          <mat-input [(ngModel)]="csvSeparator"
+            name="separator"
+            placeholder="z.B. ',', ';', TAB">
+          </mat-input>
+        </mat-form-field>
+
+        <div class="button-group">
+          <button mat-stroked-button (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Zurück
+          </button>
+          <button mat-raised-button color="primary" (click)="updatePreview()" [disabled]="isLoading()">
+            <mat-icon>preview</mat-icon>
+            Vorschau aktualisieren
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Step 3: Preview -->
+    <mat-card class="step-card" *ngIf="currentStep === ImportStep.Preview">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>visibility</mat-icon>
+          Vorschau
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="step-description">
+          Überprüfen Sie die importierten Daten in die Kasse:
+          <strong>{{activeAccount()?.label}}</strong>
+        </p>
+
+        <!-- Summary -->
+        <div class="summary-box">
+          <div class="summary-item">
+            <span class="label">Gesamtzeilen:</span>
+            <span class="value">{{previewData().length}}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Gültig:</span>
+            <span class="value valid">{{validRowCount()}}</span>
+          </div>
+          <div class="summary-item" *ngIf="hasInvalidRows()">
+            <span class="label">Probleme:</span>
+            <span class="value invalid">{{previewData().length - validRowCount()}}</span>
+          </div>
+        </div>
+
+        <!-- Warning for invalid rows -->
+        <div *ngIf="hasInvalidRows()" class="warning-box">
+          <mat-icon>warning</mat-icon>
+          <span>Es existieren {{previewData().length - validRowCount()}} fehlerhafte oder doppelte Zeilen</span>
+        </div>
+
+        <!-- Preview Table -->
+        <div class="table-wrapper">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th class="status-col">Status</th>
+                <th *ngFor="let header of headers()">{{header}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let row of previewData()"
+                [ngClass]="'status-' + getRowStatus(row)"
+              >
+                <td class="status-col">
+                  <mat-icon [title]="getRowStatus(row)">
+                    {{getRowStatusIcon(getRowStatus(row))}}
+                  </mat-icon>
+                </td>
+                <td *ngFor="let header of headers()" [ngClass]="{'invalid-cell': row._invalid}">
+                  {{row[header]}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+          <button mat-stroked-button (click)="goBack()">
+            <mat-icon>arrow_back</mat-icon>
+            Zurück
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="confirmImport()"
+            [disabled]="hasInvalidRows() || isLoading()"
+          >
+            <mat-icon>check</mat-icon>
+            Vorschau bestätigen
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Step 4: Confirmation -->
+    <mat-card class="step-card" *ngIf="currentStep === ImportStep.Confirm">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>check_circle</mat-icon>
+          Import bestätigen
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="step-description">
+          Sind Sie sicher, dass Sie {{validRowCount()}} Buchungen importieren möchten?
+        </p>
+
+        <div class="confirmation-box">
+          <div class="confirmation-item">
+            <mat-icon class="account-icon">account_balance</mat-icon>
+            <div class="confirmation-text">
+              <span class="label">Zielkonto:</span>
+              <span class="value">{{activeAccount()?.label}}</span>
+            </div>
+          </div>
+          <div class="confirmation-item">
+            <mat-icon class="file-icon">file_copy</mat-icon>
+            <div class="confirmation-text">
+              <span class="label">Buchungen zum Import:</span>
+              <span class="value">{{validRowCount()}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button mat-stroked-button (click)="currentStep = ImportStep.Preview">
+            <mat-icon>arrow_back</mat-icon>
+            Zurück
+          </button>
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="doImport()"
+            [disabled]="isLoading()"
+          >
+            <mat-icon>cloud_upload</mat-icon>
+            Import starten
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>
