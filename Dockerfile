@@ -36,16 +36,17 @@ WORKDIR /var/www/html
 
 # Copy PHP backend code
 COPY src/ ./src/
-COPY templates/ ./templates/
 COPY public/index.php ./public/
 COPY public/.htaccess ./public/
 COPY public/logo.png ./public/
+COPY router.php ./
 
 # Copy composer dependencies
 COPY --from=composer-builder /var/www/html/vendor ./vendor
 
-# Copy built Angular frontend
-COPY --from=frontend-builder /app/dist/mini-kassenbuch/* ./public/
+# Copy built Angular frontend (dist includes browser/ and root files)
+COPY --from=frontend-builder /app/dist/mini-kassenbuch/browser ./public/browser
+COPY --from=frontend-builder /app/dist/mini-kassenbuch/*.json ./public/
 
 # Create data directory and set permissions
 RUN mkdir -p data && chown www-data:www-data -R .
