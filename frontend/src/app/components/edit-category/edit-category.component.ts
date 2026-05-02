@@ -34,6 +34,7 @@ export class EditCategoryComponent implements OnInit {
   label = signal('');
   amount = signal(0);
   type = signal(0);
+  keywords = signal('');
   currency = signal('€');
 
   constructor(
@@ -69,6 +70,7 @@ export class EditCategoryComponent implements OnInit {
           this.label.set(data.label);
           this.amount.set(Math.abs(data.amount) / 100);
           this.type.set(data.amount >= 0 ? 0 : 1);
+          this.keywords.set(data.keywords || '');
         }
       });
     }
@@ -85,7 +87,8 @@ export class EditCategoryComponent implements OnInit {
     const categoryData = {
       id,
       label: this.label(),
-      amount: this.type() === 0 ? amountInCents : -amountInCents
+      amount: this.type() === 0 ? amountInCents : -amountInCents,
+      keywords: this.keywords()
     };
 
     this.categoryService.updateCategory(id, categoryData).subscribe({

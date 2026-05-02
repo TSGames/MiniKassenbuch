@@ -140,17 +140,34 @@ export class BookingComponent implements OnInit {
     const splitted = label.split(' ');
     let matched: any = null;
 
+    // First, try to match against keywords (if defined)
     for (const category of this.categories) {
-      for (const word of splitted) {
-        if (word.length > 3) {
-          const search = word.substring(0, Math.round(word.length * 0.8)).toLowerCase();
-          if (category.label.toLowerCase().indexOf(search) !== -1) {
+      if (category.keywords) {
+        const keywords = category.keywords.split(',').map((k: string) => k.trim().toLowerCase());
+        for (const keyword of keywords) {
+          if (keyword && label.toLowerCase().includes(keyword)) {
             matched = category;
             break;
           }
         }
       }
       if (matched) break;
+    }
+
+    // If no keyword match, fall back to label matching (original algorithm)
+    if (!matched) {
+      for (const category of this.categories) {
+        for (const word of splitted) {
+          if (word.length > 3) {
+            const search = word.substring(0, Math.round(word.length * 0.8)).toLowerCase();
+            if (category.label.toLowerCase().indexOf(search) !== -1) {
+              matched = category;
+              break;
+            }
+          }
+        }
+        if (matched) break;
+      }
     }
 
     if (matched) {

@@ -30,6 +30,17 @@
             <span matSuffix class="currency-suffix">{{currency()}}</span>
           </mat-form-field>
 
+          <mat-form-field class="full-width">
+            <mat-label>Suchbegriffe (Optional)</mat-label>
+            <textarea matInput
+              rows="3"
+              name="keywords"
+              [ngModel]="keywords()"
+              (ngModelChange)="keywords.set($event)"
+              placeholder="Komma-getrennte Suchbegriffe für automatische Kategorisierung&#10;z.B.: Netflix, Streaming, Abo&#10;&#10;Diese Begriffe werden verwendet, um Buchungen automatisch dieser Kategorie zuzuordnen."></textarea>
+            <mat-hint>Komma-getrennte Suchbegriffe. Diese werden bei der automatischen Kategorisierung berücksichtigt.</mat-hint>
+          </mat-form-field>
+
           <div class="type-section">
             <label class="section-label">Typ</label>
             <mat-button-toggle-group class="type-toggle" name="type" [(ngModel)]="typeValue" aria-label="Typ">
