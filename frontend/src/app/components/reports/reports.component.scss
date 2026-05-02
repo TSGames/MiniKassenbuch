@@ -10,6 +10,14 @@
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
 }
 
 .loading-container {
@@ -66,6 +74,41 @@
   mat-card-content {
     padding: 1.5rem;
   }
+
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+
+    mat-card-header {
+      padding: 1rem;
+
+      mat-card-title {
+        font-size: 1.1rem;
+
+        mat-icon {
+          font-size: 1.2rem;
+          width: 1.2rem;
+          height: 1.2rem;
+        }
+      }
+    }
+
+    mat-card-content {
+      padding: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 1rem;
+    border-radius: 4px;
+
+    mat-card-header {
+      padding: 0.75rem 1rem;
+    }
+
+    mat-card-content {
+      padding: 0.75rem;
+    }
+  }
 }
 
 // Charts
@@ -75,15 +118,35 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-x: auto;
 
   @media (max-width: 900px) {
     min-height: 300px;
+  }
+
+  @media (max-width: 600px) {
+    min-height: 250px;
+  }
+
+  @media (max-width: 480px) {
+    min-height: 200px;
   }
 }
 
 // Tables
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  @media (max-width: 600px) {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    margin: 0 -0.75rem;
+    padding: 0 0.75rem;
+  }
 }
 
 .data-table {
@@ -104,9 +167,15 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border-bottom: 2px solid #1976d2;
+    white-space: nowrap;
 
     &.amount-col {
       text-align: right;
+    }
+
+    @media (max-width: 600px) {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
     }
   }
 
@@ -131,6 +200,11 @@
       &.expense {
         color: #f44336;
       }
+    }
+
+    @media (max-width: 600px) {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
     }
   }
 

@@ -6,29 +6,29 @@
   </div>
 
   <nav class="nav-actions" aria-label="Primary">
-    <a mat-button [class.active]="isActive('/')" (click)="navigateTo('/')">
+    <a mat-button [class.active]="isActive('/')" (click)="navigateTo('/')" [class.mobile-hide-label]="!isActive('/')">
       <mat-icon>list</mat-icon>
-      <span>Liste</span>
+      <span class="nav-label">Liste</span>
     </a>
-    <a *ngIf="!readonly" mat-button [class.active]="isActive('/add')" (click)="navigateTo('/add')">
+    <a *ngIf="!readonly" mat-button [class.active]="isActive('/add')" (click)="navigateTo('/add')" [class.mobile-hide-label]="!isActive('/add')">
       <mat-icon>add_circle_outline</mat-icon>
-      <span>Buchung</span>
+      <span class="nav-label">Buchung</span>
     </a>
-    <a mat-button [class.active]="isActive('/reports')" (click)="navigateTo('/reports')">
+    <a mat-button [class.active]="isActive('/reports')" (click)="navigateTo('/reports')" [class.mobile-hide-label]="!isActive('/reports')">
       <mat-icon>timeline</mat-icon>
-      <span>Berichte</span>
+      <span class="nav-label">Berichte</span>
     </a>
-    <a mat-button [class.active]="isActive('/categories')" (click)="navigateTo('/categories')">
+    <a mat-button [class.active]="isActive('/categories')" (click)="navigateTo('/categories')" [class.mobile-hide-label]="!isActive('/categories')">
       <mat-icon>view_comfy</mat-icon>
-      <span>Kategorien</span>
+      <span class="nav-label">Kategorien</span>
     </a>
-    <a mat-button (click)="navigateTo('/import')">
+    <a mat-button (click)="navigateTo('/import')" [class.mobile-hide-label]="!isActive('/import')">
       <mat-icon>cloud_upload</mat-icon>
-      <span>Importieren</span>
+      <span class="nav-label">Importieren</span>
     </a>
-    <a *ngIf="!readonly" mat-button [class.active]="isActive('/settings')" (click)="navigateTo('/settings')">
+    <a *ngIf="!readonly" mat-button [class.active]="isActive('/settings')" (click)="navigateTo('/settings')" [class.mobile-hide-label]="!isActive('/settings')">
       <mat-icon>settings</mat-icon>
-      <span>Konfiguration</span>
+      <span class="nav-label">Konfiguration</span>
     </a>
   </nav>
 
