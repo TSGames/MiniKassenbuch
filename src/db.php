@@ -532,7 +532,11 @@ class DB{
 			 FROM BOOKING b WHERE id = :id');
 		$stmt->execute([':id'=>$id]);
 		$booking=$stmt->fetchAll()[0];
-		$booking["date"]=explode("T",date("c",$booking["date"]))[0];
+		if (is_numeric($booking["date"])) {
+			$booking["date"] = explode("T", date("c", $booking["date"]))[0];
+		} else {
+			$booking["date"] = explode("T", $booking["date"])[0];
+		}
 		$booking["amount"]/=100;
 		$booking["documents"]=$this->getDocuments($id);
 		$booking["categories"]=$this->getCategories($id);
