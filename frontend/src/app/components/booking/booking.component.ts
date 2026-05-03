@@ -334,6 +334,10 @@ export class BookingComponent implements OnInit {
     this.error = null;
     this.isLoading = false;
     this.cdr.markForCheck();
-    this.router.navigate(['/']);
+    if (this.id) {
+      this.snackBar.open('Buchung gespeichert', 'OK', { duration: 3000 });
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }
