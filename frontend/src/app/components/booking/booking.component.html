@@ -103,6 +103,7 @@
               <textarea matInput
                 name="notes"
                 [(ngModel)]="notes"
+                (blur)="guessCategory(label)"
                 rows="3"
                 placeholder="Zusätzliche Informationen">
               </textarea>

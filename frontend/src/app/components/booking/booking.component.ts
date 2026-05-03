@@ -151,11 +151,12 @@ export class BookingComponent implements OnInit {
   }
 
   guessCategory(label: string): void {
-    if (!label || this.selectedCategory) {
+    const combined = `${(label || '')} ${this.notes || ''}`.trim();
+    if (!combined || this.selectedCategory) {
       return;
     }
 
-    const splitted = label.split(' ');
+    const splitted = combined.split(' ');
     let matched: any = null;
 
     // First, try to match against keywords (if defined)
@@ -163,7 +164,7 @@ export class BookingComponent implements OnInit {
       if (category.keywords) {
         const keywords = category.keywords.split(',').map((k: string) => k.trim().toLowerCase());
         for (const keyword of keywords) {
-          if (keyword && label.toLowerCase().includes(keyword)) {
+          if (keyword && combined.toLowerCase().includes(keyword)) {
             matched = category;
             break;
           }
@@ -172,7 +173,7 @@ export class BookingComponent implements OnInit {
       if (matched) break;
     }
 
-    // If no keyword match, fall back to label matching (original algorithm)
+    // If no keyword match, fall back to word matching against label and notes
     if (!matched) {
       for (const category of this.categories) {
         for (const word of splitted) {
