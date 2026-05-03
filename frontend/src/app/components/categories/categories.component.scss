@@ -289,4 +289,8 @@
   button {
     padding: 0.5rem;
   }
+
+  @media (max-width: 600px) {
+    justify-content: center;
+  }
 }
