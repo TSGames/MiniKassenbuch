@@ -44,10 +44,10 @@ export class SettingsComponent implements OnInit {
 
   loadSettings(): void {
     this.settingsService.getSettings().subscribe({
-      next: (data: { stats: any; currency: string; settings: { readOnlyEnabled: boolean; readOnlyUsername?: string } }) => {
+      next: (data: any) => {
         this.stats = data.stats;
-        this.currency = data.currency;
-        this.readOnlyEnabled = data.settings.readOnlyEnabled;
+        this.currency = data.settings.currency || '€';
+        this.readOnlyEnabled = data.settings.readOnlyEnabled || false;
         this.readOnlyUsername = data.settings.readOnlyUsername || '';
       }
     });

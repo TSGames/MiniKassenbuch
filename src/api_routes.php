@@ -121,7 +121,11 @@ $app->delete('/api/categories/{id}', function ($request, $response, $args) {
 $app->get('/api/settings', function ($request, $response, $args) {
     $db = new DB();
     $settings = $db->getSettings();
-    return $response->withJson($settings);
+    $stats = $db->getStats();
+    return $response->withJson([
+        'settings' => $settings,
+        'stats' => $stats
+    ]);
 })->add($authMiddleware);
 
 // Update settings
