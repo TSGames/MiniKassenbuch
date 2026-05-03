@@ -379,12 +379,11 @@ class DB{
 					if($pageCount > 0) {
 						for($i = 1; $i <= $pageCount; $i++) {
 							$tpl = $mpdf->importPage($i);
-							$size = $mpdf->getTemplateSize($tpl);
-							$mpdf->AddPage('', [$size['width'], $size['height']]);
+							$mpdf->AddPage();
 							if($i === 1) {
 								$mpdf->WriteHTML($caption);
 							}
-							$mpdf->useTemplate($tpl, 0, $i === 1 ? 20 : 0, $size['width'], $size['height'] - ($i === 1 ? 20 : 0));
+							$mpdf->useTemplate($tpl, 0, $i === 1 ? 20 : 0);
 						}
 					} else {
 						$mpdf->AddPage();
