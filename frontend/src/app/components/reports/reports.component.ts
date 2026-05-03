@@ -29,7 +29,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class ReportsComponent implements OnInit {
 
-  currentYear = new Date().getFullYear();
   yearsStats: any[] = [];
   yearsAccountStats: any[] = [];
   monthsStats: any[] = [];
@@ -50,7 +49,7 @@ export class ReportsComponent implements OnInit {
   constructor(
     private reportService: ReportService,
     public currencyService: CurrencyService,
-    private filterService: FilterService,
+    public filterService: FilterService,
     private cdr: ChangeDetectorRef
   ) {
     effect(() => {
