@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../services/category.service';
-import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -35,17 +35,15 @@ export class EditCategoryComponent implements OnInit {
   amount = signal(0);
   type = signal(0);
   keywords = signal('');
-  currency = signal('€');
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private categoryService: CategoryService,
-    private settingsService: SettingsService
+    public currencyService: CurrencyService
   ) { }
 
   ngOnInit(): void {
-    this.loadSettings();
     this.route.params.subscribe(params => {
       if (params['id']) {
         this.id.set(+params['id']);
@@ -54,13 +52,6 @@ export class EditCategoryComponent implements OnInit {
     });
   }
 
-  private loadSettings(): void {
-    this.settingsService.getSettings().subscribe({
-      next: (settings) => {
-        this.currency.set(settings.currency || '€');
-      }
-    });
-  }
 
   private loadCategory(): void {
     const id = this.id();

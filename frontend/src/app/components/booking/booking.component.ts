@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CategoryService } from '../../services/category.service';
 import { AccountService } from '../../services/account.service';
-import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -55,7 +55,6 @@ export class BookingComponent implements OnInit {
   selectedCategory: number | null = null;
   documents: any[] = [];
   error: string | null = null;
-  currency = '€';
   readonly = false;
   previousId: number | null = null;
   nextId: number | null = null;
@@ -81,7 +80,7 @@ export class BookingComponent implements OnInit {
     private bookingService: BookingService,
     private categoryService: CategoryService,
     private accountService: AccountService,
-    private settingsService: SettingsService,
+    public currencyService: CurrencyService,
     private cdr: ChangeDetectorRef,
     private snackBar: MatSnackBar
   ) { }
@@ -89,7 +88,6 @@ export class BookingComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.loadCategories();
-    this.loadSettings();
     this.loadActiveAccount();
 
     this.route.params.subscribe(params => {
@@ -142,13 +140,6 @@ export class BookingComponent implements OnInit {
     });
   }
 
-  loadSettings(): void {
-    this.settingsService.getSettings().subscribe({
-      next: (settings) => {
-        this.currency = settings.currency || '€';
-      }
-    });
-  }
 
   loadActiveAccount(): void {
     this.accountService.loadActiveAccount().subscribe();

@@ -1,7 +1,7 @@
 <div class="container">
   <div class="info-panel">
     <h5>Export/Backup</h5>
-    <button mat-stroked-button color="primary" [routerLink]="['/backup']">
+    <button mat-stroked-button color="primary" (click)="downloadBackup()">
       <mat-icon>cloud_download</mat-icon>
       Backup herunterladen
     </button>
@@ -16,6 +16,9 @@
       <div>Gesamtgröße Datenbank: {{(stats?.databaseSize/1024/1024) | number:'1.2-2'}} MB</div>
     </mat-card-content>
   </mat-card>
+
+  <div class="success-message" *ngIf="successMessage">{{successMessage}}</div>
+  <div class="error-message" *ngIf="error">{{error}}</div>
 
   <form (ngSubmit)="onSubmit()" #settingsForm="ngForm" class="settings-form">
     <h4>Voreinstellungen</h4>

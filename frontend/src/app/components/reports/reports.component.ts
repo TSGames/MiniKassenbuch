@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, ChangeDetectorRef, effect } from '@angular/core';
 import { ReportService } from '../../services/report.service';
-import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { FilterService } from '../../services/filter.service';
 import { DecimalPipe, CommonModule, KeyValuePipe } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -30,7 +30,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class ReportsComponent implements OnInit {
 
   currentYear = new Date().getFullYear();
-  currency = '€';
   yearsStats: any[] = [];
   yearsAccountStats: any[] = [];
   monthsStats: any[] = [];
@@ -50,7 +49,7 @@ export class ReportsComponent implements OnInit {
 
   constructor(
     private reportService: ReportService,
-    private settingsService: SettingsService,
+    public currencyService: CurrencyService,
     private filterService: FilterService,
     private cdr: ChangeDetectorRef
   ) {
@@ -62,15 +61,6 @@ export class ReportsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadSettings();
-  }
-
-  private loadSettings(): void {
-    this.settingsService.getSettings().subscribe({
-      next: (settings) => {
-        this.currency = settings.currency || '€';
-      }
-    });
   }
 
   loadReports(): void {

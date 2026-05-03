@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { AccountService } from '../../services/account.service';
-import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { FilterService } from '../../services/filter.service';
 import { DatePipe, DecimalPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -39,14 +39,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class ListComponent implements OnInit {
   bookings: any[] = [];
-  currency = '€';
   readonly = false;
   isLoading = true;
 
   constructor(
     private bookingService: BookingService,
     private accountService: AccountService,
-    private settingsService: SettingsService,
+    public currencyService: CurrencyService,
     public filterService: FilterService,
     private cdr: ChangeDetectorRef,
     private router: Router
@@ -60,15 +59,6 @@ export class ListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadSettings();
-  }
-
-  loadSettings(): void {
-    this.settingsService.getSettings().subscribe({
-      next: (settings) => {
-        this.currency = settings.currency || '€';
-      }
-    });
   }
 
   loadBookings(): void {

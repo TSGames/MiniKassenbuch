@@ -93,10 +93,10 @@ class DB{
 	public function getStats(): array{
 	    $stmt = $this->db->prepare('SELECT COUNT(*) FROM BOOKING');
 		$stmt->execute();
-		$bookings=$stmt->fetchAll()[0][0];
+		$bookings = $stmt->fetchColumn();
 		$stmt = $this->db->prepare('SELECT COUNT(*) FROM DOCUMENT');
 		$stmt->execute();
-		$documents=$stmt->fetchAll()[0][0];
+		$documents = $stmt->fetchColumn();
 		$documentsSize = 0;
 		$docs = @scandir(DB::$DOCUMENTS);
 		if ($docs !== false) {
@@ -116,7 +116,6 @@ class DB{
 			'documentsSize' => $documentsSize,
 			'databaseSize' => filesize(DB::$FILE)
 		];
-	    
 	}
 	public function updateSettings($settings): void{
 	    foreach($settings as $name=>$value){

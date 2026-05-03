@@ -333,13 +333,37 @@ $app->get('/api/export', function ($request, $response, $args) {
 
 // Backup data
 $app->get('/api/backup', function ($request, $response, $args) {
-    $db = new DB();
-    $backupFile = $db->backup();
-    
-    $response = $response->withHeader('Content-Type', 'application/zip')
-                       ->withHeader('Content-Disposition', 'attachment; filename=backup-' . date('Y-m-d') . '.zip');
-    
-    return $response->write(file_get_contents($backupFile));
+    try {
+        $db = new DB();
+        $backupFile = $db->backup();
+
+        error_log('Backup file path: ' . $backupFile);
+        error_log('Backup file exists: ' . (file_exists($backupFile) ? 'yes' : 'no'));
+        if (file_exists($backupFile)) {
+            $size = filesize($backupFile);
+            error_log('Backup file size: ' . (is_int($size) ? $size : 'N/A'));
+        }
+
+        if (!file_exists($backupFile)) {
+            error_log('Backup file not found at: ' . $backupFile);
+            return $response->withStatus(500)->withJson(['error' => 'Backup file not created']);
+        }
+
+        $fileContent = file_get_contents($backupFile);
+        if (!is_string($fileContent)) {
+            error_log('Failed to read backup file');
+            return $response->withStatus(500)->withJson(['error' => 'Failed to read backup file']);
+        }
+
+        $response = $response->withHeader('Content-Type', 'application/zip')
+                           ->withHeader('Content-Disposition', 'attachment; filename=backup-' . date('Y-m-d') . '.zip')
+                           ->withHeader('Content-Length', (string)strlen($fileContent));
+
+        return $response->write($fileContent);
+    } catch (Exception $e) {
+        error_log('Backup error: ' . $e->getMessage());
+        return $response->withStatus(500)->withJson(['error' => 'Backup failed: ' . $e->getMessage()]);
+    }
 })->add($authMiddleware);
 
 // Get stats

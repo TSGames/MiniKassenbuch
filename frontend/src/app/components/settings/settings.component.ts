@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -35,8 +36,9 @@ export class SettingsComponent implements OnInit {
   readOnlyUsername = '';
   readOnlyPassword = '';
   error: string | null = null;
+  successMessage: string | null = null;
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(private settingsService: SettingsService, private currencyService: CurrencyService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadSettings();
@@ -47,18 +49,22 @@ export class SettingsComponent implements OnInit {
       next: (data: any) => {
         this.stats = data.stats;
         this.currency = data.settings.currency || '€';
-        this.readOnlyEnabled = data.settings.readOnlyEnabled || false;
+        this.currencyService.updateCurrency(this.currency);
+        const ro = data.settings.readOnlyEnabled;
+        this.readOnlyEnabled = ro === true || ro === 'true' || ro === '1';
         this.readOnlyUsername = data.settings.readOnlyUsername || '';
+        this.cdr.markForCheck();
       }
     });
   }
 
   downloadBackup(): void {
-    // This would trigger the backup download
-    console.log('Download backup');
+    window.location.href = '/api/backup';
   }
 
   onSubmit(): void {
+    this.error = null;
+    this.successMessage = null;
     const settingsData = {
       currency: this.currency,
       readOnlyEnabled: this.readOnlyEnabled,
@@ -68,17 +74,16 @@ export class SettingsComponent implements OnInit {
 
     this.settingsService.updateSettings(settingsData).subscribe({
       next: () => {
-        // Success handling
-        console.log('Settings saved successfully');
+        this.currencyService.updateCurrency(this.currency);
+        this.successMessage = 'Einstellungen gespeichert';
+        setTimeout(() => { this.successMessage = null; }, 3000);
       },
-      error: (error: unknown) => {
+      error: (err: unknown) => {
         this.error = 'Fehler beim Speichern der Einstellungen';
-        console.error('Settings save error:', error);
+        console.error('Settings save error:', err);
       }
     });
   }
 
-  toggleReadOnlyUser(): void {
-    // This is handled by the template binding
-  }
+  toggleReadOnlyUser(): void { }
 }

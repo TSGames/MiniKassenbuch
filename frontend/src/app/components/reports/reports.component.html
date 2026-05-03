@@ -16,7 +16,7 @@
           [series]="['Einnahmen', 'Ausgaben']"
           [colors]="['#4caf50', '#f44336']"
           [height]="350"
-          [currency]="currency"
+          [currency]="currencyService.currency()"
         ></app-column-chart>
       </mat-card-content>
     </mat-card>
@@ -43,19 +43,19 @@
               <tr *ngFor="let year of yearsStats | keyvalue">
                 <td class="year-col">{{year.key}}</td>
                 <td class="amount-col income">
-                  {{formatCurrency(year.value[0] / 100)}} {{currency}}
+                  {{formatCurrency(year.value[0] / 100)}} {{currencyService.currency()}}
                 </td>
                 <td class="amount-col expense">
-                  {{formatCurrency(year.value[1] / 100)}} {{currency}}
+                  {{formatCurrency(year.value[1] / 100)}} {{currencyService.currency()}}
                 </td>
                 <td class="amount-col" [ngClass]="year.value[0] - year.value[1] >= 0 ? 'income' : 'expense'">
-                  {{formatCurrency((year.value[0] - year.value[1]) / 100)}} {{currency}}
+                  {{formatCurrency((year.value[0] - year.value[1]) / 100)}} {{currencyService.currency()}}
                 </td>
                 <td class="amount-col">
-                  {{formatCurrency(year.value.saldo / 100)}} {{currency}}
+                  {{formatCurrency(year.value.saldo / 100)}} {{currencyService.currency()}}
                 </td>
                 <td class="amount-col" [ngClass]="year.value.saldo + (year.value[0] - year.value[1]) >= 0 ? 'income' : 'expense'">
-                  {{formatCurrency((year.value.saldo + (year.value[0] - year.value[1])) / 100)}} {{currency}}
+                  {{formatCurrency((year.value.saldo + (year.value[0] - year.value[1])) / 100)}} {{currencyService.currency()}}
                 </td>
               </tr>
             </tbody>
@@ -86,19 +86,19 @@
               <tr *ngFor="let accountStat of yearsAccountStats">
                 <td>{{accountStat.account.label}}</td>
                 <td class="amount-col income">
-                  {{formatCurrency(accountStat.stats[0] / 100)}} {{currency}}
+                  {{formatCurrency(accountStat.stats[0] / 100)}} {{currencyService.currency()}}
                 </td>
                 <td class="amount-col expense">
-                  {{formatCurrency(accountStat.stats[1] / 100)}} {{currency}}
+                  {{formatCurrency(accountStat.stats[1] / 100)}} {{currencyService.currency()}}
                 </td>
                 <td class="amount-col" [ngClass]="accountStat.stats[0] - accountStat.stats[1] >= 0 ? 'income' : 'expense'">
-                  {{formatCurrency((accountStat.stats[0] - accountStat.stats[1]) / 100)}} {{currency}}
+                  {{formatCurrency((accountStat.stats[0] - accountStat.stats[1]) / 100)}} {{currencyService.currency()}}
                 </td>
                 <td class="amount-col">
-                  {{formatCurrency(accountStat.stats.saldo / 100)}} {{currency}}
+                  {{formatCurrency(accountStat.stats.saldo / 100)}} {{currencyService.currency()}}
                 </td>
                 <td class="amount-col" [ngClass]="accountStat.stats.saldo + (accountStat.stats[0] - accountStat.stats[1]) >= 0 ? 'income' : 'expense'">
-                  {{formatCurrency((accountStat.stats.saldo + (accountStat.stats[0] - accountStat.stats[1])) / 100)}} {{currency}}
+                  {{formatCurrency((accountStat.stats.saldo + (accountStat.stats[0] - accountStat.stats[1])) / 100)}} {{currencyService.currency()}}
                 </td>
               </tr>
             </tbody>
@@ -118,7 +118,7 @@
           [series]="['Einnahmen', 'Ausgaben']"
           [colors]="['#4caf50', '#f44336']"
           [height]="350"
-          [currency]="currency"
+          [currency]="currencyService.currency()"
         ></app-column-chart>
       </mat-card-content>
     </mat-card>
@@ -144,7 +144,7 @@
             <tbody>
               <tr *ngFor="let top of tops[0]" class="income-row">
                 <td>{{top.label}}</td>
-                <td class="amount-col income">{{formatCurrency(top.amount / 100)}} {{currency}}</td>
+                <td class="amount-col income">{{formatCurrency(top.amount / 100)}} {{currencyService.currency()}}</td>
                 <td class="amount-col income">{{calculatePercentage(top.amount, yearStats[0]) | number:'1.1-1'}} %</td>
               </tr>
             </tbody>
@@ -174,7 +174,7 @@
             <tbody>
               <tr *ngFor="let top of tops[1]" class="expense-row">
                 <td>{{top.label}}</td>
-                <td class="amount-col expense">{{formatCurrency(top.amount / 100)}} {{currency}}</td>
+                <td class="amount-col expense">{{formatCurrency(top.amount / 100)}} {{currencyService.currency()}}</td>
                 <td class="amount-col expense">{{calculatePercentage(top.amount, yearStats[1]) | number:'1.1-1'}} %</td>
               </tr>
             </tbody>
@@ -208,7 +208,7 @@
             <tbody>
               <tr *ngFor="let category of categories[0]" class="income-row">
                 <td>{{category.label}}</td>
-                <td class="amount-col income">{{formatCurrency(category.amount / 100)}} {{currency}}</td>
+                <td class="amount-col income">{{formatCurrency(category.amount / 100)}} {{currencyService.currency()}}</td>
                 <td class="amount-col income">{{calculatePercentage(category.amount, yearStats[0]) | number:'1.1-1'}} %</td>
               </tr>
             </tbody>
@@ -242,7 +242,7 @@
             <tbody>
               <tr *ngFor="let category of categories[1]" class="expense-row">
                 <td>{{category.label}}</td>
-                <td class="amount-col expense">{{formatCurrency(category.amount / 100)}} {{currency}}</td>
+                <td class="amount-col expense">{{formatCurrency(category.amount / 100)}} {{currencyService.currency()}}</td>
                 <td class="amount-col expense">{{calculatePercentage(category.amount, yearStats[1]) | number:'1.1-1'}} %</td>
               </tr>
             </tbody>
