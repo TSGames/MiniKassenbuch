@@ -1,0 +1,21 @@
+Order allow,deny
+Allow from all
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Serve files that exist directly (e.g. logo.png in root)
+  RewriteCond %{REQUEST_FILENAME} -f
+  RewriteRule ^ - [L]
+
+  # API and document routes go to PHP index.php
+  RewriteCond %{REQUEST_URI} ^/api [OR]
+  RewriteCond %{REQUEST_URI} ^/document
+  RewriteRule ^ index.php [QSA,L]
+
+  # Check if the file exists inside browser/ subdirectory
+  RewriteCond %{DOCUMENT_ROOT}/browser%{REQUEST_URI} -f
+  RewriteRule ^(.*)$ browser/$1 [L]
+
+  # Everything else serves the Angular app
+  RewriteRule ^ browser/index.html [QSA,L]
+</IfModule>
