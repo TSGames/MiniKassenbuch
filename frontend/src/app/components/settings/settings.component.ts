@@ -51,6 +51,7 @@ export class SettingsComponent implements OnInit {
       next: (data: any) => {
         this.stats = data.stats;
         this.currency = data.settings.currency || '€';
+        this.currencyService.updateCurrency(this.currency);
         const ro = data.settings.readOnlyEnabled;
         this.readOnlyEnabled = ro === true || ro === 'true' || ro === '1';
         this.readOnlyUsername = data.settings.readOnlyUsername || '';
