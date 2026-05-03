@@ -45,21 +45,22 @@ class CSV{
 		}
 		return null;
 	}
-	private function guessCategory($label): int|null {
-		if(!$label || empty($this->categories)) {
+	private function guessCategory($label, $notes = null): int|null {
+		$combined = trim(($label ?? '') . ' ' . ($notes ?? ''));
+		if(!$combined || empty($this->categories)) {
 			return null;
 		}
 
 		/** @var array<string, mixed>|null */
 		$matched = null;
-		$splitted = explode(' ', $label);
+		$splitted = explode(' ', $combined);
 
 		// First try keyword matching
 		foreach($this->categories as $category) {
 			if(!empty($category['keywords'])) {
 				$keywords = array_map('trim', explode(',', strtolower($category['keywords'])));
 				foreach($keywords as $keyword) {
-					if(!empty($keyword) && strpos(strtolower($label), $keyword) !== false) {
+					if(!empty($keyword) && strpos(strtolower($combined), $keyword) !== false) {
 						$matched = $category;
 						break;
 					}
@@ -109,7 +110,7 @@ class CSV{
 
 		// Auto-detect category if enabled
 		if(!empty($this->categories)) {
-			$categoryId = $this->guessCategory($data["label"]);
+			$categoryId = $this->guessCategory($data["label"], $data["notes"]);
 			if($categoryId) {
 				$data["category"] = $categoryId;
 			}
