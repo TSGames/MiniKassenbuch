@@ -358,6 +358,7 @@ class DB{
 							$mpdf->useTemplate($tpl, 0, $i === 1 ? 20 : 0, $size['width'], $size['height'] - ($i === 1 ? 20 : 0));
 						}
 					} catch(\Throwable $e) {
+						error_log('PDF embed failed for doc ' . $doc['id'] . ' (' . $doc['filename'] . '): ' . $e->getMessage() . "\n" . $e->getTraceAsString());
 						$mpdf->AddPage();
 						$mpdf->WriteHTML(
 							'<div style="background-color: #f0f0f0; padding: 8px 12px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
