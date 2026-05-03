@@ -1,7 +1,7 @@
 <div class="container">
   <div class="info-panel">
     <h5>Export/Backup</h5>
-    <button mat-stroked-button color="primary" [routerLink]="['/backup']">
+    <button mat-stroked-button color="primary" (click)="downloadBackup()">
       <mat-icon>cloud_download</mat-icon>
       Backup herunterladen
     </button>

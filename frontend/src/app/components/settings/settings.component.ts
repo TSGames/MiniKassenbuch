@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { SettingsService } from '../../services/settings.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -36,7 +37,7 @@ export class SettingsComponent implements OnInit {
   readOnlyPassword = '';
   error: string | null = null;
 
-  constructor(private settingsService: SettingsService) { }
+  constructor(private settingsService: SettingsService, private http: HttpClient) { }
 
   ngOnInit(): void {
     this.loadSettings();
@@ -54,8 +55,20 @@ export class SettingsComponent implements OnInit {
   }
 
   downloadBackup(): void {
-    // This would trigger the backup download
-    console.log('Download backup');
+    this.http.get('/api/backup', { responseType: 'blob' }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `backup-${new Date().toISOString().split('T')[0]}.zip`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('Backup download failed:', error);
+        this.error = 'Fehler beim Herunterladen des Backups';
+      }
+    });
   }
 
   onSubmit(): void {
