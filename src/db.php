@@ -607,12 +607,12 @@ class DB{
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getAllCategories(): array{
-		$stmt = $this->db->prepare('SELECT c.id,c.label,c.amount as amount,COUNT(booking) as count FROM CATEGORY c LEFT JOIN BOOKING_CATEGORY ON (category=id) GROUP BY id ORDER BY upper(label)');
+		$stmt = $this->db->prepare('SELECT c.id,c.label,c.keywords,c.amount as amount,COUNT(booking) as count FROM CATEGORY c LEFT JOIN BOOKING_CATEGORY ON (category=id) GROUP BY id ORDER BY upper(label)');
 		$stmt->execute();
 		return $stmt->fetchAll(PDO::FETCH_ASSOC);
 	}
 	public function getCategory($id){
-		$stmt = $this->db->prepare('SELECT id,label,amount,COUNT(booking) as count FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=id) WHERE id = :id GROUP BY id ORDER BY upper(label)');
+		$stmt = $this->db->prepare('SELECT id,label,amount,keywords,COUNT(booking) as count FROM CATEGORY LEFT JOIN BOOKING_CATEGORY ON (category=id) WHERE id = :id GROUP BY id ORDER BY upper(label)');
 		$stmt->execute([":id"=>$id]);
 		$category=$stmt->fetchAll()[0];
 		$category["amount"] /= 100;
