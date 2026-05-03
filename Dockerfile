@@ -56,4 +56,6 @@ COPY --from=frontend-builder /app/dist/mini-kassenbuch/*.json ./public/
 RUN mkdir -p data/documents && \
     chmod 755 data && \
     chmod 755 data/documents && \
-    chown -R www-data:www-data data
+    chown -R www-data:www-data data && \
+    mkdir -p vendor/mpdf/mpdf/tmp/mpdf && \
+    chown -R www-data:www-data vendor/mpdf/mpdf/tmp
