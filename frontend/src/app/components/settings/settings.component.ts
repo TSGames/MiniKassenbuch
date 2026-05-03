@@ -63,22 +63,45 @@ export class SettingsComponent implements OnInit {
   downloadBackup(): void {
     this.isDownloading = true;
     this.error = null;
+    this.successMessage = null;
+    this.cdr.markForCheck();
+
     this.http.get('/api/backup', { responseType: 'blob' }).subscribe({
       next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `backup-${new Date().toISOString().split('T')[0]}.zip`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+        console.log('Backup downloaded, blob size:', blob.size);
+
+        if (blob.size === 0) {
+          this.error = 'Backup-Datei ist leer';
+          this.isDownloading = false;
+          this.cdr.markForCheck();
+          return;
+        }
+
+        try {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `backup-${new Date().toISOString().split('T')[0]}.zip`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+
+          this.successMessage = 'Backup erfolgreich heruntergeladen';
+          setTimeout(() => { this.successMessage = null; }, 3000);
+        } catch (err) {
+          console.error('Error creating download link:', err);
+          this.error = 'Fehler beim Erstellen des Downloads';
+        }
+
         this.isDownloading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Backup download failed:', err);
-        this.error = 'Fehler beim Herunterladen des Backups';
+        this.error = 'Fehler beim Herunterladen des Backups: ' + (err.error?.message || err.statusText || 'Unbekannter Fehler');
         this.isDownloading = false;
+        this.cdr.markForCheck();
       }
     });
   }
