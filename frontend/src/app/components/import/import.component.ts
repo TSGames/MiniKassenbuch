@@ -1,9 +1,8 @@
-import { Component, OnInit, signal, computed, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { ImportService } from '../../services/import.service';
 import { AccountService } from '../../services/account.service';
 import { CurrencyService } from '../../services/currency.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -69,9 +68,7 @@ export class ImportComponent implements OnInit {
   error = signal<string | null>(null);
 
   activeAccount = signal<any>(null);
-  currency = signal('€');
   readonly = signal(false);
-  private destroyRef = inject(DestroyRef);
 
   // Computed properties
   ImportStep = ImportStep;
@@ -92,22 +89,11 @@ export class ImportComponent implements OnInit {
     private router: Router,
     private importService: ImportService,
     private accountService: AccountService,
-    private currencyService: CurrencyService
+    public currencyService: CurrencyService
   ) {}
 
   ngOnInit(): void {
-    this.loadSettings();
     this.loadActiveAccount();
-  }
-
-  private loadSettings(): void {
-    this.currencyService.currency$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (currency) => {
-          this.currency.set(currency);
-        }
-      });
   }
 
   private loadActiveAccount(): void {

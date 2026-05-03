@@ -1,39 +1,29 @@
-import { Injectable, DestroyRef, inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Injectable, signal } from '@angular/core';
 import { SettingsService } from './settings.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CurrencyService {
-  private currencySubject = new BehaviorSubject<string>('€');
-  public currency$: Observable<string> = this.currencySubject.asObservable();
-  private destroyRef = inject(DestroyRef);
+  currency = signal<string>('€');
 
   constructor(private settingsService: SettingsService) {
     this.loadCurrency();
   }
 
   private loadCurrency(): void {
-    this.settingsService.getSettings()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data: any) => {
-          const currency = data?.settings?.currency || '€';
-          this.currencySubject.next(currency);
-        },
-        error: (err) => {
-          console.error('Failed to load currency settings:', err);
-        }
-      });
+    this.settingsService.getSettings().subscribe({
+      next: (data: any) => {
+        const currency = data?.settings?.currency || '€';
+        this.currency.set(currency);
+      },
+      error: (err) => {
+        console.error('Failed to load currency settings:', err);
+      }
+    });
   }
 
   updateCurrency(currency: string): void {
-    this.currencySubject.next(currency);
-  }
-
-  getCurrency(): string {
-    return this.currencySubject.value;
+    this.currency.set(currency);
   }
 }

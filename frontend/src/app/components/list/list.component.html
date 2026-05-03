@@ -64,10 +64,10 @@
                 <span class="type-icon" [title]="booking.type === 0 ? 'Einnahme' : 'Ausgabe'">
                   <mat-icon>{{booking.type === 0 ? 'arrow_upward' : 'arrow_downward'}}</mat-icon>
                 </span>
-                <span class="amount-value">{{formatCurrency(booking.amount)}} {{currency}}</span>
+                <span class="amount-value">{{formatCurrency(booking.amount)}} {{currencyService.currency()}}</span>
               </div>
               <div class="saldo" [ngClass]="{'positive': booking.saldo >= 0, 'negative': booking.saldo < 0}">
-                Saldo: {{formatCurrency(booking.saldo)}} {{currency}}
+                Saldo: {{formatCurrency(booking.saldo)}} {{currencyService.currency()}}
               </div>
             </div>
 

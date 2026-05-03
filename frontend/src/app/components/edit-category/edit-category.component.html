@@ -25,7 +25,7 @@
               name="amount"
               [ngModel]="amount()"
               (ngModelChange)="amount.set($event)">
-            <span matSuffix class="currency-suffix">{{currency()}}</span>
+            <span matSuffix class="currency-suffix">{{currencyService.currency()}}</span>
           </mat-form-field>
 
           <mat-form-field class="full-width">

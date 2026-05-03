@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CategoryService } from '../../services/category.service';
@@ -7,7 +7,6 @@ import { CurrencyService } from '../../services/currency.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HeaderComponent } from '../header/header.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -56,13 +55,11 @@ export class BookingComponent implements OnInit {
   selectedCategory: number | null = null;
   documents: any[] = [];
   error: string | null = null;
-  currency = '€';
   readonly = false;
   previousId: number | null = null;
   nextId: number | null = null;
   isLoading = true;
   uploadedFiles: File[] = [];
-  private destroyRef = inject(DestroyRef);
 
   get activeAccount() {
     return this.accountService.activeAccount;
@@ -83,7 +80,7 @@ export class BookingComponent implements OnInit {
     private bookingService: BookingService,
     private categoryService: CategoryService,
     private accountService: AccountService,
-    private currencyService: CurrencyService,
+    public currencyService: CurrencyService,
     private cdr: ChangeDetectorRef,
     private snackBar: MatSnackBar
   ) { }
@@ -91,7 +88,6 @@ export class BookingComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.loadCategories();
-    this.loadSettings();
     this.loadActiveAccount();
 
     this.route.params.subscribe(params => {
@@ -144,15 +140,6 @@ export class BookingComponent implements OnInit {
     });
   }
 
-  loadSettings(): void {
-    this.currencyService.currency$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (currency) => {
-          this.currency = currency;
-        }
-      });
-  }
 
   loadActiveAccount(): void {
     this.accountService.loadActiveAccount().subscribe();

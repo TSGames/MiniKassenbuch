@@ -76,7 +76,7 @@
                   name="amount"
                   [(ngModel)]="amount"
                   required>
-                <span matSuffix class="currency">{{currency}}</span>
+                <span matSuffix class="currency">{{currencyService.currency()}}</span>
               </mat-form-field>
 
               <mat-button-toggle-group

@@ -1,7 +1,6 @@
-import { Component, signal, OnInit, DestroyRef, inject } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
 import { CurrencyService } from '../../services/currency.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -36,33 +35,20 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class CategoriesComponent implements OnInit {
   categories = signal<any[]>([]);
   newCategoryName = signal('');
-  currency = '€';
   readonly = signal(false);
   isLoading = signal(false);
   error = signal<string | null>(null);
-  private destroyRef = inject(DestroyRef);
 
   constructor(
     private categoryService: CategoryService,
     private authService: AuthService,
-    private currencyService: CurrencyService
+    public currencyService: CurrencyService
   ) {
     this.readonly.set(this.authService.isReadOnly());
   }
 
   ngOnInit(): void {
-    this.loadCurrency();
     this.loadCategories();
-  }
-
-  private loadCurrency(): void {
-    this.currencyService.currency$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (currency) => {
-          this.currency = currency;
-        }
-      });
   }
 
   private loadCategories(): void {
