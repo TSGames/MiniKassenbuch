@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CategoryService } from '../../services/category.service';
 import { AccountService } from '../../services/account.service';
-import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -81,7 +81,7 @@ export class BookingComponent implements OnInit {
     private bookingService: BookingService,
     private categoryService: CategoryService,
     private accountService: AccountService,
-    private settingsService: SettingsService,
+    private currencyService: CurrencyService,
     private cdr: ChangeDetectorRef,
     private snackBar: MatSnackBar
   ) { }
@@ -143,9 +143,9 @@ export class BookingComponent implements OnInit {
   }
 
   loadSettings(): void {
-    this.settingsService.getSettings().subscribe({
-      next: (settings) => {
-        this.currency = settings.currency || '€';
+    this.currencyService.currency$.subscribe({
+      next: (currency) => {
+        this.currency = currency;
       }
     });
   }

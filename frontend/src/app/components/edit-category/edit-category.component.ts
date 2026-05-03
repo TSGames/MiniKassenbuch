@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../services/category.service';
-import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -41,7 +41,7 @@ export class EditCategoryComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private categoryService: CategoryService,
-    private settingsService: SettingsService
+    private currencyService: CurrencyService
   ) { }
 
   ngOnInit(): void {
@@ -55,9 +55,9 @@ export class EditCategoryComponent implements OnInit {
   }
 
   private loadSettings(): void {
-    this.settingsService.getSettings().subscribe({
-      next: (settings) => {
-        this.currency.set(settings.currency || '€');
+    this.currencyService.currency$.subscribe({
+      next: (currency) => {
+        this.currency.set(currency);
       }
     });
   }

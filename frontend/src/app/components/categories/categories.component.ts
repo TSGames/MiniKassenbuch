@@ -1,6 +1,6 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { CategoryService } from '../../services/category.service';
-import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -43,7 +43,7 @@ export class CategoriesComponent implements OnInit {
   constructor(
     private categoryService: CategoryService,
     private authService: AuthService,
-    private settingsService: SettingsService
+    private currencyService: CurrencyService
   ) {
     this.readonly.set(this.authService.isReadOnly());
   }
@@ -54,9 +54,9 @@ export class CategoriesComponent implements OnInit {
   }
 
   private loadCurrency(): void {
-    this.settingsService.getSettings().subscribe({
-      next: (settings) => {
-        this.currency = settings.currency || '€';
+    this.currencyService.currency$.subscribe({
+      next: (currency) => {
+        this.currency = currency;
       }
     });
   }

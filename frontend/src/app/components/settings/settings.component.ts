@@ -4,6 +4,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { SettingsService } from '../../services/settings.service';
+import { CurrencyService } from '../../services/currency.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -39,7 +40,7 @@ export class SettingsComponent implements OnInit {
   successMessage: string | null = null;
   isDownloading = false;
 
-  constructor(private settingsService: SettingsService, private http: HttpClient, private cdr: ChangeDetectorRef) { }
+  constructor(private settingsService: SettingsService, private currencyService: CurrencyService, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadSettings();
@@ -93,6 +94,7 @@ export class SettingsComponent implements OnInit {
 
     this.settingsService.updateSettings(settingsData).subscribe({
       next: () => {
+        this.currencyService.updateCurrency(this.currency);
         this.successMessage = 'Einstellungen gespeichert';
         setTimeout(() => { this.successMessage = null; }, 3000);
       },
