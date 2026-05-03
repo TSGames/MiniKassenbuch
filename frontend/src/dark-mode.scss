@@ -663,4 +663,13 @@
       color: rgba(255, 255, 255, 0.7) !important;
     }
   }
+
+  // Category badges and label items
+  .category-badge {
+    color: #000000 !important;
+
+    &.no-category {
+      color: #000000 !important;
+    }
+  }
 }
