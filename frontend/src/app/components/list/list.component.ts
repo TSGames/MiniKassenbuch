@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, effect } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, effect, DestroyRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { AccountService } from '../../services/account.service';
@@ -6,6 +6,7 @@ import { CurrencyService } from '../../services/currency.service';
 import { FilterService } from '../../services/filter.service';
 import { DatePipe, DecimalPipe, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -42,6 +43,7 @@ export class ListComponent implements OnInit {
   currency = '€';
   readonly = false;
   isLoading = true;
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private bookingService: BookingService,
@@ -60,11 +62,13 @@ export class ListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.currencyService.currency$.subscribe({
-      next: (currency) => {
-        this.currency = currency;
-      }
-    });
+    this.currencyService.currency$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (currency) => {
+          this.currency = currency;
+        }
+      });
   }
 
   loadBookings(): void {

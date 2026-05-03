@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../services/category.service';
 import { CurrencyService } from '../../services/currency.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
@@ -36,6 +37,7 @@ export class EditCategoryComponent implements OnInit {
   type = signal(0);
   keywords = signal('');
   currency = signal('€');
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private route: ActivatedRoute,
@@ -55,11 +57,13 @@ export class EditCategoryComponent implements OnInit {
   }
 
   private loadSettings(): void {
-    this.currencyService.currency$.subscribe({
-      next: (currency) => {
-        this.currency.set(currency);
-      }
-    });
+    this.currencyService.currency$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (currency) => {
+          this.currency.set(currency);
+        }
+      });
   }
 
   private loadCategory(): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../services/booking.service';
 import { CategoryService } from '../../services/category.service';
@@ -7,6 +7,7 @@ import { CurrencyService } from '../../services/currency.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HeaderComponent } from '../header/header.component';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -61,6 +62,7 @@ export class BookingComponent implements OnInit {
   nextId: number | null = null;
   isLoading = true;
   uploadedFiles: File[] = [];
+  private destroyRef = inject(DestroyRef);
 
   get activeAccount() {
     return this.accountService.activeAccount;
@@ -143,11 +145,13 @@ export class BookingComponent implements OnInit {
   }
 
   loadSettings(): void {
-    this.currencyService.currency$.subscribe({
-      next: (currency) => {
-        this.currency = currency;
-      }
-    });
+    this.currencyService.currency$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (currency) => {
+          this.currency = currency;
+        }
+      });
   }
 
   loadActiveAccount(): void {

@@ -1,7 +1,8 @@
-import { Component, OnInit, signal, ChangeDetectorRef, effect } from '@angular/core';
+import { Component, OnInit, signal, ChangeDetectorRef, effect, DestroyRef, inject } from '@angular/core';
 import { ReportService } from '../../services/report.service';
 import { CurrencyService } from '../../services/currency.service';
 import { FilterService } from '../../services/filter.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe, CommonModule, KeyValuePipe } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { ColumnChartComponent } from '../charts/column-chart.component';
@@ -47,6 +48,7 @@ export class ReportsComponent implements OnInit {
 
   yearlyChartData: { [key: string]: [number, number] } = {};
   monthlyChartData: { [key: string]: [number, number] } = {};
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private reportService: ReportService,
@@ -66,11 +68,13 @@ export class ReportsComponent implements OnInit {
   }
 
   private loadSettings(): void {
-    this.currencyService.currency$.subscribe({
-      next: (currency) => {
-        this.currency = currency;
-      }
-    });
+    this.currencyService.currency$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (currency) => {
+          this.currency = currency;
+        }
+      });
   }
 
   loadReports(): void {
