@@ -208,12 +208,50 @@
   }
 
   .amount {
-    &.income .type-icon {
-      background-color: rgba(76, 175, 80, 0.2);
+    &.income {
+      color: #81c784;
+
+      .type-icon {
+        background-color: rgba(129, 199, 132, 0.2);
+        color: #81c784;
+      }
     }
 
-    &.expense .type-icon {
-      background-color: rgba(244, 67, 54, 0.2);
+    &.expense {
+      color: #e57373;
+
+      .type-icon {
+        background-color: rgba(229, 115, 115, 0.2);
+        color: #e57373;
+      }
+    }
+  }
+
+  .saldo {
+    &.positive {
+      color: #81c784;
+    }
+
+    &.negative {
+      color: #e57373;
+    }
+  }
+
+  .category-badge {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #90caf9;
+
+    mat-icon {
+      color: #90caf9;
+    }
+
+    &.no-category {
+      background-color: rgba(229, 115, 115, 0.15);
+      color: #e57373;
+
+      mat-icon {
+        color: #e57373;
+      }
     }
   }
 }
