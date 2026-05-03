@@ -341,22 +341,30 @@ class DB{
 						$mpdf->Image($docPath, 10, 45, 140, 120);
 					}
 				} elseif($fileExt === 'pdf') {
+					if(!file_exists($docPath)) continue;
 					try {
 						$pageCount = $mpdf->setSourceFile($docPath);
 						for($i = 1; $i <= $pageCount; $i++) {
-							$mpdf->AddPage();
+							$tpl = $mpdf->importPage($i);
+							$size = $mpdf->getTemplateSize($tpl);
+							$mpdf->AddPage('', [$size['width'], $size['height']]);
 							if($i == 1) {
 								$mpdf->WriteHTML(
-									'<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 15px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
+									'<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 5px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
 									'<strong style="color: #1976d2;">Buchung #' . $bookingNum . '</strong> - ' . $docFilename .
 									'</div>'
 								);
-								$mpdf->SetMargins(10, 15, 10);
 							}
-							$tpl = $mpdf->importPage($i);
-							$mpdf->useTemplate($tpl);
+							$mpdf->useTemplate($tpl, 0, $i === 1 ? 20 : 0, $size['width'], $size['height'] - ($i === 1 ? 20 : 0));
 						}
-					} catch(Exception $e) {
+					} catch(\Throwable $e) {
+						$mpdf->AddPage();
+						$mpdf->WriteHTML(
+							'<div style="background-color: #f0f0f0; padding: 8px 12px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
+							'<strong style="color: #1976d2;">Buchung #' . $bookingNum . '</strong> - ' . $docFilename .
+							'</div>' .
+							'<p style="color: red; font-size: 10pt;">PDF konnte nicht eingebettet werden.</p>'
+						);
 					}
 				}
 			}
