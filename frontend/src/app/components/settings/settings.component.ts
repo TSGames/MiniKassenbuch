@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -39,7 +39,7 @@ export class SettingsComponent implements OnInit {
   successMessage: string | null = null;
   isDownloading = false;
 
-  constructor(private settingsService: SettingsService, private http: HttpClient) { }
+  constructor(private settingsService: SettingsService, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadSettings();
@@ -53,6 +53,7 @@ export class SettingsComponent implements OnInit {
         const ro = data.settings.readOnlyEnabled;
         this.readOnlyEnabled = ro === true || ro === 'true' || ro === '1';
         this.readOnlyUsername = data.settings.readOnlyUsername || '';
+        this.cdr.markForCheck();
       }
     });
   }
