@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { SettingsService } from '../../services/settings.service';
 import { CurrencyService } from '../../services/currency.service';
 import { MatCardModule } from '@angular/material/card';
@@ -38,9 +37,8 @@ export class SettingsComponent implements OnInit {
   readOnlyPassword = '';
   error: string | null = null;
   successMessage: string | null = null;
-  isDownloading = false;
 
-  constructor(private settingsService: SettingsService, private currencyService: CurrencyService, private http: HttpClient, private cdr: ChangeDetectorRef) { }
+  constructor(private settingsService: SettingsService, private currencyService: CurrencyService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadSettings();
@@ -61,49 +59,7 @@ export class SettingsComponent implements OnInit {
   }
 
   downloadBackup(): void {
-    this.isDownloading = true;
-    this.error = null;
-    this.successMessage = null;
-    this.cdr.markForCheck();
-
-    this.http.get('/api/backup', { responseType: 'blob' }).subscribe({
-      next: (blob) => {
-        console.log('Backup downloaded, blob size:', blob.size);
-
-        if (blob.size === 0) {
-          this.error = 'Backup-Datei ist leer';
-          this.isDownloading = false;
-          this.cdr.markForCheck();
-          return;
-        }
-
-        try {
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = `backup-${new Date().toISOString().split('T')[0]}.zip`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          window.URL.revokeObjectURL(url);
-
-          this.successMessage = 'Backup erfolgreich heruntergeladen';
-          setTimeout(() => { this.successMessage = null; }, 3000);
-        } catch (err) {
-          console.error('Error creating download link:', err);
-          this.error = 'Fehler beim Erstellen des Downloads';
-        }
-
-        this.isDownloading = false;
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        console.error('Backup download failed:', err);
-        this.error = 'Fehler beim Herunterladen des Backups: ' + (err.error?.message || err.statusText || 'Unbekannter Fehler');
-        this.isDownloading = false;
-        this.cdr.markForCheck();
-      }
-    });
+    window.location.href = '/api/backup';
   }
 
   onSubmit(): void {
