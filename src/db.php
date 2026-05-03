@@ -274,6 +274,21 @@ class DB{
 		$contents = file_get_contents($meta['uri']);
 		return $contents !== false ? $contents : null;
 	}
+	private function preprocessPdf(string $inputPath): string|null {
+		$tmpFile = tempnam(sys_get_temp_dir(), 'mpdf_gs_') . '.pdf';
+		$cmd = sprintf(
+			'gs -dBATCH -dNOPAUSE -dQUIET -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -sOutputFile=%s %s 2>&1',
+			escapeshellarg($tmpFile),
+			escapeshellarg($inputPath)
+		);
+		exec($cmd, $output, $returnCode);
+		if($returnCode !== 0 || !file_exists($tmpFile) || filesize($tmpFile) === 0) {
+			@unlink($tmpFile);
+			return null;
+		}
+		return $tmpFile;
+	}
+
 	public function getPDF($account, $filter = false, $accountLabel = ''): string|null{
 		$bookings = $this->getBookingsForAccount($filter, $account);
 		if(count($bookings) == 0)
@@ -342,31 +357,40 @@ class DB{
 					}
 				} elseif($fileExt === 'pdf') {
 					if(!file_exists($docPath)) continue;
+					$tmpPath = null;
+					$pageCount = 0;
+					$caption = '<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 5px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
+						'<strong style="color: #1976d2;">Buchung #' . $bookingNum . '</strong> - ' . $docFilename .
+						'</div>';
 					try {
 						$pageCount = $mpdf->setSourceFile($docPath);
+					} catch(\Throwable $e) {
+						$tmpPath = $this->preprocessPdf($docPath);
+						if($tmpPath) {
+							try {
+								$pageCount = $mpdf->setSourceFile($tmpPath);
+							} catch(\Throwable $e2) {
+								error_log('PDF embed failed even after gs preprocessing for doc ' . $doc['id'] . ': ' . $e2->getMessage());
+							}
+						} else {
+							error_log('PDF gs preprocessing failed for doc ' . $doc['id'] . ': ' . $e->getMessage());
+						}
+					}
+					if($pageCount > 0) {
 						for($i = 1; $i <= $pageCount; $i++) {
 							$tpl = $mpdf->importPage($i);
 							$size = $mpdf->getTemplateSize($tpl);
 							$mpdf->AddPage('', [$size['width'], $size['height']]);
-							if($i == 1) {
-								$mpdf->WriteHTML(
-									'<div style="background-color: #f0f0f0; padding: 8px 12px; margin-bottom: 5px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
-									'<strong style="color: #1976d2;">Buchung #' . $bookingNum . '</strong> - ' . $docFilename .
-									'</div>'
-								);
+							if($i === 1) {
+								$mpdf->WriteHTML($caption);
 							}
 							$mpdf->useTemplate($tpl, 0, $i === 1 ? 20 : 0, $size['width'], $size['height'] - ($i === 1 ? 20 : 0));
 						}
-					} catch(\Throwable $e) {
-						error_log('PDF embed failed for doc ' . $doc['id'] . ' (' . $doc['filename'] . '): ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+					} else {
 						$mpdf->AddPage();
-						$mpdf->WriteHTML(
-							'<div style="background-color: #f0f0f0; padding: 8px 12px; border-left: 4px solid #1976d2; font-size: 11pt;">' .
-							'<strong style="color: #1976d2;">Buchung #' . $bookingNum . '</strong> - ' . $docFilename .
-							'</div>' .
-							'<p style="color: red; font-size: 10pt;">PDF konnte nicht eingebettet werden.</p>'
-						);
+						$mpdf->WriteHTML($caption . '<p style="color: red; font-size: 10pt;">PDF konnte nicht eingebettet werden.</p>');
 					}
+					if($tmpPath) @unlink($tmpPath);
 				}
 			}
 		}
