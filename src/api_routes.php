@@ -337,10 +337,6 @@ $app->get('/api/backup', function ($request, $response, $args) {
         $db = new DB();
         $backupFile = $db->backup();
 
-        if (!is_string($backupFile)) {
-            return $response->withStatus(500)->withJson(['error' => 'Invalid backup file path']);
-        }
-
         error_log('Backup file path: ' . $backupFile);
         error_log('Backup file exists: ' . (file_exists($backupFile) ? 'yes' : 'no'));
         if (file_exists($backupFile)) {
