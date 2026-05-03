@@ -337,9 +337,16 @@ $app->get('/api/backup', function ($request, $response, $args) {
         $db = new DB();
         $backupFile = $db->backup();
 
+        if (!is_string($backupFile)) {
+            return $response->withStatus(500)->withJson(['error' => 'Invalid backup file path']);
+        }
+
         error_log('Backup file path: ' . $backupFile);
         error_log('Backup file exists: ' . (file_exists($backupFile) ? 'yes' : 'no'));
-        error_log('Backup file size: ' . (file_exists($backupFile) ? filesize($backupFile) : 'N/A'));
+        if (file_exists($backupFile)) {
+            $size = filesize($backupFile);
+            error_log('Backup file size: ' . (is_int($size) ? $size : 'N/A'));
+        }
 
         if (!file_exists($backupFile)) {
             error_log('Backup file not found at: ' . $backupFile);
@@ -347,14 +354,14 @@ $app->get('/api/backup', function ($request, $response, $args) {
         }
 
         $fileContent = file_get_contents($backupFile);
-        if ($fileContent === false) {
+        if (!is_string($fileContent)) {
             error_log('Failed to read backup file');
             return $response->withStatus(500)->withJson(['error' => 'Failed to read backup file']);
         }
 
         $response = $response->withHeader('Content-Type', 'application/zip')
                            ->withHeader('Content-Disposition', 'attachment; filename=backup-' . date('Y-m-d') . '.zip')
-                           ->withHeader('Content-Length', strlen($fileContent));
+                           ->withHeader('Content-Length', (string)strlen($fileContent));
 
         return $response->write($fileContent);
     } catch (Exception $e) {
