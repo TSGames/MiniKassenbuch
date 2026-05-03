@@ -36,6 +36,8 @@ export class SettingsComponent implements OnInit {
   readOnlyUsername = '';
   readOnlyPassword = '';
   error: string | null = null;
+  successMessage: string | null = null;
+  isDownloading = false;
 
   constructor(private settingsService: SettingsService, private http: HttpClient) { }
 
@@ -48,30 +50,39 @@ export class SettingsComponent implements OnInit {
       next: (data: any) => {
         this.stats = data.stats;
         this.currency = data.settings.currency || '€';
-        this.readOnlyEnabled = data.settings.readOnlyEnabled || false;
+        const ro = data.settings.readOnlyEnabled;
+        this.readOnlyEnabled = ro === true || ro === 'true' || ro === '1';
         this.readOnlyUsername = data.settings.readOnlyUsername || '';
       }
     });
   }
 
   downloadBackup(): void {
+    this.isDownloading = true;
+    this.error = null;
     this.http.get('/api/backup', { responseType: 'blob' }).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = `backup-${new Date().toISOString().split('T')[0]}.zip`;
+        document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
+        this.isDownloading = false;
       },
-      error: (error) => {
-        console.error('Backup download failed:', error);
+      error: (err) => {
+        console.error('Backup download failed:', err);
         this.error = 'Fehler beim Herunterladen des Backups';
+        this.isDownloading = false;
       }
     });
   }
 
   onSubmit(): void {
+    this.error = null;
+    this.successMessage = null;
     const settingsData = {
       currency: this.currency,
       readOnlyEnabled: this.readOnlyEnabled,
@@ -81,17 +92,15 @@ export class SettingsComponent implements OnInit {
 
     this.settingsService.updateSettings(settingsData).subscribe({
       next: () => {
-        // Success handling
-        console.log('Settings saved successfully');
+        this.successMessage = 'Einstellungen gespeichert';
+        setTimeout(() => { this.successMessage = null; }, 3000);
       },
-      error: (error: unknown) => {
+      error: (err: unknown) => {
         this.error = 'Fehler beim Speichern der Einstellungen';
-        console.error('Settings save error:', error);
+        console.error('Settings save error:', err);
       }
     });
   }
 
-  toggleReadOnlyUser(): void {
-    // This is handled by the template binding
-  }
+  toggleReadOnlyUser(): void { }
 }
