@@ -20,7 +20,7 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ['8.4']
+        php-version: ['8.5']
 
     steps:
       - name: Checkout code
@@ -31,6 +31,10 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           coverage: none
+
+      - name: Verify PHP version
+        run: |
+          php -r 'exit(version_compare(PHP_VERSION, "8.5.12", ">=") ? 0 : 1);'
 
       - name: Check PHP syntax
         run: |

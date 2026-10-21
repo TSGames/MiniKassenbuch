@@ -141,7 +141,7 @@ Das Projekt nutzt u.a. folgende Frameworks oder Toolkits
 - RxJS (reactive programming)
 
 ## Backend
-- PHP 8.4
+- PHP 8.5 (8.5.12 or newer)
 - Slim Framework 3.x (REST API)
 - SQLite (database)
 - PhpOffice PhpSpreadsheet (Excel export)
