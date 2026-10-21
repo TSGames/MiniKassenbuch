@@ -62,3 +62,9 @@ RUN mkdir -p data/documents && \
     chown -R www-data:www-data data && \
     mkdir -p vendor/mpdf/mpdf/tmp/mpdf && \
     chown -R www-data:www-data vendor/mpdf/mpdf/tmp
+
+# Log the PHP version on container startup
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["apache2-foreground"]
